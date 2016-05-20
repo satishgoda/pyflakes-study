@@ -11,7 +11,11 @@
 <vnodes>
 <v t="ekr.20160519180137.1"><vh>epytext markup</vh></v>
 <v t="ekr.20160520102401.1"><vh>Reference</vh>
-<v t="ekr.20160519172255.2"><vh>@@clean api.py</vh>
+<v t="ekr.20160519172255.117"><vh>@@clean __init__.py</vh></v>
+<v t="ekr.20160519172255.119"><vh>@@clean __main__.py</vh>
+<v t="ekr.20160519172255.120"><vh>&lt;&lt;declarations&gt;&gt; (__main__)</vh></v>
+</v>
+<v t="ekr.20160519172255.2"><vh>@clean api.py</vh>
 <v t="ekr.20160519172255.3"><vh>&lt;&lt;declarations&gt;&gt; (api)</vh></v>
 <v t="ekr.20160519172255.4"><vh>api.check</vh></v>
 <v t="ekr.20160519172255.5"><vh>api.checkPath</vh></v>
@@ -19,114 +23,6 @@
 <v t="ekr.20160519172255.7"><vh>api.checkRecursive</vh></v>
 <v t="ekr.20160519172255.8"><vh>api._exitOnSignal</vh></v>
 <v t="ekr.20160519172255.9"><vh>api.main</vh></v>
-</v>
-<v t="ekr.20160519172255.109"><vh>@@clean reporter.py</vh>
-<v t="ekr.20160519172255.110"><vh>&lt;&lt;declarations&gt;&gt; (reporter)</vh></v>
-<v t="ekr.20160519172255.111"><vh>class Reporter</vh>
-<v t="ekr.20160519172255.112"><vh>__init__</vh></v>
-<v t="ekr.20160519172255.113"><vh>unexpectedError</vh></v>
-<v t="ekr.20160519172255.114"><vh>syntaxError</vh></v>
-<v t="ekr.20160519172255.115"><vh>flake</vh></v>
-</v>
-<v t="ekr.20160519172255.116"><vh>_makeDefaultReporter</vh></v>
-</v>
-<v t="ekr.20160519172255.117"><vh>@@clean __init__.py</vh></v>
-<v t="ekr.20160519172255.119"><vh>@@clean __main__.py</vh>
-<v t="ekr.20160519172255.120"><vh>&lt;&lt;declarations&gt;&gt; (__main__)</vh></v>
-</v>
-<v t="ekr.20160519172255.10"><vh>@@clean checker.py</vh>
-<v t="ekr.20160519172255.11"><vh>&lt;&lt;imports&gt;&gt; (checker)</vh></v>
-<v t="ekr.20160519181348.1"><vh>top-level getters</vh>
-<v t="ekr.20160519181035.1"><vh>getAlternatives</vh></v>
-<v t="ekr.20160519172255.39"><vh>getNodeName</vh></v>
-<v t="ekr.20160519180953.1"><vh>getNodeType (returns uppercase class name)</vh></v>
-<v t="ekr.20160519172255.15"><vh>iter_child_nodes</vh></v>
-</v>
-<v t="ekr.20160519172255.12"><vh>class _FieldsOrder(dict)</vh>
-<v t="ekr.20160519172255.13"><vh>_get_fields</vh></v>
-<v t="ekr.20160519172255.14"><vh>__missing__</vh></v>
-</v>
-<v t="ekr.20160519172710.1"><vh>Bindings &amp; Definitions</vh>
-<v t="ekr.20160519172255.16"><vh>class Binding</vh>
-<v t="ekr.20160519172255.17"><vh>__init__</vh></v>
-<v t="ekr.20160519172255.18"><vh>__str__</vh></v>
-<v t="ekr.20160519172255.19"><vh>__repr__</vh></v>
-<v t="ekr.20160519172255.20"><vh>redefines</vh></v>
-</v>
-<v t="ekr.20160519172255.21"><vh>class Definition (Binding)</vh></v>
-<v t="ekr.20160519172255.22"><vh>class Importation (Definition)</vh>
-<v t="ekr.20160519172255.23"><vh>__init__</vh></v>
-<v t="ekr.20160519172255.24"><vh>redefines</vh></v>
-</v>
-<v t="ekr.20160519172255.25"><vh>class Argument (Binding)</vh></v>
-<v t="ekr.20160519172255.26"><vh>class Assignment (Binding)</vh></v>
-<v t="ekr.20160519172255.27"><vh>class FunctionDefinition (Definition)</vh></v>
-<v t="ekr.20160519172255.28"><vh>class ClassDefinition (Definition)</vh></v>
-<v t="ekr.20160519172255.29"><vh>class ExportBinding (Binding)</vh>
-<v t="ekr.20160519172255.30"><vh>__init__</vh></v>
-</v>
-</v>
-<v t="ekr.20160519172730.1"><vh>Scopes</vh>
-<v t="ekr.20160519172255.31"><vh>class Scope</vh>
-<v t="ekr.20160519172255.32"><vh>__repr__</vh></v>
-</v>
-<v t="ekr.20160519172255.33"><vh>class ClassScope (Scope)</vh></v>
-<v t="ekr.20160519172255.34"><vh>class FunctionScope (Scope)</vh>
-<v t="ekr.20160519172255.35"><vh>__init__</vh></v>
-<v t="ekr.20160519172255.36"><vh>unusedAssignments</vh></v>
-</v>
-<v t="ekr.20160519172255.37"><vh>class GeneratorScope (Scope)</vh></v>
-<v t="ekr.20160519172255.38"><vh>class ModuleScope (Scope)</vh></v>
-</v>
-<v t="ekr.20160519172255.40"><vh>class Checker</vh>
-<v t="ekr.20160519172255.41"><vh>Checker.__init__</vh></v>
-<v t="ekr.20160519172255.42"><vh>deferFunction</vh></v>
-<v t="ekr.20160519172255.43"><vh>deferAssignment</vh></v>
-<v t="ekr.20160519172255.44"><vh>runDeferred</vh></v>
-<v t="ekr.20160519173318.1"><vh>scopes...</vh>
-<v t="ekr.20160519172255.45"><vh>scope (property)</vh></v>
-<v t="ekr.20160519172255.46"><vh>popScope</vh></v>
-<v t="ekr.20160519172255.47"><vh>checkDeadScopes</vh></v>
-<v t="ekr.20160519172255.48"><vh>pushScope</vh></v>
-</v>
-<v t="ekr.20160519172255.49"><vh>report</vh></v>
-<v t="ekr.20160519173339.1"><vh>tree structure</vh>
-<v t="ekr.20160519172255.50"><vh>getParent</vh></v>
-<v t="ekr.20160519172255.51"><vh>getCommonAncestor</vh></v>
-<v t="ekr.20160519172255.52"><vh>descendantOf</vh></v>
-<v t="ekr.20160519172255.53"><vh>differentForks</vh></v>
-</v>
-<v t="ekr.20160519172255.54"><vh>addBinding</vh></v>
-<v t="ekr.20160519172255.55"><vh>getNodeHandler</vh></v>
-<v t="ekr.20160519173152.1"><vh>handle...</vh>
-<v t="ekr.20160519172255.59"><vh>handleChildren</vh></v>
-<v t="ekr.20160519172255.64"><vh>handleDoctests</vh></v>
-<v t="ekr.20160519172255.63"><vh>handleNode (sets parent/depth fields)</vh></v>
-<v t="ekr.20160519172255.58"><vh>handleNodeDelete</vh></v>
-<v t="ekr.20160519172255.56"><vh>handleNodeLoad</vh></v>
-<v t="ekr.20160519172255.57"><vh>handleNodeStore</vh></v>
-</v>
-<v t="ekr.20160519172255.60"><vh>isLiteralTupleUnpacking</vh></v>
-<v t="ekr.20160519172255.61"><vh>isDocstring</vh></v>
-<v t="ekr.20160519172255.62"><vh>getDocstring</vh></v>
-<v t="ekr.20160519172255.65"><vh>ignore</vh></v>
-<v t="ekr.20160519172836.1"><vh>Node handlers</vh>
-<v t="ekr.20160519172255.66"><vh>GLOBAL &amp; NONLOCAL</vh></v>
-<v t="ekr.20160519172255.67"><vh>GENERATOREXP &amp; comprehensions</vh></v>
-<v t="ekr.20160519172255.68"><vh>NAME</vh></v>
-<v t="ekr.20160519172255.69"><vh>RETURN</vh></v>
-<v t="ekr.20160519172255.70"><vh>YIELD</vh></v>
-<v t="ekr.20160519172255.71"><vh>FUNCTIONDEF</vh></v>
-<v t="ekr.20160519172255.72"><vh>LAMBDA</vh></v>
-<v t="ekr.20160519172255.73"><vh>CLASSDEF</vh></v>
-<v t="ekr.20160519172255.74"><vh>AUGASSIGN</vh></v>
-<v t="ekr.20160519172255.75"><vh>IMPORT</vh></v>
-<v t="ekr.20160519172255.76"><vh>IMPORTFROM</vh></v>
-<v t="ekr.20160519172255.77"><vh>TRY</vh></v>
-<v t="ekr.20160519172255.78"><vh>EXCEPTHANDLER</vh></v>
-</v>
-</v>
-</v>
 </v>
 <v t="ekr.20160519172255.79"><vh>@clean messages.py</vh>
 <v t="ekr.20160519172255.80"><vh>class Message</vh>
@@ -172,37 +68,132 @@
 <v t="ekr.20160519172255.107"><vh>class ReturnWithArgsInsideGenerator</vh></v>
 <v t="ekr.20160519172255.108"><vh>class ReturnOutsideFunction</vh></v>
 </v>
+<v t="ekr.20160519172255.109"><vh>@clean reporter.py</vh>
+<v t="ekr.20160519172255.111"><vh>class Reporter</vh>
+<v t="ekr.20160519172255.112"><vh>__init__</vh></v>
+<v t="ekr.20160519172255.113"><vh>unexpectedError</vh></v>
+<v t="ekr.20160519172255.114"><vh>syntaxError</vh></v>
+<v t="ekr.20160519172255.115"><vh>flake</vh></v>
+</v>
+<v t="ekr.20160519172255.116"><vh>_makeDefaultReporter</vh></v>
+</v>
+</v>
+<v t="ekr.20160520163049.1"><vh>Study</vh>
 <v t="ekr.20160519172947.1"><vh>Found:handleChildren</vh>
-<v t="ekr.20160519172255.67"></v>
-<v t="ekr.20160519172255.77"></v>
-<v t="ekr.20160519172255.78"></v>
-<v t="ekr.20160519172255.59"></v>
-<v t="ekr.20160519172255.64"></v>
-<v t="ekr.20160519172255.41"></v>
+<v t="ekr.20160519172255.67"><vh>GENERATOREXP &amp; comprehensions</vh></v>
+<v t="ekr.20160519172255.77"><vh>TRY</vh></v>
+<v t="ekr.20160519172255.78"><vh>EXCEPTHANDLER</vh></v>
+<v t="ekr.20160519172255.59"><vh>handleChildren</vh></v>
+<v t="ekr.20160519172255.64"><vh>handleDoctests</vh></v>
+<v t="ekr.20160519172255.41"><vh>Checker.__init__</vh></v>
 </v>
 <v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
-<v t="ekr.20160519173152.1"></v>
-<v t="ekr.20160519172836.1"></v>
-<v t="ekr.20160519185320.1"><vh>Found:getAlternatives</vh>
-<v t="ekr.20160519172255.53"></v>
-<v t="ekr.20160519181035.1"></v>
+<v t="ekr.20160519173152.1"><vh>handle...</vh>
+<v t="ekr.20160519172255.59"></v>
+<v t="ekr.20160519172255.64"></v>
+<v t="ekr.20160519172255.63"><vh>handleNode (sets parent/depth fields)</vh></v>
+<v t="ekr.20160519172255.58"><vh>handleNodeDelete</vh></v>
+<v t="ekr.20160519172255.56"><vh>handleNodeLoad</vh></v>
+<v t="ekr.20160519172255.57"><vh>handleNodeStore</vh></v>
 </v>
-<v t="ekr.20160520081237.1"><vh>@button test @key=Ctrl-1</vh>
-<v t="ekr.20160519172255.11"></v>
-<v t="ekr.20160520081718.1"><vh>&lt;&lt; globals &gt;&gt;</vh></v>
-<v t="ekr.20160519172255.12"></v>
-<v t="ekr.20160519181348.1"></v>
-<v t="ekr.20160519172710.1"></v>
-<v t="ekr.20160519172730.1"></v>
-<v t="ekr.20160519172255.40"></v>
-<v t="ekr.20160520081827.1"><vh>run_test &amp; helpers</vh>
+<v t="ekr.20160519185320.1"><vh>Found:getAlternatives</vh>
+<v t="ekr.20160519172255.53"><vh>differentForks</vh></v>
+<v t="ekr.20160519181035.1"><vh>getAlternatives</vh></v>
+</v>
+</v>
+<v t="ekr.20160520163727.1"><vh>Changed</vh>
+<v t="ekr.20160519172255.14"><vh>__missing__</vh></v>
+</v>
+<v t="ekr.20160520081237.1"><vh>@button test</vh>
+<v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
+<v t="ekr.20160520162722.1"><vh>&lt;&lt; define s &gt;&gt;</vh></v>
+<v t="ekr.20160520081827.1"><vh>run_test</vh></v>
 <v t="ekr.20160520082209.1"><vh>check_all</vh></v>
-<v t="ekr.20160520082308.1"><vh>api.check</vh></v>
-<v t="ekr.20160520082346.1"><vh>class Reporter</vh>
-<v t="ekr.20160520082346.2"><vh>__init__</vh></v>
-<v t="ekr.20160520082346.3"><vh>unexpectedError</vh></v>
-<v t="ekr.20160520082346.4"><vh>syntaxError</vh></v>
-<v t="ekr.20160520082346.5"><vh>flake</vh></v>
+<v t="ekr.20160520162336.1"><vh>check_string</vh></v>
+</v>
+<v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
+<v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
+<v t="ekr.20160519172255.12"><vh>class _FieldsOrder(dict)</vh>
+<v t="ekr.20160519172255.13"><vh>_get_fields</vh></v>
+<v t="ekr.20160519172255.14"></v>
+</v>
+<v t="ekr.20160519181348.1"><vh>top-level getters</vh>
+<v t="ekr.20160519181035.1"></v>
+<v t="ekr.20160519172255.39"><vh>getNodeName</vh></v>
+<v t="ekr.20160519180953.1"><vh>getNodeType (returns uppercase class name)</vh></v>
+<v t="ekr.20160519172255.15"><vh>iter_child_nodes</vh></v>
+</v>
+<v t="ekr.20160519172710.1"><vh>Bindings &amp; Definitions</vh>
+<v t="ekr.20160519172255.16"><vh>class Binding</vh>
+<v t="ekr.20160519172255.17"><vh>__init__</vh></v>
+<v t="ekr.20160519172255.18"><vh>__str__</vh></v>
+<v t="ekr.20160519172255.19"><vh>__repr__</vh></v>
+<v t="ekr.20160519172255.20"><vh>redefines</vh></v>
+</v>
+<v t="ekr.20160519172255.21"><vh>class Definition (Binding)</vh></v>
+<v t="ekr.20160519172255.22"><vh>class Importation (Definition)</vh>
+<v t="ekr.20160519172255.23"><vh>__init__</vh></v>
+<v t="ekr.20160519172255.24"><vh>redefines</vh></v>
+</v>
+<v t="ekr.20160519172255.25"><vh>class Argument (Binding)</vh></v>
+<v t="ekr.20160519172255.26"><vh>class Assignment (Binding)</vh></v>
+<v t="ekr.20160519172255.27"><vh>class FunctionDefinition (Definition)</vh></v>
+<v t="ekr.20160519172255.28"><vh>class ClassDefinition (Definition)</vh></v>
+<v t="ekr.20160519172255.29"><vh>class ExportBinding (Binding)</vh>
+<v t="ekr.20160519172255.30"><vh>__init__</vh></v>
+</v>
+</v>
+<v t="ekr.20160519172730.1"><vh>Scopes</vh>
+<v t="ekr.20160519172255.31"><vh>class Scope</vh>
+<v t="ekr.20160519172255.32"><vh>__repr__</vh></v>
+</v>
+<v t="ekr.20160519172255.33"><vh>class ClassScope (Scope)</vh></v>
+<v t="ekr.20160519172255.34"><vh>class FunctionScope (Scope)</vh>
+<v t="ekr.20160519172255.35"><vh>__init__</vh></v>
+<v t="ekr.20160519172255.36"><vh>unusedAssignments</vh></v>
+</v>
+<v t="ekr.20160519172255.37"><vh>class GeneratorScope (Scope)</vh></v>
+<v t="ekr.20160519172255.38"><vh>class ModuleScope (Scope)</vh></v>
+</v>
+<v t="ekr.20160519172255.40"><vh>class Checker</vh>
+<v t="ekr.20160519172255.41"></v>
+<v t="ekr.20160519172255.42"><vh>deferFunction</vh></v>
+<v t="ekr.20160519172255.43"><vh>deferAssignment</vh></v>
+<v t="ekr.20160519172255.44"><vh>runDeferred</vh></v>
+<v t="ekr.20160519173318.1"><vh>scopes...</vh>
+<v t="ekr.20160519172255.45"><vh>scope (property)</vh></v>
+<v t="ekr.20160519172255.46"><vh>popScope</vh></v>
+<v t="ekr.20160519172255.47"><vh>checkDeadScopes</vh></v>
+<v t="ekr.20160519172255.48"><vh>pushScope</vh></v>
+</v>
+<v t="ekr.20160519172255.49"><vh>report</vh></v>
+<v t="ekr.20160519173339.1"><vh>tree structure</vh>
+<v t="ekr.20160519172255.50"><vh>getParent</vh></v>
+<v t="ekr.20160519172255.51"><vh>getCommonAncestor</vh></v>
+<v t="ekr.20160519172255.52"><vh>descendantOf</vh></v>
+<v t="ekr.20160519172255.53"></v>
+</v>
+<v t="ekr.20160519172255.54"><vh>addBinding</vh></v>
+<v t="ekr.20160519172255.55"><vh>getNodeHandler</vh></v>
+<v t="ekr.20160519173152.1"></v>
+<v t="ekr.20160519172255.60"><vh>isLiteralTupleUnpacking</vh></v>
+<v t="ekr.20160519172255.61"><vh>isDocstring</vh></v>
+<v t="ekr.20160519172255.62"><vh>getDocstring</vh></v>
+<v t="ekr.20160519172255.65"><vh>ignore</vh></v>
+<v t="ekr.20160519172836.1"><vh>Node handlers</vh>
+<v t="ekr.20160519172255.66"><vh>GLOBAL &amp; NONLOCAL</vh></v>
+<v t="ekr.20160519172255.67"></v>
+<v t="ekr.20160519172255.68"><vh>NAME</vh></v>
+<v t="ekr.20160519172255.69"><vh>RETURN</vh></v>
+<v t="ekr.20160519172255.70"><vh>YIELD</vh></v>
+<v t="ekr.20160519172255.71"><vh>FUNCTIONDEF</vh></v>
+<v t="ekr.20160519172255.72"><vh>LAMBDA</vh></v>
+<v t="ekr.20160519172255.73"><vh>CLASSDEF</vh></v>
+<v t="ekr.20160519172255.74"><vh>AUGASSIGN</vh></v>
+<v t="ekr.20160519172255.75"><vh>IMPORT</vh></v>
+<v t="ekr.20160519172255.76"><vh>IMPORTFROM</vh></v>
+<v t="ekr.20160519172255.77"></v>
+<v t="ekr.20160519172255.78"></v>
 </v>
 </v>
 </v>
@@ -276,14 +267,17 @@ _MAGIC_GLOBALS = ['__file__', '__builtins__', 'WindowsError']
 <t tx="ekr.20160519172255.109">"""
 Provide the Reporter class.
 """
-
+import re
+import sys
+@others
 @language python
 @tabwidth -4
-
-&lt;&lt;declarations&gt;&gt;
-@others
 </t>
-<t tx="ekr.20160519172255.11">import doctest
+<t tx="ekr.20160519172255.11"># checker.py imports...
+
+import leo.core.leoGlobals as g # EKR
+
+import doctest
 import os
 import sys
 
@@ -304,9 +298,6 @@ except ImportError:     # Python 2.5
 
 import messages # EKR
 # from pyflakes import messages
-</t>
-<t tx="ekr.20160519172255.110">import re
-import sys
 </t>
 <t tx="ekr.20160519172255.111">class Reporter(object):
     """
@@ -421,6 +412,7 @@ if __name__ == '__main__':
 <t tx="ekr.20160519172255.14">def __missing__(self, node_class):
     # EKR: called if self[node_class] does not exist.
     self[node_class] = fields = self._get_fields(node_class)
+    # g.trace(node_class.__name__, fields)
     return fields
 </t>
 <t tx="ekr.20160519172255.15">def iter_child_nodes(node, omit=None, _fields_order=_FieldsOrder()):
@@ -546,8 +538,11 @@ import sys
 import os
 import _ast
 
-from pyflakes import checker, __version__
-from pyflakes import reporter as modReporter
+### from pyflakes import checker, __version__
+import checker # EKR
+__version__ = 'EKR: __version__'
+### from pyflakes import reporter as modReporter
+import reporter as modReporter # EKR
 
 __all__ = ['check', 'checkPath', 'checkRecursive', 'iterSourceCode', 'main']
 </t>
@@ -634,6 +629,7 @@ def getNodeName(node):
     @return: The number of warnings emitted.
     @rtype: C{int}
     """
+    # print('EKR: api.check: %s' % filename)
     if reporter is None:
         reporter = modReporter._makeDefaultReporter()
     # First, compile into an AST and handle syntax errors.
@@ -644,18 +640,21 @@ def getNodeName(node):
         msg = value.args[0]
 
         (lineno, offset, text) = value.lineno, value.offset, value.text
+        g.es_print_exception() # EKR
 
         # If there's an encoding problem with the file, the text is None.
         if text is None:
             # Avoid using msg, since for the only known case, it contains a
             # bogus message that claims the encoding the file declared was
             # unknown.
-            reporter.unexpectedError(filename, 'problem decoding source')
+            # EKR:
+            reporter.unexpectedError(filename, 'no text: syntax error?')
         else:
             reporter.syntaxError(filename, msg, lineno, offset, text)
         return 1
     except Exception:
-        reporter.unexpectedError(filename, 'problem decoding source')
+        g.es_print_exception() # EKR
+        reporter.unexpectedError(filename, 'unexpected exception')
         return 1
     # Okay, it's syntactically valid.  Now check it.
     w = checker.Checker(tree, filename)
@@ -1613,180 +1612,78 @@ print(['iter'.find(z) for z in fields])
 </t>
 <t tx="ekr.20160519185320.1"># flattened, word, ignore-case, head, body</t>
 <t tx="ekr.20160520081237.1">g.cls()
+if c.isChanged():
+    c.save()
+&lt;&lt; test imports &gt;&gt;
+&lt;&lt; define s &gt;&gt;
+@others
+run_test(scope='all', s=s)
+</t>
+<t tx="ekr.20160520081827.1">def run_test(scope, s):
+    g.trace('scope:', scope)
+    g_option_fn = None
+    if scope == 'test':
+        files = []
+    else:
+        files = leoTest.LinterTable().get_files_for_scope(scope, fn=g_option_fn)
+        s = None
+    t1 = time.clock()
+    check_all(files, s)
+    t2 = time.clock()
+    n = len(files)
+    print('%s file%s, time: %5.2f sec.' % (n, g.plural(n), t2-t1))
+</t>
+<t tx="ekr.20160520082209.1">def check_all(files, s=None):
+    '''Run pyflakes on all files.'''
+    # from pyflakes import api, reporter
+    if s:
+        fn = '&lt;test string&gt;'
+        check_string(fn, s)
+    else:
+        for fn in files:
+            s = g.readFileIntoEncodedString(fn, silent=False)
+            if s and s.strip():
+                check_string(fn, s)
+            else:
+                print('can not read:', fn)
+</t>
+<t tx="ekr.20160520102401.1"></t>
+<t tx="ekr.20160520160409.1">import imp
+import sys
 import time
 import leo.core.leoGlobals as g
 import leo.core.leoTest as leoTest
-&lt;&lt; imports &gt;&gt;
-&lt;&lt; globals &gt;&gt;
-@others
-run_test(scope='all')
+import api
+import checker
+import messages
+import reporter
+imp.reload(api)
+imp.reload(checker)
+imp.reload(messages)
+imp.reload(reporter)
 </t>
-<t tx="ekr.20160520081718.1"># Globally defined names which are not attributes of the builtins module, or
-# are only present on some platforms.
-_MAGIC_GLOBALS = ['__file__', '__builtins__', 'WindowsError']
+<t tx="ekr.20160520162336.1">def check_string(fn, s):
+    
+    sfn = g.shortFileName(fn)
+    r = reporter.Reporter(
+        errorStream=sys.stderr,
+        warningStream=sys.stderr,
+        )
+    errors = api.check(s, sfn, r)
+    if errors:
+        print('pyflakes: %s error%s in %s' % (
+            errors, g.plural(errors), fn))
 </t>
-<t tx="ekr.20160520081827.1">def run_test(scope):
-    g_option_fn = None
-    tables_table = leoTest.LinterTable().get_table(scope, fn=g_option_fn)
-    g.trace(scope, len(tables_table))
-    t1 = time.clock()
-    n = 0
-    for table, dir_ in tables_table:
-        g.trace(len(table), dir_)
-        n += len(table)
-        check_all(dir_, table)
-    t2 = time.clock()
-    print('%s file%s, time: %5.2f sec.' % (n, g.plural(n), t2-t1))
-</t>
-<t tx="ekr.20160520082209.1">def check_all(dir_, files):
-    '''Run pyflakes on all files.'''
-    # from pyflakes import api, reporter
-    loadDir = g.os_path_finalize_join(g.__file__, '..', '..')
-    paths = []
-    for fn in files:
-        if dir_:
-            fn = g.os_path_join(loadDir, dir_, fn)
-        else:
-            fn = g.os_path_join(loadDir, fn)
-        fn = g.os_path_abspath(fn)
-        if not fn.endswith('.py'):
-            fn = fn+'.py'
-        paths.append(fn)
-    for fn in paths:
-        # Report the file name.
-        sfn = g.shortFileName(fn)
-        s = g.readFileIntoEncodedString(fn, silent=False)
-        if not s or not s.strip():
-            g.trace('can not read:', fn)
-            return
-        r = Reporter( # reporter.Reporter
-            errorStream=sys.stderr,
-            warningStream=sys.stderr,
-            )
-        errors = check(s, sfn, r) # api.check
-        if errors:
-            print('pyflakes: %s error%s in %s' % (
-                errors, g.plural(errors), fn))
-</t>
-<t tx="ekr.20160520082308.1">def check(codeString, filename, reporter=None):
-    """
-    Check the Python source given by C{codeString} for flakes.
+<t tx="ekr.20160520162722.1">s = '''\
 
-    @param codeString: The Python source to check.
-    @type codeString: C{str}
-
-    @param filename: The name of the file the source came from, used to report
-        errors.
-    @type filename: C{str}
-
-    @param reporter: A L{Reporter} instance, where errors and warnings will be
-        reported.
-
-    @return: The number of warnings emitted.
-    @rtype: C{int}
-    """
-    _ast = ast # EKR
-
-    if reporter is None:
-        reporter = modReporter._makeDefaultReporter()
-    # First, compile into an AST and handle syntax errors.
-    try:
-        tree = compile(codeString, filename, "exec", _ast.PyCF_ONLY_AST)
-    except SyntaxError:
-        value = sys.exc_info()[1]
-        msg = value.args[0]
-
-        (lineno, offset, text) = value.lineno, value.offset, value.text
-
-        # If there's an encoding problem with the file, the text is None.
-        if text is None:
-            # Avoid using msg, since for the only known case, it contains a
-            # bogus message that claims the encoding the file declared was
-            # unknown.
-            g.es_print_exception() # EKR
-            reporter.unexpectedError(filename, 'syntax error') # EKR
-        else:
-            reporter.syntaxError(filename, msg, lineno, offset, text)
-        return 1
-    except Exception:
-        g.es_print_exception() # EKR
-        reporter.unexpectedError(filename, 'unexpected exception') # EKR
-        return 1
-    # Okay, it's syntactically valid.  Now check it.
-    w = Checker(tree, filename) # EKR: checker.Checker
-    w.messages.sort(key=lambda m: m.lineno)
-    for warning in w.messages:
-        reporter.flake(warning)
-    return len(w.messages)
-</t>
-<t tx="ekr.20160520082346.1">class Reporter(object):
-    """
-    Formats the results of pyflakes checks to users.
-    """
-    @others
-</t>
-<t tx="ekr.20160520082346.2">def __init__(self, warningStream, errorStream):
-    """
-    Construct a L{Reporter}.
-
-    @param warningStream: A file-like object where warnings will be
-        written to.  The stream's C{write} method must accept unicode.
-        C{sys.stdout} is a good value.
-    @param errorStream: A file-like object where error output will be
-        written to.  The stream's C{write} method must accept unicode.
-        C{sys.stderr} is a good value.
-    """
-    self._stdout = warningStream
-    self._stderr = errorStream
-</t>
-<t tx="ekr.20160520082346.3">def unexpectedError(self, filename, msg):
-    """
-    An unexpected error occurred trying to process C{filename}.
-
-    @param filename: The path to a file that we could not process.
-    @ptype filename: C{unicode}
-    @param msg: A message explaining the problem.
-    @ptype msg: C{unicode}
-    """
-    self._stderr.write("%s: %s\n" % (filename, msg))
-</t>
-<t tx="ekr.20160520082346.4">def syntaxError(self, filename, msg, lineno, offset, text):
-    """
-    There was a syntax errror in C{filename}.
-
-    @param filename: The path to the file with the syntax error.
-    @ptype filename: C{unicode}
-    @param msg: An explanation of the syntax error.
-    @ptype msg: C{unicode}
-    @param lineno: The line number where the syntax error occurred.
-    @ptype lineno: C{int}
-    @param offset: The column on which the syntax error occurred, or None.
-    @ptype offset: C{int}
-    @param text: The source code containing the syntax error.
-    @ptype text: C{unicode}
-    """
-    line = text.splitlines()[-1]
-    if offset is not None:
-        offset = offset - (len(text) - len(line))
-        self._stderr.write('%s:%d:%d: %s\n' %
-                           (filename, lineno, offset + 1, msg))
-    else:
-        self._stderr.write('%s:%d: %s\n' % (filename, lineno, msg))
-    self._stderr.write(line)
-    self._stderr.write('\n')
-    if offset is not None:
-        self._stderr.write(re.sub(r'\S', ' ', line[:offset]) +
-                           "^\n")
-</t>
-<t tx="ekr.20160520082346.5">def flake(self, message):
-    """
-    pyflakes found something wrong with the code.
-
-    @param: A L{pyflakes.messages.Message}.
-    """
-    self._stdout.write(str(message))
-    self._stdout.write('\n')
-</t>
-<t tx="ekr.20160520102401.1"></t>
+class TestClass:
+    
+    def spam():
+        
+        return n + 1
+        
+'''</t>
+<t tx="ekr.20160520163049.1"></t>
+<t tx="ekr.20160520163727.1"></t>
 </tnodes>
 </leo_file>

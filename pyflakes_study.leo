@@ -103,6 +103,7 @@
 </v>
 <v t="ekr.20160520163727.1"><vh>Changed</vh>
 <v t="ekr.20160519172255.14"><vh>__missing__</vh></v>
+<v t="ekr.20160519172255.13"><vh>_get_fields</vh></v>
 </v>
 <v t="ekr.20160520081237.1"><vh>@button test</vh>
 <v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
@@ -114,7 +115,7 @@
 <v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
 <v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
 <v t="ekr.20160519172255.12"><vh>class _FieldsOrder(dict)</vh>
-<v t="ekr.20160519172255.13"><vh>_get_fields</vh></v>
+<v t="ekr.20160519172255.13"></v>
 <v t="ekr.20160519172255.14"></v>
 </v>
 <v t="ekr.20160519181348.1"><vh>top-level getters</vh>
@@ -398,17 +399,24 @@ if __name__ == '__main__':
     # handle iter before target, and generators before element
     # EKR: the effect of the key is to assign 0 to 'iter' or 'generators' or 'value'
     # and -1 to everything else. So the target is *last*, so reverse=True is needed.
-    fields = node_class._fields
-    if 'iter' in fields:
-        key_first = 'iter'.find
-    elif 'generators' in fields:
-        key_first = 'generators'.find
+    if 1: # EKR new code
+        fields = list(node_class._fields)
+        for field in ('iter', 'generators', 'value'):
+            if field in fields:
+                fields.remove(field)
+                fields.insert(0, field)
+                break
+        return tuple(fields)
     else:
-        key_first = 'value'.find
-    return tuple(sorted(fields, key=key_first, reverse=True))
-
-
-</t>
+        fields = node_class._fields
+        if 'iter' in fields:
+            key_first = 'iter'.find
+        elif 'generators' in fields:
+            key_first = 'generators'.find
+        else:
+            key_first = 'value'.find
+        return tuple(sorted(fields, key=key_first, reverse=True))
+    </t>
 <t tx="ekr.20160519172255.14">def __missing__(self, node_class):
     # EKR: called if self[node_class] does not exist.
     self[node_class] = fields = self._get_fields(node_class)

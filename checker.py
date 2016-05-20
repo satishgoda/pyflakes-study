@@ -42,16 +42,24 @@ class _FieldsOrder(dict):
         # handle iter before target, and generators before element
         # EKR: the effect of the key is to assign 0 to 'iter' or 'generators' or 'value'
         # and -1 to everything else. So the target is *last*, so reverse=True is needed.
-        fields = node_class._fields
-        if 'iter' in fields:
-            key_first = 'iter'.find
-        elif 'generators' in fields:
-            key_first = 'generators'.find
+        if 1: # EKR new code
+            fields = list(node_class._fields)
+            for field in ('iter', 'generators', 'value'):
+                if field in fields:
+                    fields.remove(field)
+                    fields.insert(0, field)
+                    break
+            return tuple(fields)
         else:
-            key_first = 'value'.find
-        return tuple(sorted(fields, key=key_first, reverse=True))
-
-
+            fields = node_class._fields
+            if 'iter' in fields:
+                key_first = 'iter'.find
+            elif 'generators' in fields:
+                key_first = 'generators'.find
+            else:
+                key_first = 'value'.find
+            return tuple(sorted(fields, key=key_first, reverse=True))
+        
     def __missing__(self, node_class):
         # EKR: called if self[node_class] does not exist.
         self[node_class] = fields = self._get_fields(node_class)

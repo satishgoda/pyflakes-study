@@ -20,50 +20,6 @@
 <v t="ekr.20160519172255.8"><vh>api._exitOnSignal</vh></v>
 <v t="ekr.20160519172255.9"><vh>api.main</vh></v>
 </v>
-<v t="ekr.20160519172255.79"><vh>@@clean messages.py</vh>
-<v t="ekr.20160519172255.80"><vh>class Message</vh>
-<v t="ekr.20160519172255.81"><vh>__init__</vh></v>
-<v t="ekr.20160519172255.82"><vh>__str__</vh></v>
-</v>
-<v t="ekr.20160519172255.83"><vh>class UnusedImport</vh>
-<v t="ekr.20160519172255.84"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.85"><vh>class RedefinedWhileUnused</vh>
-<v t="ekr.20160519172255.86"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.87"><vh>class RedefinedInListComp</vh>
-<v t="ekr.20160519172255.88"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.89"><vh>class ImportShadowedByLoopVar</vh>
-<v t="ekr.20160519172255.90"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.91"><vh>class ImportStarUsed</vh>
-<v t="ekr.20160519172255.92"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.93"><vh>class UndefinedName</vh>
-<v t="ekr.20160519172255.94"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.95"><vh>class DoctestSyntaxError</vh>
-<v t="ekr.20160519172255.96"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.97"><vh>class UndefinedExport</vh>
-<v t="ekr.20160519172255.98"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.99"><vh>class UndefinedLocal</vh>
-<v t="ekr.20160519172255.100"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.101"><vh>class DuplicateArgument</vh>
-<v t="ekr.20160519172255.102"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.103"><vh>class LateFutureImport</vh>
-<v t="ekr.20160519172255.104"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.105"><vh>class UnusedVariable</vh>
-<v t="ekr.20160519172255.106"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.107"><vh>class ReturnWithArgsInsideGenerator</vh></v>
-<v t="ekr.20160519172255.108"><vh>class ReturnOutsideFunction</vh></v>
-</v>
 <v t="ekr.20160519172255.109"><vh>@@clean reporter.py</vh>
 <v t="ekr.20160519172255.110"><vh>&lt;&lt;declarations&gt;&gt; (reporter)</vh></v>
 <v t="ekr.20160519172255.111"><vh>class Reporter</vh>
@@ -171,6 +127,50 @@
 </v>
 </v>
 </v>
+</v>
+<v t="ekr.20160519172255.79"><vh>@clean messages.py</vh>
+<v t="ekr.20160519172255.80"><vh>class Message</vh>
+<v t="ekr.20160519172255.81"><vh>__init__</vh></v>
+<v t="ekr.20160519172255.82"><vh>__str__</vh></v>
+</v>
+<v t="ekr.20160519172255.83"><vh>class UnusedImport</vh>
+<v t="ekr.20160519172255.84"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.85"><vh>class RedefinedWhileUnused</vh>
+<v t="ekr.20160519172255.86"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.87"><vh>class RedefinedInListComp</vh>
+<v t="ekr.20160519172255.88"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.89"><vh>class ImportShadowedByLoopVar</vh>
+<v t="ekr.20160519172255.90"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.91"><vh>class ImportStarUsed</vh>
+<v t="ekr.20160519172255.92"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.93"><vh>class UndefinedName</vh>
+<v t="ekr.20160519172255.94"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.95"><vh>class DoctestSyntaxError</vh>
+<v t="ekr.20160519172255.96"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.97"><vh>class UndefinedExport</vh>
+<v t="ekr.20160519172255.98"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.99"><vh>class UndefinedLocal</vh>
+<v t="ekr.20160519172255.100"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.101"><vh>class DuplicateArgument</vh>
+<v t="ekr.20160519172255.102"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.103"><vh>class LateFutureImport</vh>
+<v t="ekr.20160519172255.104"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.105"><vh>class UnusedVariable</vh>
+<v t="ekr.20160519172255.106"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.107"><vh>class ReturnWithArgsInsideGenerator</vh></v>
+<v t="ekr.20160519172255.108"><vh>class ReturnOutsideFunction</vh></v>
 </v>
 <v t="ekr.20160519172947.1"><vh>Found:handleChildren</vh>
 <v t="ekr.20160519172255.67"></v>
@@ -302,7 +302,8 @@ except ImportError:     # Python 2.5
         ast.ClassDef.decorator_list = ()
         ast.FunctionDef.decorator_list = property(lambda s: s.decorators)
 
-from pyflakes import messages
+import messages # EKR
+# from pyflakes import messages
 </t>
 <t tx="ekr.20160519172255.110">import re
 import sys
@@ -1703,17 +1704,16 @@ _MAGIC_GLOBALS = ['__file__', '__builtins__', 'WindowsError']
             # bogus message that claims the encoding the file declared was
             # unknown.
             g.es_print_exception() # EKR
-            reporter.unexpectedError(filename, 'problem decoding source')
+            reporter.unexpectedError(filename, 'syntax error') # EKR
         else:
             reporter.syntaxError(filename, msg, lineno, offset, text)
         return 1
     except Exception:
         g.es_print_exception() # EKR
-        reporter.unexpectedError(filename, 'problem decoding source')
+        reporter.unexpectedError(filename, 'unexpected exception') # EKR
         return 1
     # Okay, it's syntactically valid.  Now check it.
-    # w = checker.Checker(tree, filename)
-    w = Checker(tree, filename)
+    w = Checker(tree, filename) # EKR: checker.Checker
     w.messages.sort(key=lambda m: m.lineno)
     for warning in w.messages:
         reporter.flake(warning)

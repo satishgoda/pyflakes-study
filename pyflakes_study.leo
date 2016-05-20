@@ -10,6 +10,7 @@
 <find_panel_settings/>
 <vnodes>
 <v t="ekr.20160519180137.1"><vh>epytext markup</vh></v>
+<v t="ekr.20160520102401.1"><vh>Reference</vh>
 <v t="ekr.20160519172255.2"><vh>@@clean api.py</vh>
 <v t="ekr.20160519172255.3"><vh>&lt;&lt;declarations&gt;&gt; (api)</vh></v>
 <v t="ekr.20160519172255.4"><vh>api.check</vh></v>
@@ -170,6 +171,7 @@
 </v>
 </v>
 </v>
+</v>
 <v t="ekr.20160519172947.1"><vh>Found:handleChildren</vh>
 <v t="ekr.20160519172255.67"></v>
 <v t="ekr.20160519172255.77"></v>
@@ -178,15 +180,31 @@
 <v t="ekr.20160519172255.64"></v>
 <v t="ekr.20160519172255.41"></v>
 </v>
-<v t="ekr.20160519172255.12"></v>
 <v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
-<v t="ekr.20160519181348.1"></v>
-<v t="ekr.20160519172255.40"></v>
 <v t="ekr.20160519173152.1"></v>
 <v t="ekr.20160519172836.1"></v>
 <v t="ekr.20160519185320.1"><vh>Found:getAlternatives</vh>
 <v t="ekr.20160519172255.53"></v>
 <v t="ekr.20160519181035.1"></v>
+</v>
+<v t="ekr.20160520081237.1"><vh>@button test @key=Ctrl-1</vh>
+<v t="ekr.20160519172255.11"></v>
+<v t="ekr.20160520081718.1"><vh>&lt;&lt; globals &gt;&gt;</vh></v>
+<v t="ekr.20160519172255.12"></v>
+<v t="ekr.20160519181348.1"></v>
+<v t="ekr.20160519172710.1"></v>
+<v t="ekr.20160519172730.1"></v>
+<v t="ekr.20160519172255.40"></v>
+<v t="ekr.20160520081827.1"><vh>run_test &amp; helpers</vh>
+<v t="ekr.20160520082209.1"><vh>check_all</vh></v>
+<v t="ekr.20160520082308.1"><vh>api.check</vh></v>
+<v t="ekr.20160520082346.1"><vh>class Reporter</vh>
+<v t="ekr.20160520082346.2"><vh>__init__</vh></v>
+<v t="ekr.20160520082346.3"><vh>unexpectedError</vh></v>
+<v t="ekr.20160520082346.4"><vh>syntaxError</vh></v>
+<v t="ekr.20160520082346.5"><vh>flake</vh></v>
+</v>
+</v>
 </v>
 </vnodes>
 <tnodes>
@@ -1593,5 +1611,182 @@ print(aList)
 print(['iter'.find(z) for z in fields])
 </t>
 <t tx="ekr.20160519185320.1"># flattened, word, ignore-case, head, body</t>
+<t tx="ekr.20160520081237.1">g.cls()
+import time
+import leo.core.leoGlobals as g
+import leo.core.leoTest as leoTest
+&lt;&lt; imports &gt;&gt;
+&lt;&lt; globals &gt;&gt;
+@others
+run_test(scope='all')
+</t>
+<t tx="ekr.20160520081718.1"># Globally defined names which are not attributes of the builtins module, or
+# are only present on some platforms.
+_MAGIC_GLOBALS = ['__file__', '__builtins__', 'WindowsError']
+</t>
+<t tx="ekr.20160520081827.1">def run_test(scope):
+    g_option_fn = None
+    tables_table = leoTest.LinterTable().get_table(scope, fn=g_option_fn)
+    g.trace(scope, len(tables_table))
+    t1 = time.clock()
+    n = 0
+    for table, dir_ in tables_table:
+        g.trace(len(table), dir_)
+        n += len(table)
+        check_all(dir_, table)
+    t2 = time.clock()
+    print('%s file%s, time: %5.2f sec.' % (n, g.plural(n), t2-t1))
+</t>
+<t tx="ekr.20160520082209.1">def check_all(dir_, files):
+    '''Run pyflakes on all files.'''
+    # from pyflakes import api, reporter
+    loadDir = g.os_path_finalize_join(g.__file__, '..', '..')
+    paths = []
+    for fn in files:
+        if dir_:
+            fn = g.os_path_join(loadDir, dir_, fn)
+        else:
+            fn = g.os_path_join(loadDir, fn)
+        fn = g.os_path_abspath(fn)
+        if not fn.endswith('.py'):
+            fn = fn+'.py'
+        paths.append(fn)
+    for fn in paths:
+        # Report the file name.
+        sfn = g.shortFileName(fn)
+        s = g.readFileIntoEncodedString(fn, silent=False)
+        if not s or not s.strip():
+            g.trace('can not read:', fn)
+            return
+        r = Reporter( # reporter.Reporter
+            errorStream=sys.stderr,
+            warningStream=sys.stderr,
+            )
+        errors = check(s, sfn, r) # api.check
+        if errors:
+            print('pyflakes: %s error%s in %s' % (
+                errors, g.plural(errors), fn))
+</t>
+<t tx="ekr.20160520082308.1">def check(codeString, filename, reporter=None):
+    """
+    Check the Python source given by C{codeString} for flakes.
+
+    @param codeString: The Python source to check.
+    @type codeString: C{str}
+
+    @param filename: The name of the file the source came from, used to report
+        errors.
+    @type filename: C{str}
+
+    @param reporter: A L{Reporter} instance, where errors and warnings will be
+        reported.
+
+    @return: The number of warnings emitted.
+    @rtype: C{int}
+    """
+    _ast = ast # EKR
+
+    if reporter is None:
+        reporter = modReporter._makeDefaultReporter()
+    # First, compile into an AST and handle syntax errors.
+    try:
+        tree = compile(codeString, filename, "exec", _ast.PyCF_ONLY_AST)
+    except SyntaxError:
+        value = sys.exc_info()[1]
+        msg = value.args[0]
+
+        (lineno, offset, text) = value.lineno, value.offset, value.text
+
+        # If there's an encoding problem with the file, the text is None.
+        if text is None:
+            # Avoid using msg, since for the only known case, it contains a
+            # bogus message that claims the encoding the file declared was
+            # unknown.
+            g.es_print_exception() # EKR
+            reporter.unexpectedError(filename, 'problem decoding source')
+        else:
+            reporter.syntaxError(filename, msg, lineno, offset, text)
+        return 1
+    except Exception:
+        g.es_print_exception() # EKR
+        reporter.unexpectedError(filename, 'problem decoding source')
+        return 1
+    # Okay, it's syntactically valid.  Now check it.
+    # w = checker.Checker(tree, filename)
+    w = Checker(tree, filename)
+    w.messages.sort(key=lambda m: m.lineno)
+    for warning in w.messages:
+        reporter.flake(warning)
+    return len(w.messages)
+</t>
+<t tx="ekr.20160520082346.1">class Reporter(object):
+    """
+    Formats the results of pyflakes checks to users.
+    """
+    @others
+</t>
+<t tx="ekr.20160520082346.2">def __init__(self, warningStream, errorStream):
+    """
+    Construct a L{Reporter}.
+
+    @param warningStream: A file-like object where warnings will be
+        written to.  The stream's C{write} method must accept unicode.
+        C{sys.stdout} is a good value.
+    @param errorStream: A file-like object where error output will be
+        written to.  The stream's C{write} method must accept unicode.
+        C{sys.stderr} is a good value.
+    """
+    self._stdout = warningStream
+    self._stderr = errorStream
+</t>
+<t tx="ekr.20160520082346.3">def unexpectedError(self, filename, msg):
+    """
+    An unexpected error occurred trying to process C{filename}.
+
+    @param filename: The path to a file that we could not process.
+    @ptype filename: C{unicode}
+    @param msg: A message explaining the problem.
+    @ptype msg: C{unicode}
+    """
+    self._stderr.write("%s: %s\n" % (filename, msg))
+</t>
+<t tx="ekr.20160520082346.4">def syntaxError(self, filename, msg, lineno, offset, text):
+    """
+    There was a syntax errror in C{filename}.
+
+    @param filename: The path to the file with the syntax error.
+    @ptype filename: C{unicode}
+    @param msg: An explanation of the syntax error.
+    @ptype msg: C{unicode}
+    @param lineno: The line number where the syntax error occurred.
+    @ptype lineno: C{int}
+    @param offset: The column on which the syntax error occurred, or None.
+    @ptype offset: C{int}
+    @param text: The source code containing the syntax error.
+    @ptype text: C{unicode}
+    """
+    line = text.splitlines()[-1]
+    if offset is not None:
+        offset = offset - (len(text) - len(line))
+        self._stderr.write('%s:%d:%d: %s\n' %
+                           (filename, lineno, offset + 1, msg))
+    else:
+        self._stderr.write('%s:%d: %s\n' % (filename, lineno, msg))
+    self._stderr.write(line)
+    self._stderr.write('\n')
+    if offset is not None:
+        self._stderr.write(re.sub(r'\S', ' ', line[:offset]) +
+                           "^\n")
+</t>
+<t tx="ekr.20160520082346.5">def flake(self, message):
+    """
+    pyflakes found something wrong with the code.
+
+    @param: A L{pyflakes.messages.Message}.
+    """
+    self._stdout.write(str(message))
+    self._stdout.write('\n')
+</t>
+<t tx="ekr.20160520102401.1"></t>
 </tnodes>
 </leo_file>

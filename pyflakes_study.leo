@@ -3653,7 +3653,7 @@ def do_BinOp(self, node):
 
     global stats
     t1 = time.clock()
-    ast.AstFullTraverser().visit(tree)
+    leo_ast.AstFullTraverser().visit(tree)
     t2 = time.clock()
     stats['visit'] = stats.get('visit', 0.0) + t2 - t1</t>
 </tnodes>

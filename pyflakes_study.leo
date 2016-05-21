@@ -1915,10 +1915,12 @@ run_test(scope='all', s=s)
     t2 = time.clock()
     n = len(files)
     stats['total'] = t2 - t1
+    stats['total2'] = t2 - t1 - stats.get('handle',0.0) - stats.get('visit',0.0)
     print('%s file%s' % (n, g.plural(n)))
     if 1:
-        for key in ('read', 'parse', 'visit', 'handle', 'check', 'total'):
+        for key in ('read', 'parse', 'visit', 'handle', 'check', 'total', 'total2'):
             print('%6s %5.2f sec' % (key, stats.get(key, 0.0)))
+        print('total2 = total - visit - handle')
 </t>
 <t tx="ekr.20160520082209.1">def check_all(files, s=None):
     '''Run pyflakes on all files.'''

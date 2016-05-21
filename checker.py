@@ -418,6 +418,7 @@ class Checker(object):
 
         # g.trace(self.scope, value) # EKR
         self.scope[value.name] = value
+    # EKR: like visitors
     def getNodeHandler(self, node_class):
         try:
             return self._nodeHandlers[node_class]
@@ -425,8 +426,8 @@ class Checker(object):
             nodeType = getNodeType(node_class)
         self._nodeHandlers[node_class] = handler = getattr(self, nodeType)
         return handler
-    # EKR: like visitors
     def handleChildren(self, tree, omit=None):
+        # EKR: iter_child_nodes uses _FieldsOrder class.
         for node in iter_child_nodes(tree, omit=omit):
             self.handleNode(node, tree)
     def handleDoctests(self, node):
@@ -865,4 +866,205 @@ class Checker(object):
         # the exception, which is not a Name node, but a simple string.
         if isinstance(node.name, str):
             self.handleNodeStore(node)
+        self.handleChildren(node)
+class NullChecker:
+    
+    def __init__(self):
+        self.nodeDepth = 0
+        self._nodeHandlers = {}
+        
+    def getNodeHandler(self, node_class):
+        try:
+            return self._nodeHandlers[node_class]
+        except KeyError:
+            nodeType = getNodeType(node_class)
+        self._nodeHandlers[node_class] = handler = getattr(self, nodeType)
+        return handler
+    def handleChildren(self, tree, omit=None):
+        # EKR: iter_child_nodes uses _FieldsOrder class.
+        for node in iter_child_nodes(tree, omit=omit):
+            self.handleNode(node, tree)
+    def handleNode(self, node, parent):
+        # EKR: this the general node visiter.
+        if node is None:
+            return
+        self.nodeDepth += 1
+        node.depth = self.nodeDepth
+        node.parent = parent
+        try:
+            # EKR: this is the only call to getNodeHandler.
+            handler = self.getNodeHandler(node.__class__)
+            handler(node)
+        finally:
+            self.nodeDepth -= 1
+
+    # _getDoctestExamples = doctest.DocTestParser().get_examples
+    def ignore(self, node):
+        pass
+
+    # "stmt" type nodes
+    DELETE = PRINT = FOR = ASYNCFOR = WHILE = IF = WITH = WITHITEM = \
+        ASYNCWITH = ASYNCWITHITEM = RAISE = TRYFINALLY = ASSERT = EXEC = \
+        EXPR = ASSIGN = handleChildren
+
+    CONTINUE = BREAK = PASS = ignore
+
+    # "expr" type nodes
+    BOOLOP = BINOP = UNARYOP = IFEXP = DICT = SET = \
+        COMPARE = CALL = REPR = ATTRIBUTE = SUBSCRIPT = LIST = TUPLE = \
+        STARRED = NAMECONSTANT = handleChildren
+
+    NUM = STR = BYTES = ELLIPSIS = ignore
+
+    # "slice" type nodes
+    SLICE = EXTSLICE = INDEX = handleChildren
+
+    # expression contexts are node instances too, though being constants
+    LOAD = STORE = DEL = AUGLOAD = AUGSTORE = PARAM = ignore
+
+    # same for operators
+    AND = OR = ADD = SUB = MULT = DIV = MOD = POW = LSHIFT = RSHIFT = \
+        BITOR = BITXOR = BITAND = FLOORDIV = INVERT = NOT = UADD = USUB = \
+        EQ = NOTEQ = LT = LTE = GT = GTE = IS = ISNOT = IN = NOTIN = ignore
+
+    # additional node types
+    COMPREHENSION = KEYWORD = handleChildren
+    def GLOBAL(self, node):
+        """
+        Keep track of globals declarations.
+        """
+        pass
+
+    NONLOCAL = GLOBAL
+    def GENERATOREXP(self, node):
+        self.handleChildren(node)
+
+    LISTCOMP = handleChildren if PY2 else GENERATOREXP
+
+    DICTCOMP = SETCOMP = GENERATOREXP
+    def NAME(self, node):
+        """
+        Handle occurrence of Name (which can be a load/store/delete access.)
+        """
+        pass
+    def RETURN(self, node):
+        
+        self.handleNode(node.value, node)
+    def YIELD(self, node):
+        self.handleNode(node.value, node)
+
+    AWAIT = YIELDFROM = YIELD
+    def FUNCTIONDEF(self, node):
+        for deco in node.decorator_list:
+            self.handleNode(deco, node)
+        self.LAMBDA(node)
+
+    ASYNCFUNCTIONDEF = FUNCTIONDEF
+    def LAMBDA(self, node):
+        # args = []
+        annotations = []
+
+        if PY2:
+            # def addArgs(arglist):
+                # for arg in arglist:
+                    # if isinstance(arg, ast.Tuple):
+                        # addArgs(arg.elts)
+                    # else:
+                        # args.append(arg.id)
+            # addArgs(node.args.args)
+            defaults = node.args.defaults
+        else:
+            for arg in node.args.args + node.args.kwonlyargs:
+                # args.append(arg.arg)
+                annotations.append(arg.annotation)
+            defaults = node.args.defaults + node.args.kw_defaults
+
+        # Only for Python3 FunctionDefs
+        is_py3_func = hasattr(node, 'returns')
+
+        for arg_name in ('vararg', 'kwarg'):
+            wildcard = getattr(node.args, arg_name)
+            if not wildcard:
+                continue
+            # args.append(wildcard if PY33 else wildcard.arg)
+            if is_py3_func:
+                if PY33:  # Python 2.5 to 3.3
+                    argannotation = arg_name + 'annotation'
+                    annotations.append(getattr(node.args, argannotation))
+                else:     # Python >= 3.4
+                    annotations.append(wildcard.annotation)
+
+        if is_py3_func:
+            annotations.append(node.returns)
+
+        for child in annotations + defaults:
+            if child:
+                self.handleNode(child, node)
+                
+        # EKR: Was deferred.
+        if isinstance(node.body, list):
+            # case for FunctionDefs
+            for stmt in node.body:
+                self.handleNode(stmt, node)
+        else:
+            # case for Lambdas
+            self.handleNode(node.body, node)
+    def CLASSDEF(self, node):
+        """
+        Check names used in a class definition, including its decorators, base
+        classes, and the body of its definition.  Additionally, add its name to
+        the current scope.
+        """
+        for deco in node.decorator_list:
+            self.handleNode(deco, node)
+        for baseNode in node.bases:
+            self.handleNode(baseNode, node)
+        if not PY2:
+            for keywordNode in node.keywords:
+                self.handleNode(keywordNode, node)
+        # self.pushScope(ClassScope)
+        # if self.withDoctest:
+            # self.deferFunction(lambda: self.handleDoctests(node))
+        for stmt in node.body:
+            self.handleNode(stmt, node)
+        # self.popScope()
+        # self.addBinding(node, ClassDefinition(node.name, node))
+    def AUGASSIGN(self, node):
+        # self.handleNodeLoad(node.target)
+        self.handleNode(node.value, node)
+        # self.handleNode(node.target, node)
+    def IMPORT(self, node):
+        for alias in node.names:
+            name = alias.asname or alias.name
+            # importation = Importation(name, node)
+            # self.addBinding(node, importation)
+    def IMPORTFROM(self, node):
+        # if node.module == '__future__':
+            # if not self.futuresAllowed:
+                # self.report(messages.LateFutureImport,
+                            # node, [n.name for n in node.names])
+        # else:
+            # self.futuresAllowed = False
+
+        for alias in node.names:
+            if alias.name == '*':
+                # self.scope.importStarred = True
+                # self.report(messages.ImportStarUsed, node, node.module)
+                continue
+            name = alias.asname or alias.name
+            # importation = Importation(name, node)
+            # if node.module == '__future__':
+                # importation.used = (self.scope, node)
+            # self.addBinding(node, importation)
+    def TRY(self, node):
+        for child in node.body:
+            self.handleNode(child, node)
+        self.handleChildren(node, omit='body')
+
+    TRYEXCEPT = TRY
+    def EXCEPTHANDLER(self, node):
+        # 3.x: in addition to handling children, we must handle the name of
+        # the exception, which is not a Name node, but a simple string.
+        # if isinstance(node.name, str):
+            # self.handleNodeStore(node)
         self.handleChildren(node)

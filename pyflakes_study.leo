@@ -9,8 +9,8 @@
 <preferences/>
 <find_panel_settings/>
 <vnodes>
-<v t="ekr.20160519180137.1"><vh>epytext markup</vh></v>
 <v t="ekr.20160520102401.1"><vh>Reference</vh>
+<v t="ekr.20160519180137.1"><vh>epytext markup</vh></v>
 <v t="ekr.20160519172255.117"><vh>@@clean __init__.py</vh></v>
 <v t="ekr.20160519172255.119"><vh>@@clean __main__.py</vh>
 <v t="ekr.20160519172255.120"><vh>&lt;&lt;declarations&gt;&gt; (__main__)</vh></v>
@@ -275,31 +275,23 @@
 </v>
 <v t="ekr.20160520163049.1"><vh>Study</vh>
 <v t="ekr.20160519172947.1"><vh>Found:handleChildren</vh>
-<v t="ekr.20160519172255.67"><vh>GENERATOREXP &amp; comprehensions</vh></v>
-<v t="ekr.20160519172255.77"><vh>TRY</vh></v>
-<v t="ekr.20160519172255.78"><vh>EXCEPTHANDLER</vh></v>
-<v t="ekr.20160519172255.59"><vh>handleChildren</vh></v>
-<v t="ekr.20160519172255.64"><vh>handleDoctests</vh></v>
+<v t="ekr.20160519172255.67"><vh>Checker.GENERATOREXP &amp; comprehensions</vh></v>
+<v t="ekr.20160519172255.77"><vh>Checker.TRY</vh></v>
+<v t="ekr.20160519172255.78"><vh>Checker.EXCEPTHANDLER</vh></v>
+<v t="ekr.20160519172255.59"><vh>Checker.handleChildren</vh></v>
+<v t="ekr.20160519172255.64"><vh>Checker.handleDoctests</vh></v>
 <v t="ekr.20160519172255.41"><vh>Checker.__init__</vh></v>
 </v>
 <v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
-<v t="ekr.20160519173152.1"><vh>handle...</vh>
-<v t="ekr.20160519172255.55"><vh>getNodeHandler</vh></v>
-<v t="ekr.20160519172255.59"></v>
-<v t="ekr.20160519172255.64"></v>
-<v t="ekr.20160519172255.63"><vh>handleNode (sets parent/depth fields)</vh></v>
-<v t="ekr.20160519172255.58"><vh>handleNodeDelete</vh></v>
-<v t="ekr.20160519172255.56"><vh>handleNodeLoad</vh></v>
-<v t="ekr.20160519172255.57"><vh>handleNodeStore</vh></v>
-</v>
 <v t="ekr.20160519185320.1"><vh>Found:getAlternatives</vh>
-<v t="ekr.20160519172255.53"><vh>differentForks</vh></v>
+<v t="ekr.20160519172255.53"><vh>Checker.differentForks</vh></v>
 <v t="ekr.20160519181035.1"><vh>getAlternatives</vh></v>
 </v>
 <v t="ekr.20160520195402.1"><vh>Found:Binding</vh>
-<v t="ekr.20160519172255.57"></v>
+<v t="ekr.20160519172255.57"><vh>Checker.handleNodeStore &amp; helper</vh>
+<v t="ekr.20160519172255.60"><vh>Checker.isLiteralTupleUnpacking</vh></v>
+</v>
 <v t="ekr.20160519172255.16"><vh>class Binding</vh>
-<v t="ekr.20160519172255.17"><vh>__init__</vh></v>
 <v t="ekr.20160519172255.18"><vh>__str__</vh></v>
 <v t="ekr.20160519172255.19"><vh>__repr__</vh></v>
 <v t="ekr.20160519172255.20"><vh>redefines</vh></v>
@@ -314,9 +306,31 @@
 <v t="ekr.20160519172255.29"><vh>class ExportBinding (Binding)</vh>
 <v t="ekr.20160519172255.30"><vh>__init__</vh></v>
 </v>
-<v t="ekr.20160519172255.36"><vh>unusedAssignments</vh></v>
-<v t="ekr.20160519172255.54"><vh>addBinding</vh></v>
-<v t="ekr.20160519172255.72"><vh>LAMBDA</vh></v>
+<v t="ekr.20160519172255.36"><vh>FunctionScope.unusedAssignments</vh></v>
+<v t="ekr.20160519172255.54"><vh>Checker.addBinding</vh></v>
+<v t="ekr.20160519172255.72"><vh>Checker.LAMBDA</vh></v>
+</v>
+<v t="ekr.20160521152418.1"><vh>Found:globals</vh>
+<v t="ekr.20160519172255.57"></v>
+<v t="ekr.20160519172255.36"></v>
+<v t="ekr.20160519172255.34"><vh>class FunctionScope (Scope)</vh>
+<v t="ekr.20160519172255.35"><vh>FunctionScope.__init__</vh></v>
+<v t="ekr.20160519172255.36"></v>
+</v>
+<v t="ekr.20160519172255.35"></v>
+<v t="ekr.20160519172255.66"><vh>Checker.GLOBAL &amp; NONLOCAL</vh></v>
+<v t="ekr.20160519172255.68"><vh>Checker.NAME &amp; helpers</vh>
+<v t="ekr.20160519172255.58"><vh>Checker.handleNodeDelete</vh></v>
+<v t="ekr.20160519172255.56"><vh>Checker.handleNodeLoad</vh></v>
+<v t="ekr.20160519172255.57"></v>
+</v>
+<v t="ekr.20160519172255.58"></v>
+</v>
+<v t="ekr.20160519172255.68"></v>
+<v t="ekr.20160521152957.1"><vh>Found:usesLocals</vh>
+<v t="ekr.20160519172255.34"></v>
+<v t="ekr.20160519172255.36"></v>
+<v t="ekr.20160519172255.68"></v>
 </v>
 </v>
 <v t="ekr.20160520163727.1"><vh>Changed</vh>
@@ -357,53 +371,55 @@
 <v t="ekr.20160519172255.29"></v>
 </v>
 <v t="ekr.20160519172730.1"><vh>Scopes</vh>
-<v t="ekr.20160519172255.31"><vh>class Scope(dict)</vh>
-<v t="ekr.20160519172255.32"><vh>Scope.__repr__</vh></v>
-</v>
+<v t="ekr.20160519172255.31"><vh>class Scope(dict)</vh></v>
 <v t="ekr.20160519172255.33"><vh>class ClassScope (Scope)</vh></v>
-<v t="ekr.20160519172255.34"><vh>class FunctionScope (Scope)</vh>
-<v t="ekr.20160519172255.35"><vh>__init__</vh></v>
-<v t="ekr.20160519172255.36"></v>
-</v>
+<v t="ekr.20160519172255.34"></v>
 <v t="ekr.20160519172255.37"><vh>class GeneratorScope (Scope)</vh></v>
 <v t="ekr.20160519172255.38"><vh>class ModuleScope (Scope)</vh></v>
 </v>
 <v t="ekr.20160519172255.40"><vh>class Checker</vh>
 <v t="ekr.20160519172255.41"></v>
-<v t="ekr.20160519172255.42"><vh>deferFunction</vh></v>
-<v t="ekr.20160519172255.43"><vh>deferAssignment</vh></v>
-<v t="ekr.20160519172255.44"><vh>runDeferred</vh></v>
-<v t="ekr.20160519173318.1"><vh>scopes...</vh>
-<v t="ekr.20160519172255.45"><vh>scope (property)</vh></v>
-<v t="ekr.20160519172255.46"><vh>popScope</vh></v>
-<v t="ekr.20160519172255.47"><vh>checkDeadScopes</vh></v>
-<v t="ekr.20160519172255.48"><vh>pushScope</vh></v>
+<v t="ekr.20160521155725.1"><vh>Checker.defer...</vh>
+<v t="ekr.20160519172255.43"><vh>Checker.deferAssignment</vh></v>
+<v t="ekr.20160519172255.42"><vh>Checker.deferFunction</vh></v>
+<v t="ekr.20160519172255.44"><vh>Checker.runDeferred</vh></v>
 </v>
-<v t="ekr.20160519172255.49"><vh>report</vh></v>
-<v t="ekr.20160519173339.1"><vh>tree structure</vh>
-<v t="ekr.20160519172255.50"><vh>getParent</vh></v>
-<v t="ekr.20160519172255.51"><vh>getCommonAncestor</vh></v>
-<v t="ekr.20160519172255.52"><vh>descendantOf</vh></v>
+<v t="ekr.20160519173318.1"><vh>Checker.scopes...</vh>
+<v t="ekr.20160519172255.45"><vh>Checker.scope (property)</vh></v>
+<v t="ekr.20160519172255.46"><vh>Checker.popScope</vh></v>
+<v t="ekr.20160519172255.47"><vh>Checker.checkDeadScopes</vh></v>
+<v t="ekr.20160519172255.48"><vh>Checker.pushScope</vh></v>
+</v>
+<v t="ekr.20160519172255.49"><vh>Checker.report</vh></v>
+<v t="ekr.20160519173339.1"><vh>Checker.tree structure</vh>
+<v t="ekr.20160519172255.50"><vh>Checker.getParent</vh></v>
+<v t="ekr.20160519172255.51"><vh>Checker.getCommonAncestor</vh></v>
+<v t="ekr.20160519172255.52"><vh>Checker.descendantOf</vh></v>
 <v t="ekr.20160519172255.53"></v>
 </v>
 <v t="ekr.20160519172255.54"></v>
-<v t="ekr.20160519173152.1"></v>
-<v t="ekr.20160519172255.60"><vh>isLiteralTupleUnpacking</vh></v>
-<v t="ekr.20160519172255.61"><vh>isDocstring</vh></v>
-<v t="ekr.20160519172255.62"><vh>getDocstring</vh></v>
-<v t="ekr.20160519172255.65"><vh>ignore</vh></v>
-<v t="ekr.20160519172836.1"><vh>Node handlers</vh>
-<v t="ekr.20160519172255.66"><vh>GLOBAL &amp; NONLOCAL</vh></v>
+<v t="ekr.20160519173152.1"><vh>Checker.handle (traversers)...</vh>
+<v t="ekr.20160519172255.55"><vh>Checker.getNodeHandler</vh></v>
+<v t="ekr.20160519172255.59"></v>
+<v t="ekr.20160519172255.64"></v>
+<v t="ekr.20160519172255.63"><vh>Checker.handleNode (injects parent/depth fields)</vh></v>
+</v>
+<v t="ekr.20160521155817.1"><vh>Checker.docstrings...</vh>
+<v t="ekr.20160519172255.61"><vh>Checker.isDocstring</vh></v>
+<v t="ekr.20160519172255.62"><vh>Checker.getDocstring</vh></v>
+</v>
+<v t="ekr.20160519172836.1"><vh>Checker.Node handlers</vh>
+<v t="ekr.20160519172255.66"></v>
 <v t="ekr.20160519172255.67"></v>
-<v t="ekr.20160519172255.68"><vh>NAME</vh></v>
-<v t="ekr.20160519172255.69"><vh>RETURN</vh></v>
-<v t="ekr.20160519172255.70"><vh>YIELD</vh></v>
-<v t="ekr.20160519172255.71"><vh>FUNCTIONDEF</vh></v>
+<v t="ekr.20160519172255.68"></v>
+<v t="ekr.20160519172255.69"><vh>Checker.RETURN</vh></v>
+<v t="ekr.20160519172255.70"><vh>Checker.YIELD</vh></v>
+<v t="ekr.20160519172255.71"><vh>Checker.FUNCTIONDEF</vh></v>
 <v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160519172255.73"><vh>CLASSDEF</vh></v>
-<v t="ekr.20160519172255.74"><vh>AUGASSIGN</vh></v>
-<v t="ekr.20160519172255.75"><vh>IMPORT</vh></v>
-<v t="ekr.20160519172255.76"><vh>IMPORTFROM</vh></v>
+<v t="ekr.20160519172255.73"><vh>Checker.CLASSDEF</vh></v>
+<v t="ekr.20160519172255.74"><vh>Checker.AUGASSIGN</vh></v>
+<v t="ekr.20160519172255.75"><vh>Checker.IMPORT</vh></v>
+<v t="ekr.20160519172255.76"><vh>Checker.IMPORTFROM</vh></v>
 <v t="ekr.20160519172255.77"></v>
 <v t="ekr.20160519172255.78"></v>
 </v>
@@ -412,7 +428,8 @@
 <v t="ekr.20160521024555.1"><vh>NullChecker.getNodeHandler</vh></v>
 <v t="ekr.20160521023730.2"><vh>NullChecker.handleChildren</vh></v>
 <v t="ekr.20160521023730.4"><vh>NullChecker.handleNode</vh></v>
-<v t="ekr.20160521024930.1"><vh>NullChcker.handlers</vh>
+<v t="ekr.20160521024930.1"><vh>NullChcker.handlers</vh></v>
+<v t="ekr.20160521154847.1"><vh>NullChecker.unused handlers</vh>
 <v t="ekr.20160521024930.2"><vh>NullChecker.GLOBAL &amp; NONLOCAL</vh></v>
 <v t="ekr.20160521024930.3"><vh>NullChecker.GENERATOREXP &amp; comprehensions</vh></v>
 <v t="ekr.20160521024930.4"><vh>NullChecker.NAME</vh></v>
@@ -429,6 +446,7 @@
 </v>
 </v>
 </v>
+<v t="ekr.20160519172255.40"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -508,6 +526,7 @@ import sys
 <t tx="ekr.20160519172255.11"># checker.py imports...
 
 import leo.core.leoGlobals as g # EKR
+assert g
 
 import doctest
 import os
@@ -680,21 +699,22 @@ if __name__ == '__main__':
     @ivar used: pair of (L{Scope}, line-number) indicating the scope and
                 line number that this binding was last used
     """
+    def __init__(self, name, source):
+        self.name = name
+        self.source = source # EKR: a node.
+        self.used = False # EKR: Set in helpers of Name.
+
     @others
-</t>
-<t tx="ekr.20160519172255.17">def __init__(self, name, source):
-    self.name = name
-    self.source = source
-    self.used = False
 </t>
 <t tx="ekr.20160519172255.18">def __str__(self):
     return self.name
 </t>
 <t tx="ekr.20160519172255.19">def __repr__(self):
-    return '&lt;%s object %r from line %r at 0x%x&gt;' % (self.__class__.__name__,
-                                                    self.name,
-                                                    self.source.lineno,
-                                                    id(self))
+    return '&lt;%s object %r from line %r at 0x%x&gt;' % (
+        self.__class__.__name__,
+        self.name,
+        self.source.lineno,
+        id(self))
 </t>
 <t tx="ekr.20160519172255.2">"""
 API for the command-line I{pyflakes} tool.
@@ -733,7 +753,9 @@ API for the command-line I{pyflakes} tool.
 <t tx="ekr.20160519172255.24">def redefines(self, other):
     if isinstance(other, Importation):
         return self.fullName == other.fullName
-    return isinstance(other, Definition) and self.name == other.name
+    else:
+        # EKR: same as Binding.redefines.
+        return isinstance(other, Definition) and self.name == other.name
 </t>
 <t tx="ekr.20160519172255.25">class Argument(Binding):
     """
@@ -799,11 +821,9 @@ __all__ = ['check', 'checkPath', 'checkRecursive', 'iterSourceCode', 'main']
 <t tx="ekr.20160519172255.31">class Scope(dict):
     importStarred = False       # set to True when import * is found
 
-    @others
-</t>
-<t tx="ekr.20160519172255.32">def __repr__(self):
-    scope_cls = self.__class__.__name__
-    return '&lt;%s at 0x%x %s&gt;' % (scope_cls, id(self), dict.__repr__(self))
+    def __repr__(self):
+        scope_cls = self.__class__.__name__
+        return '&lt;%s at 0x%x %s&gt;' % (scope_cls, id(self), dict.__repr__(self))
 </t>
 <t tx="ekr.20160519172255.33">class ClassScope(Scope):
     pass
@@ -814,9 +834,12 @@ __all__ = ['check', 'checkPath', 'checkRecursive', 'iterSourceCode', 'main']
 
     @ivar globals: Names declared 'global' in this function.
     """
+    # EKR: only FunctionScope defines .globals ivar.
     usesLocals = False
-    alwaysUsed = set(['__tracebackhide__',
-                      '__traceback_info__', '__traceback_supplement__'])
+    alwaysUsed = set([
+        '__tracebackhide__',
+        '__traceback_info__',
+        '__traceback_supplement__'])
 
     @others
 </t>
@@ -831,10 +854,13 @@ __all__ = ['check', 'checkPath', 'checkRecursive', 'iterSourceCode', 'main']
     """
     Return a generator for the assignments which have not been used.
     """
+    # EKR: only called in FunctionScope.
     for name, binding in self.items():
-        if (not binding.used and name not in self.globals
-                and not self.usesLocals
-                and isinstance(binding, Assignment)):
+        if (not binding.used and
+            name not in self.globals and
+            not self.usesLocals and
+            isinstance(binding, Assignment)
+        ):
             yield name, binding
 </t>
 <t tx="ekr.20160519172255.37">class GeneratorScope(Scope):
@@ -1151,6 +1177,7 @@ def scope(self):
     return handler
 </t>
 <t tx="ekr.20160519172255.56">def handleNodeLoad(self, node):
+    # EKR: ctx is Load or AugLoad.
     name = getNodeName(node)
     if not name:
         return
@@ -1160,10 +1187,15 @@ def scope(self):
     except KeyError:
         pass
     else:
+        # EKR: the name is in the scope,
+        # scope[name] is a Binding, and we have just marked it used.
         return
 
+    # EKR: Create a list of previous defining scopes.
+    defining_scopes = (FunctionScope, ModuleScope, GeneratorScope) # EKR
     scopes = [scope for scope in self.scopeStack[:-1]
-              if isinstance(scope, (FunctionScope, ModuleScope, GeneratorScope))]
+        if isinstance(scope, defining_scopes)]
+            
     if isinstance(self.scope, GeneratorScope) and scopes[-1] != self.scopeStack[-2]:
         scopes.append(self.scopeStack[-2])
 
@@ -1189,7 +1221,9 @@ def scope(self):
     if 'NameError' not in self.exceptHandlers[-1]:
         self.report(messages.UndefinedName, node, name)
 </t>
-<t tx="ekr.20160519172255.57">def handleNodeStore(self, node):
+<t tx="ekr.20160519172255.57"># EKR: called by Name and ExceptHandler.
+# EKR: ctx is Store or AugStore.
+def handleNodeStore(self, node):
     name = getNodeName(node)
     if not name:
         return
@@ -1220,7 +1254,8 @@ def scope(self):
         binding = Assignment(name, node)
     self.addBinding(node, binding)
 </t>
-<t tx="ekr.20160519172255.58">def handleNodeDelete(self, node):
+<t tx="ekr.20160519172255.58"># EKR: ctx is Del.
+def handleNodeDelete(self, node):
 
     def on_conditional_branch():
         """
@@ -1354,9 +1389,6 @@ _getDoctestExamples = doctest.DocTestParser().get_examples
         self.builtIns.remove('_')
     self.popScope()
 </t>
-<t tx="ekr.20160519172255.65">def ignore(self, node):
-    pass
-</t>
 <t tx="ekr.20160519172255.66">def GLOBAL(self, node):
     """
     Keep track of globals declarations.
@@ -1404,10 +1436,13 @@ DICTCOMP = SETCOMP = GENERATOREXP
     # Locate the name in locals / function / globals scopes.
     if isinstance(node.ctx, (ast.Load, ast.AugLoad)):
         self.handleNodeLoad(node)
-        if (node.id == 'locals' and isinstance(self.scope, FunctionScope)
-                and isinstance(node.parent, ast.Call)):
+        if (node.id == 'locals' and
+            isinstance(self.scope, FunctionScope) and
+            isinstance(node.parent, ast.Call)
+        ):
             # we are doing locals() call in current scope
             self.scope.usesLocals = True
+                ### EKR: why does this matter???
     elif isinstance(node.ctx, (ast.Store, ast.AugStore)):
         self.handleNodeStore(node)
     elif isinstance(node.ctx, ast.Del):
@@ -1767,7 +1802,10 @@ Provide the class Message and its subclasses.
 </t>
 <t tx="ekr.20160519172710.1"></t>
 <t tx="ekr.20160519172730.1"></t>
-<t tx="ekr.20160519172836.1"># "stmt" type nodes
+<t tx="ekr.20160519172836.1">def ignore(self, node):
+    pass
+
+# "stmt" type nodes
 DELETE = PRINT = FOR = ASYNCFOR = WHILE = IF = WITH = WITHITEM = \
     ASYNCWITH = ASYNCWITHITEM = RAISE = TRYFINALLY = ASSERT = EXEC = \
     EXPR = ASSIGN = handleChildren
@@ -1813,7 +1851,9 @@ L{...}: </t>
 <t tx="ekr.20160519180953.1">if PY2:
     def getNodeType(node_class):
         # workaround str.upper() which is locale-dependent
-        return str(unicode(node_class.__name__).upper())
+        ### return str(unicode(node_class.__name__).upper())
+        return node_class.__name__.upper()
+            # EKR: hehe: pyflakes complains about unicode.
 else:
     def getNodeType(node_class):
         return node_class.__name__.upper()</t>
@@ -1832,10 +1872,7 @@ else:
         if isinstance(n, ast.Try):
             return [n.body + n.orelse] + [[hdl] for hdl in n.handlers]</t>
 <t tx="ekr.20160519181348.1"></t>
-<t tx="ekr.20160519182919.1">
-
-
-# handle iter before target, and generators before element
+<t tx="ekr.20160519182919.1"># handle iter before target, and generators before element
 # fields = node_class._fields
 fields = ['value', 'w', 'iter', 'z', 'x']
 
@@ -1848,7 +1885,6 @@ else:
 
 aList = tuple(sorted(fields, key=key_first, reverse=True))
 print(aList)
-
 print(['iter'.find(z) for z in fields])
 </t>
 <t tx="ekr.20160519185320.1"># flattened, word, ignore-case, head, body</t>
@@ -1862,7 +1898,7 @@ gc.collect() # Stabalizes timing statistics a bit.
 stats = {}
     # 4.8 to 5.0 sec for pyflakes 'all'
     # 2.2 sec for FullTraverser 'all'
-run_test(scope='test', s=s)
+run_test(scope='all', s=s)
 </t>
 <t tx="ekr.20160520081827.1">def run_test(scope, s):
     
@@ -3763,34 +3799,13 @@ AND = OR = ADD = SUB = MULT = DIV = MOD = POW = LSHIFT = RSHIFT = \
 # additional node types
 COMPREHENSION = KEYWORD = handleChildren</t>
 <t tx="ekr.20160521024930.10">def AUGASSIGN(self, node):
-    # self.handleNodeLoad(node.target)
     self.handleNode(node.value, node)
-    # self.handleNode(node.target, node)
 </t>
 <t tx="ekr.20160521024930.11">def IMPORT(self, node):
-    for alias in node.names:
-        name = alias.asname or alias.name
-        # importation = Importation(name, node)
-        # self.addBinding(node, importation)
+    pass
 </t>
 <t tx="ekr.20160521024930.12">def IMPORTFROM(self, node):
-    # if node.module == '__future__':
-        # if not self.futuresAllowed:
-            # self.report(messages.LateFutureImport,
-                        # node, [n.name for n in node.names])
-    # else:
-        # self.futuresAllowed = False
-
-    for alias in node.names:
-        if alias.name == '*':
-            # self.scope.importStarred = True
-            # self.report(messages.ImportStarUsed, node, node.module)
-            continue
-        name = alias.asname or alias.name
-        # importation = Importation(name, node)
-        # if node.module == '__future__':
-            # importation.used = (self.scope, node)
-        # self.addBinding(node, importation)
+    pass
 </t>
 <t tx="ekr.20160521024930.13">def TRY(self, node):
     for child in node.body:
@@ -3800,16 +3815,9 @@ COMPREHENSION = KEYWORD = handleChildren</t>
 TRYEXCEPT = TRY
 </t>
 <t tx="ekr.20160521024930.14">def EXCEPTHANDLER(self, node):
-    # 3.x: in addition to handling children, we must handle the name of
-    # the exception, which is not a Name node, but a simple string.
-    # if isinstance(node.name, str):
-        # self.handleNodeStore(node)
     self.handleChildren(node)
 </t>
 <t tx="ekr.20160521024930.2">def GLOBAL(self, node):
-    """
-    Keep track of globals declarations.
-    """
     pass
 
 NONLOCAL = GLOBAL
@@ -3822,12 +3830,8 @@ LISTCOMP = handleChildren if PY2 else GENERATOREXP
 DICTCOMP = SETCOMP = GENERATOREXP
 </t>
 <t tx="ekr.20160521024930.4">def NAME(self, node):
-    """
-    Handle occurrence of Name (which can be a load/store/delete access.)
-    """
     pass</t>
 <t tx="ekr.20160521024930.5">def RETURN(self, node):
-    
     self.handleNode(node.value, node)
 </t>
 <t tx="ekr.20160521024930.6">def YIELD(self, node):
@@ -3843,42 +3847,28 @@ AWAIT = YIELDFROM = YIELD
 ASYNCFUNCTIONDEF = FUNCTIONDEF
 </t>
 <t tx="ekr.20160521024930.8">def LAMBDA(self, node):
-    # args = []
     annotations = []
-
     if PY2:
-        # def addArgs(arglist):
-            # for arg in arglist:
-                # if isinstance(arg, ast.Tuple):
-                    # addArgs(arg.elts)
-                # else:
-                    # args.append(arg.id)
-        # addArgs(node.args.args)
         defaults = node.args.defaults
     else:
         for arg in node.args.args + node.args.kwonlyargs:
-            # args.append(arg.arg)
             annotations.append(arg.annotation)
         defaults = node.args.defaults + node.args.kw_defaults
 
     # Only for Python3 FunctionDefs
     is_py3_func = hasattr(node, 'returns')
-
     for arg_name in ('vararg', 'kwarg'):
         wildcard = getattr(node.args, arg_name)
         if not wildcard:
             continue
-        # args.append(wildcard if PY33 else wildcard.arg)
         if is_py3_func:
             if PY33:  # Python 2.5 to 3.3
                 argannotation = arg_name + 'annotation'
                 annotations.append(getattr(node.args, argannotation))
             else:     # Python &gt;= 3.4
                 annotations.append(wildcard.annotation)
-
     if is_py3_func:
         annotations.append(node.returns)
-
     for child in annotations + defaults:
         if child:
             self.handleNode(child, node)
@@ -3905,13 +3895,13 @@ ASYNCFUNCTIONDEF = FUNCTIONDEF
     if not PY2:
         for keywordNode in node.keywords:
             self.handleNode(keywordNode, node)
-    # self.pushScope(ClassScope)
-    # if self.withDoctest:
-        # self.deferFunction(lambda: self.handleDoctests(node))
     for stmt in node.body:
         self.handleNode(stmt, node)
-    # self.popScope()
-    # self.addBinding(node, ClassDefinition(node.name, node))
 </t>
+<t tx="ekr.20160521152418.1"># flattened, word, ignore-case, head, body</t>
+<t tx="ekr.20160521152957.1"># flattened, word, ignore-case, head, body</t>
+<t tx="ekr.20160521154847.1"></t>
+<t tx="ekr.20160521155725.1"></t>
+<t tx="ekr.20160521155817.1"></t>
 </tnodes>
 </leo_file>

@@ -9,6 +9,7 @@ Also, it models the Bindings and Scopes.
 # checker.py imports...
 
 import leo.core.leoGlobals as g # EKR
+assert g
 
 import doctest
 import os
@@ -88,7 +89,9 @@ def getNodeName(node):
 if PY2:
     def getNodeType(node_class):
         # workaround str.upper() which is locale-dependent
-        return str(unicode(node_class.__name__).upper())
+        ### return str(unicode(node_class.__name__).upper())
+        return node_class.__name__.upper()
+            # EKR: hehe: pyflakes complains about unicode.
 else:
     def getNodeType(node_class):
         return node_class.__name__.upper()
@@ -119,15 +122,17 @@ class Binding(object):
     """
     def __init__(self, name, source):
         self.name = name
-        self.source = source
-        self.used = False
+        self.source = source # EKR: a node.
+        self.used = False # EKR: Set in helpers of Name.
+
     def __str__(self):
         return self.name
     def __repr__(self):
-        return '<%s object %r from line %r at 0x%x>' % (self.__class__.__name__,
-                                                        self.name,
-                                                        self.source.lineno,
-                                                        id(self))
+        return '<%s object %r from line %r at 0x%x>' % (
+            self.__class__.__name__,
+            self.name,
+            self.source.lineno,
+            id(self))
     def redefines(self, other):
         return isinstance(other, Definition) and self.name == other.name
 class Definition(Binding):
@@ -150,7 +155,9 @@ class Importation(Definition):
     def redefines(self, other):
         if isinstance(other, Importation):
             return self.fullName == other.fullName
-        return isinstance(other, Definition) and self.name == other.name
+        else:
+            # EKR: same as Binding.redefines.
+            return isinstance(other, Definition) and self.name == other.name
 class Argument(Binding):
     """
     Represents binding a name as an argument.
@@ -205,9 +212,12 @@ class FunctionScope(Scope):
 
     @ivar globals: Names declared 'global' in this function.
     """
+    # EKR: only FunctionScope defines .globals ivar.
     usesLocals = False
-    alwaysUsed = set(['__tracebackhide__',
-                      '__traceback_info__', '__traceback_supplement__'])
+    alwaysUsed = set([
+        '__tracebackhide__',
+        '__traceback_info__',
+        '__traceback_supplement__'])
 
     def __init__(self):
         super(FunctionScope, self).__init__()
@@ -219,10 +229,13 @@ class FunctionScope(Scope):
         """
         Return a generator for the assignments which have not been used.
         """
+        # EKR: only called in FunctionScope.
         for name, binding in self.items():
-            if (not binding.used and name not in self.globals
-                    and not self.usesLocals
-                    and isinstance(binding, Assignment)):
+            if (not binding.used and
+                name not in self.globals and
+                not self.usesLocals and
+                isinstance(binding, Assignment)
+            ):
                 yield name, binding
 class GeneratorScope(Scope):
     pass
@@ -279,6 +292,12 @@ class Checker(object):
         del self.scopeStack[1:]
         self.popScope()
         self.checkDeadScopes()
+    def deferAssignment(self, callable):
+        """
+        Schedule an assignment handler to be called just after deferred
+        function handlers.
+        """
+        self._deferredAssignments.append((callable, self.scopeStack[:], self.offset))
     def deferFunction(self, callable):
         """
         Schedule a function handler to be called just before completion.
@@ -289,12 +308,6 @@ class Checker(object):
         restored, however it will contain any new bindings added to it.
         """
         self._deferredFunctions.append((callable, self.scopeStack[:], self.offset))
-    def deferAssignment(self, callable):
-        """
-        Schedule an assignment handler to be called just after deferred
-        function handlers.
-        """
-        self._deferredAssignments.append((callable, self.scopeStack[:], self.offset))
     def runDeferred(self, deferred):
         """
         Run the callables in C{deferred} using their associated scope stack.
@@ -486,109 +499,6 @@ class Checker(object):
             print('  ' * self.nodeDepth + 'end ' + node.__class__.__name__)
 
     _getDoctestExamples = doctest.DocTestParser().get_examples
-    def handleNodeDelete(self, node):
-
-        def on_conditional_branch():
-            """
-            Return `True` if node is part of a conditional body.
-            """
-            current = getattr(node, 'parent', None)
-            while current:
-                if isinstance(current, (ast.If, ast.While, ast.IfExp)):
-                    return True
-                current = getattr(current, 'parent', None)
-            return False
-
-        name = getNodeName(node)
-        if not name:
-            return
-
-        if on_conditional_branch():
-            # We can not predict if this conditional branch is going to
-            # be executed.
-            return
-
-        if isinstance(self.scope, FunctionScope) and name in self.scope.globals:
-            self.scope.globals.remove(name)
-        else:
-            try:
-                del self.scope[name]
-            except KeyError:
-                self.report(messages.UndefinedName, node, name)
-    def handleNodeLoad(self, node):
-        name = getNodeName(node)
-        if not name:
-            return
-        # try local scope
-        try:
-            self.scope[name].used = (self.scope, node)
-        except KeyError:
-            pass
-        else:
-            return
-
-        scopes = [scope for scope in self.scopeStack[:-1]
-                  if isinstance(scope, (FunctionScope, ModuleScope, GeneratorScope))]
-        if isinstance(self.scope, GeneratorScope) and scopes[-1] != self.scopeStack[-2]:
-            scopes.append(self.scopeStack[-2])
-
-        # try enclosing function scopes and global scope
-        importStarred = self.scope.importStarred
-        for scope in reversed(scopes):
-            importStarred = importStarred or scope.importStarred
-            try:
-                scope[name].used = (self.scope, node)
-            except KeyError:
-                pass
-            else:
-                return
-
-        # look in the built-ins
-        if importStarred or name in self.builtIns:
-            return
-        if name == '__path__' and os.path.basename(self.filename) == '__init__.py':
-            # the special name __path__ is valid only in packages
-            return
-
-        # protected with a NameError handler?
-        if 'NameError' not in self.exceptHandlers[-1]:
-            self.report(messages.UndefinedName, node, name)
-    def handleNodeStore(self, node):
-        name = getNodeName(node)
-        if not name:
-            return
-        # if the name hasn't already been defined in the current scope
-        if isinstance(self.scope, FunctionScope) and name not in self.scope:
-            # for each function or module scope above us
-            for scope in self.scopeStack[:-1]:
-                if not isinstance(scope, (FunctionScope, ModuleScope)):
-                    continue
-                # if the name was defined in that scope, and the name has
-                # been accessed already in the current scope, and hasn't
-                # been declared global
-                used = name in scope and scope[name].used
-                if used and used[0] is self.scope and name not in self.scope.globals:
-                    # then it's probably a mistake
-                    self.report(messages.UndefinedLocal,
-                                scope[name].used[1], name, scope[name].source)
-                    break
-
-        parent_stmt = self.getParent(node)
-        if isinstance(parent_stmt, (ast.For, ast.comprehension)) or (
-                parent_stmt != node.parent and
-                not self.isLiteralTupleUnpacking(parent_stmt)):
-            binding = Binding(name, node)
-        elif name == '__all__' and isinstance(self.scope, ModuleScope):
-            binding = ExportBinding(name, node.parent, self.scope)
-        else:
-            binding = Assignment(name, node)
-        self.addBinding(node, binding)
-    def isLiteralTupleUnpacking(self, node):
-        if isinstance(node, ast.Assign):
-            for child in node.targets + [node.value]:
-                if not hasattr(child, 'elts'):
-                    return False
-            return True
     def isDocstring(self, node):
         """
         Determine if the given node is a docstring, as long as it is at the
@@ -606,6 +516,7 @@ class Checker(object):
         return (node.s, doctest_lineno)
     def ignore(self, node):
         pass
+
     # "stmt" type nodes
     DELETE = PRINT = FOR = ASYNCFOR = WHILE = IF = WITH = WITHITEM = \
         ASYNCWITH = ASYNCWITHITEM = RAISE = TRYFINALLY = ASSERT = EXEC = \
@@ -678,10 +589,13 @@ class Checker(object):
         # Locate the name in locals / function / globals scopes.
         if isinstance(node.ctx, (ast.Load, ast.AugLoad)):
             self.handleNodeLoad(node)
-            if (node.id == 'locals' and isinstance(self.scope, FunctionScope)
-                    and isinstance(node.parent, ast.Call)):
+            if (node.id == 'locals' and
+                isinstance(self.scope, FunctionScope) and
+                isinstance(node.parent, ast.Call)
+            ):
                 # we are doing locals() call in current scope
                 self.scope.usesLocals = True
+                    ### EKR: why does this matter???
         elif isinstance(node.ctx, (ast.Store, ast.AugStore)):
             self.handleNodeStore(node)
         elif isinstance(node.ctx, ast.Del):
@@ -690,6 +604,118 @@ class Checker(object):
             # must be a Param context -- this only happens for names in function
             # arguments, but these aren't dispatched through here
             raise RuntimeError("Got impossible expression context: %r" % (node.ctx,))
+    # EKR: ctx is Del.
+    def handleNodeDelete(self, node):
+
+        def on_conditional_branch():
+            """
+            Return `True` if node is part of a conditional body.
+            """
+            current = getattr(node, 'parent', None)
+            while current:
+                if isinstance(current, (ast.If, ast.While, ast.IfExp)):
+                    return True
+                current = getattr(current, 'parent', None)
+            return False
+
+        name = getNodeName(node)
+        if not name:
+            return
+
+        if on_conditional_branch():
+            # We can not predict if this conditional branch is going to
+            # be executed.
+            return
+
+        if isinstance(self.scope, FunctionScope) and name in self.scope.globals:
+            self.scope.globals.remove(name)
+        else:
+            try:
+                del self.scope[name]
+            except KeyError:
+                self.report(messages.UndefinedName, node, name)
+    def handleNodeLoad(self, node):
+        # EKR: ctx is Load or AugLoad.
+        name = getNodeName(node)
+        if not name:
+            return
+        # try local scope
+        try:
+            self.scope[name].used = (self.scope, node)
+        except KeyError:
+            pass
+        else:
+            # EKR: the name is in the scope,
+            # scope[name] is a Binding, and we have just marked it used.
+            return
+
+        # EKR: Create a list of previous defining scopes.
+        defining_scopes = (FunctionScope, ModuleScope, GeneratorScope) # EKR
+        scopes = [scope for scope in self.scopeStack[:-1]
+            if isinstance(scope, defining_scopes)]
+                
+        if isinstance(self.scope, GeneratorScope) and scopes[-1] != self.scopeStack[-2]:
+            scopes.append(self.scopeStack[-2])
+
+        # try enclosing function scopes and global scope
+        importStarred = self.scope.importStarred
+        for scope in reversed(scopes):
+            importStarred = importStarred or scope.importStarred
+            try:
+                scope[name].used = (self.scope, node)
+            except KeyError:
+                pass
+            else:
+                return
+
+        # look in the built-ins
+        if importStarred or name in self.builtIns:
+            return
+        if name == '__path__' and os.path.basename(self.filename) == '__init__.py':
+            # the special name __path__ is valid only in packages
+            return
+
+        # protected with a NameError handler?
+        if 'NameError' not in self.exceptHandlers[-1]:
+            self.report(messages.UndefinedName, node, name)
+    # EKR: called by Name and ExceptHandler.
+    # EKR: ctx is Store or AugStore.
+    def handleNodeStore(self, node):
+        name = getNodeName(node)
+        if not name:
+            return
+        # if the name hasn't already been defined in the current scope
+        if isinstance(self.scope, FunctionScope) and name not in self.scope:
+            # for each function or module scope above us
+            for scope in self.scopeStack[:-1]:
+                if not isinstance(scope, (FunctionScope, ModuleScope)):
+                    continue
+                # if the name was defined in that scope, and the name has
+                # been accessed already in the current scope, and hasn't
+                # been declared global
+                used = name in scope and scope[name].used
+                if used and used[0] is self.scope and name not in self.scope.globals:
+                    # then it's probably a mistake
+                    self.report(messages.UndefinedLocal,
+                                scope[name].used[1], name, scope[name].source)
+                    break
+
+        parent_stmt = self.getParent(node)
+        if isinstance(parent_stmt, (ast.For, ast.comprehension)) or (
+                parent_stmt != node.parent and
+                not self.isLiteralTupleUnpacking(parent_stmt)):
+            binding = Binding(name, node)
+        elif name == '__all__' and isinstance(self.scope, ModuleScope):
+            binding = ExportBinding(name, node.parent, self.scope)
+        else:
+            binding = Assignment(name, node)
+        self.addBinding(node, binding)
+    def isLiteralTupleUnpacking(self, node):
+        if isinstance(node, ast.Assign):
+            for child in node.targets + [node.value]:
+                if not hasattr(child, 'elts'):
+                    return False
+            return True
     def RETURN(self, node):
         
         if isinstance(self.scope, ClassScope):
@@ -930,9 +956,6 @@ class NullChecker:
     # additional node types
     COMPREHENSION = KEYWORD = handleChildren
     def GLOBAL(self, node):
-        """
-        Keep track of globals declarations.
-        """
         pass
 
     NONLOCAL = GLOBAL
@@ -943,12 +966,8 @@ class NullChecker:
 
     DICTCOMP = SETCOMP = GENERATOREXP
     def NAME(self, node):
-        """
-        Handle occurrence of Name (which can be a load/store/delete access.)
-        """
         pass
     def RETURN(self, node):
-        
         self.handleNode(node.value, node)
     def YIELD(self, node):
         self.handleNode(node.value, node)
@@ -961,42 +980,28 @@ class NullChecker:
 
     ASYNCFUNCTIONDEF = FUNCTIONDEF
     def LAMBDA(self, node):
-        # args = []
         annotations = []
-
         if PY2:
-            # def addArgs(arglist):
-                # for arg in arglist:
-                    # if isinstance(arg, ast.Tuple):
-                        # addArgs(arg.elts)
-                    # else:
-                        # args.append(arg.id)
-            # addArgs(node.args.args)
             defaults = node.args.defaults
         else:
             for arg in node.args.args + node.args.kwonlyargs:
-                # args.append(arg.arg)
                 annotations.append(arg.annotation)
             defaults = node.args.defaults + node.args.kw_defaults
 
         # Only for Python3 FunctionDefs
         is_py3_func = hasattr(node, 'returns')
-
         for arg_name in ('vararg', 'kwarg'):
             wildcard = getattr(node.args, arg_name)
             if not wildcard:
                 continue
-            # args.append(wildcard if PY33 else wildcard.arg)
             if is_py3_func:
                 if PY33:  # Python 2.5 to 3.3
                     argannotation = arg_name + 'annotation'
                     annotations.append(getattr(node.args, argannotation))
                 else:     # Python >= 3.4
                     annotations.append(wildcard.annotation)
-
         if is_py3_func:
             annotations.append(node.returns)
-
         for child in annotations + defaults:
             if child:
                 self.handleNode(child, node)
@@ -1022,40 +1027,14 @@ class NullChecker:
         if not PY2:
             for keywordNode in node.keywords:
                 self.handleNode(keywordNode, node)
-        # self.pushScope(ClassScope)
-        # if self.withDoctest:
-            # self.deferFunction(lambda: self.handleDoctests(node))
         for stmt in node.body:
             self.handleNode(stmt, node)
-        # self.popScope()
-        # self.addBinding(node, ClassDefinition(node.name, node))
     def AUGASSIGN(self, node):
-        # self.handleNodeLoad(node.target)
         self.handleNode(node.value, node)
-        # self.handleNode(node.target, node)
     def IMPORT(self, node):
-        for alias in node.names:
-            name = alias.asname or alias.name
-            # importation = Importation(name, node)
-            # self.addBinding(node, importation)
+        pass
     def IMPORTFROM(self, node):
-        # if node.module == '__future__':
-            # if not self.futuresAllowed:
-                # self.report(messages.LateFutureImport,
-                            # node, [n.name for n in node.names])
-        # else:
-            # self.futuresAllowed = False
-
-        for alias in node.names:
-            if alias.name == '*':
-                # self.scope.importStarred = True
-                # self.report(messages.ImportStarUsed, node, node.module)
-                continue
-            name = alias.asname or alias.name
-            # importation = Importation(name, node)
-            # if node.module == '__future__':
-                # importation.used = (self.scope, node)
-            # self.addBinding(node, importation)
+        pass
     def TRY(self, node):
         for child in node.body:
             self.handleNode(child, node)
@@ -1063,8 +1042,4 @@ class NullChecker:
 
     TRYEXCEPT = TRY
     def EXCEPTHANDLER(self, node):
-        # 3.x: in addition to handling children, we must handle the name of
-        # the exception, which is not a Name node, but a simple string.
-        # if isinstance(node.name, str):
-            # self.handleNodeStore(node)
         self.handleChildren(node)

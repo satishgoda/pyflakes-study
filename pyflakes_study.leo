@@ -296,10 +296,43 @@
 <v t="ekr.20160519172255.53"><vh>differentForks</vh></v>
 <v t="ekr.20160519181035.1"><vh>getAlternatives</vh></v>
 </v>
+<v t="ekr.20160520195402.1"><vh>Found:Binding</vh>
+<v t="ekr.20160519172255.57"></v>
+<v t="ekr.20160519172255.16"><vh>class Binding</vh>
+<v t="ekr.20160519172255.17"><vh>__init__</vh></v>
+<v t="ekr.20160519172255.18"><vh>__str__</vh></v>
+<v t="ekr.20160519172255.19"><vh>__repr__</vh></v>
+<v t="ekr.20160519172255.20"><vh>redefines</vh></v>
+</v>
+<v t="ekr.20160519172255.21"><vh>class Definition (Binding)</vh></v>
+<v t="ekr.20160519172255.26"><vh>class Assignment (Binding)</vh></v>
+<v t="ekr.20160519172255.22"><vh>class Importation (Definition)</vh>
+<v t="ekr.20160519172255.23"><vh>__init__</vh></v>
+<v t="ekr.20160519172255.24"><vh>redefines</vh></v>
+</v>
+<v t="ekr.20160519172255.25"><vh>class Argument (Binding)</vh></v>
+<v t="ekr.20160519172255.29"><vh>class ExportBinding (Binding)</vh>
+<v t="ekr.20160519172255.30"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.36"><vh>unusedAssignments</vh></v>
+<v t="ekr.20160519172255.54"><vh>addBinding</vh></v>
+<v t="ekr.20160519172255.72"><vh>LAMBDA</vh></v>
+</v>
 </v>
 <v t="ekr.20160520163727.1"><vh>Changed</vh>
 <v t="ekr.20160519172255.13"><vh>_FieldsOrder._get_fields</vh></v>
 <v t="ekr.20160520184945.151"></v>
+</v>
+<v t="ekr.20160520081237.1"><vh>@button test</vh>
+<v t="ekr.20160520162722.1"><vh>&lt;&lt; define s &gt;&gt;</vh></v>
+<v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
+<v t="ekr.20160520082209.1"><vh>check_all</vh></v>
+<v t="ekr.20160520162336.1"><vh>check_string</vh></v>
+<v t="ekr.20160520210414.1"><vh>compile_string</vh></v>
+<v t="ekr.20160521023438.1"><vh>handle_tree</vh></v>
+<v t="ekr.20160520210256.1"><vh>read_string</vh></v>
+<v t="ekr.20160520081827.1"><vh>run_test</vh></v>
+<v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
 </v>
 <v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
 <v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
@@ -314,24 +347,14 @@
 <v t="ekr.20160519172255.15"><vh>iter_child_nodes</vh></v>
 </v>
 <v t="ekr.20160519172710.1"><vh>Bindings &amp; Definitions</vh>
-<v t="ekr.20160519172255.16"><vh>class Binding</vh>
-<v t="ekr.20160519172255.17"><vh>__init__</vh></v>
-<v t="ekr.20160519172255.18"><vh>__str__</vh></v>
-<v t="ekr.20160519172255.19"><vh>__repr__</vh></v>
-<v t="ekr.20160519172255.20"><vh>redefines</vh></v>
-</v>
-<v t="ekr.20160519172255.21"><vh>class Definition (Binding)</vh></v>
-<v t="ekr.20160519172255.22"><vh>class Importation (Definition)</vh>
-<v t="ekr.20160519172255.23"><vh>__init__</vh></v>
-<v t="ekr.20160519172255.24"><vh>redefines</vh></v>
-</v>
-<v t="ekr.20160519172255.25"><vh>class Argument (Binding)</vh></v>
-<v t="ekr.20160519172255.26"><vh>class Assignment (Binding)</vh></v>
+<v t="ekr.20160519172255.16"></v>
+<v t="ekr.20160519172255.21"></v>
+<v t="ekr.20160519172255.22"></v>
+<v t="ekr.20160519172255.25"></v>
+<v t="ekr.20160519172255.26"></v>
 <v t="ekr.20160519172255.27"><vh>class FunctionDefinition (Definition)</vh></v>
 <v t="ekr.20160519172255.28"><vh>class ClassDefinition (Definition)</vh></v>
-<v t="ekr.20160519172255.29"><vh>class ExportBinding (Binding)</vh>
-<v t="ekr.20160519172255.30"><vh>__init__</vh></v>
-</v>
+<v t="ekr.20160519172255.29"></v>
 </v>
 <v t="ekr.20160519172730.1"><vh>Scopes</vh>
 <v t="ekr.20160519172255.31"><vh>class Scope(dict)</vh>
@@ -340,7 +363,7 @@
 <v t="ekr.20160519172255.33"><vh>class ClassScope (Scope)</vh></v>
 <v t="ekr.20160519172255.34"><vh>class FunctionScope (Scope)</vh>
 <v t="ekr.20160519172255.35"><vh>__init__</vh></v>
-<v t="ekr.20160519172255.36"><vh>unusedAssignments</vh></v>
+<v t="ekr.20160519172255.36"></v>
 </v>
 <v t="ekr.20160519172255.37"><vh>class GeneratorScope (Scope)</vh></v>
 <v t="ekr.20160519172255.38"><vh>class ModuleScope (Scope)</vh></v>
@@ -363,7 +386,7 @@
 <v t="ekr.20160519172255.52"><vh>descendantOf</vh></v>
 <v t="ekr.20160519172255.53"></v>
 </v>
-<v t="ekr.20160519172255.54"><vh>addBinding</vh></v>
+<v t="ekr.20160519172255.54"></v>
 <v t="ekr.20160519173152.1"></v>
 <v t="ekr.20160519172255.60"><vh>isLiteralTupleUnpacking</vh></v>
 <v t="ekr.20160519172255.61"><vh>isDocstring</vh></v>
@@ -376,7 +399,7 @@
 <v t="ekr.20160519172255.69"><vh>RETURN</vh></v>
 <v t="ekr.20160519172255.70"><vh>YIELD</vh></v>
 <v t="ekr.20160519172255.71"><vh>FUNCTIONDEF</vh></v>
-<v t="ekr.20160519172255.72"><vh>LAMBDA</vh></v>
+<v t="ekr.20160519172255.72"></v>
 <v t="ekr.20160519172255.73"><vh>CLASSDEF</vh></v>
 <v t="ekr.20160519172255.74"><vh>AUGASSIGN</vh></v>
 <v t="ekr.20160519172255.75"><vh>IMPORT</vh></v>
@@ -406,32 +429,6 @@
 </v>
 </v>
 </v>
-<v t="ekr.20160520195402.1"><vh>Found:Binding</vh>
-<v t="ekr.20160519172255.57"></v>
-<v t="ekr.20160519172255.16"></v>
-<v t="ekr.20160519172255.21"></v>
-<v t="ekr.20160519172255.26"></v>
-<v t="ekr.20160519172255.22"></v>
-<v t="ekr.20160519172255.25"></v>
-<v t="ekr.20160519172255.29"></v>
-<v t="ekr.20160519172255.36"></v>
-<v t="ekr.20160519172255.54"></v>
-<v t="ekr.20160519172255.72"></v>
-</v>
-<v t="ekr.20160519172255.54"></v>
-<v t="ekr.20160519172255.31"></v>
-<v t="ekr.20160520081237.1"><vh>@button test</vh>
-<v t="ekr.20160520162722.1"><vh>&lt;&lt; define s &gt;&gt;</vh></v>
-<v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
-<v t="ekr.20160520082209.1"><vh>check_all</vh></v>
-<v t="ekr.20160520162336.1"><vh>check_string</vh></v>
-<v t="ekr.20160520210414.1"><vh>compile_string</vh></v>
-<v t="ekr.20160521023438.1"><vh>handle_tree</vh></v>
-<v t="ekr.20160520210256.1"><vh>read_string</vh></v>
-<v t="ekr.20160520081827.1"><vh>run_test</vh></v>
-<v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
-</v>
-<v t="ekr.20160521023529.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""

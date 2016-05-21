@@ -1862,7 +1862,7 @@ gc.collect() # Stabalizes timing statistics a bit.
 stats = {}
     # 4.8 to 5.0 sec for pyflakes 'all'
     # 2.2 sec for FullTraverser 'all'
-run_test(scope='all', s=s)
+run_test(scope='test', s=s)
 </t>
 <t tx="ekr.20160520081827.1">def run_test(scope, s):
     
@@ -1882,14 +1882,15 @@ run_test(scope='all', s=s)
     print('%s file%s' % (n, g.plural(n)))
     if 1:
         for key in ('read', 'parse', 'visit', 'handle', 'check', 'total'):
-            print('%6s %5.2f sec' % (key, stats.get(key)))
+            print('%6s %5.2f sec' % (key, stats.get(key, 0.0)))
 </t>
 <t tx="ekr.20160520082209.1">def check_all(files, s=None):
     '''Run pyflakes on all files.'''
     # from pyflakes import api, reporter
     if s:
         fn = '&lt;test string&gt;'
-        check_string(fn, s)
+        tree = compile_string(fn, s)
+        check_string(fn, s, tree)
     else:
         for fn in files:
             s = read_string(fn)
@@ -1939,12 +1940,21 @@ imp.reload(reporter)
 </t>
 <t tx="ekr.20160520162722.1">s = '''\
 
+import leo.core.leoGlobals as g
+
 class TestClass:
     
     def spam():
+        return m + 1
         
-        return n + 1
-        
+def match_c_word(s, i, name):
+    # n = len(name)
+    return (
+        name and
+        name == s[i: i + n] and
+        (i + n == len(s) or not g.is_c_id(s[i + n]))
+    )
+  
 '''</t>
 <t tx="ekr.20160520163049.1"></t>
 <t tx="ekr.20160520163727.1"></t>

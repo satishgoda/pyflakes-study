@@ -24,60 +24,7 @@
 <v t="ekr.20160519172255.8"><vh>api._exitOnSignal</vh></v>
 <v t="ekr.20160519172255.9"><vh>api.main</vh></v>
 </v>
-<v t="ekr.20160519172255.79"><vh>@clean messages.py</vh>
-<v t="ekr.20160519172255.80"><vh>class Message</vh>
-<v t="ekr.20160519172255.81"><vh>__init__</vh></v>
-<v t="ekr.20160519172255.82"><vh>__str__</vh></v>
-</v>
-<v t="ekr.20160519172255.83"><vh>class UnusedImport</vh>
-<v t="ekr.20160519172255.84"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.85"><vh>class RedefinedWhileUnused</vh>
-<v t="ekr.20160519172255.86"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.87"><vh>class RedefinedInListComp</vh>
-<v t="ekr.20160519172255.88"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.89"><vh>class ImportShadowedByLoopVar</vh>
-<v t="ekr.20160519172255.90"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.91"><vh>class ImportStarUsed</vh>
-<v t="ekr.20160519172255.92"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.93"><vh>class UndefinedName</vh>
-<v t="ekr.20160519172255.94"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.95"><vh>class DoctestSyntaxError</vh>
-<v t="ekr.20160519172255.96"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.97"><vh>class UndefinedExport</vh>
-<v t="ekr.20160519172255.98"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.99"><vh>class UndefinedLocal</vh>
-<v t="ekr.20160519172255.100"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.101"><vh>class DuplicateArgument</vh>
-<v t="ekr.20160519172255.102"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.103"><vh>class LateFutureImport</vh>
-<v t="ekr.20160519172255.104"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.105"><vh>class UnusedVariable</vh>
-<v t="ekr.20160519172255.106"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.107"><vh>class ReturnWithArgsInsideGenerator</vh></v>
-<v t="ekr.20160519172255.108"><vh>class ReturnOutsideFunction</vh></v>
-</v>
-<v t="ekr.20160519172255.109"><vh>@clean reporter.py</vh>
-<v t="ekr.20160519172255.111"><vh>class Reporter</vh>
-<v t="ekr.20160519172255.112"><vh>__init__</vh></v>
-<v t="ekr.20160519172255.113"><vh>unexpectedError</vh></v>
-<v t="ekr.20160519172255.114"><vh>syntaxError</vh></v>
-<v t="ekr.20160519172255.115"><vh>flake</vh></v>
-</v>
-<v t="ekr.20160519172255.116"><vh>_makeDefaultReporter</vh></v>
-</v>
-<v t="ekr.20160520184945.1"><vh>@clean ast.py</vh>
+<v t="ekr.20160520184945.1"><vh>@clean leo_ast.py</vh>
 <v t="ekr.20160520184945.2"><vh>class AstDumper</vh>
 <v t="ekr.20160520184945.3"><vh>d.ctor</vh></v>
 <v t="ekr.20160520184945.4"><vh>d.dump</vh></v>
@@ -272,6 +219,59 @@
 <v t="ekr.20160520184945.272"><vh>ts.trailing_lines</vh></v>
 </v>
 </v>
+<v t="ekr.20160519172255.79"><vh>@clean messages.py</vh>
+<v t="ekr.20160519172255.80"><vh>class Message</vh>
+<v t="ekr.20160519172255.81"><vh>__init__</vh></v>
+<v t="ekr.20160519172255.82"><vh>__str__</vh></v>
+</v>
+<v t="ekr.20160519172255.83"><vh>class UnusedImport</vh>
+<v t="ekr.20160519172255.84"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.85"><vh>class RedefinedWhileUnused</vh>
+<v t="ekr.20160519172255.86"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.87"><vh>class RedefinedInListComp</vh>
+<v t="ekr.20160519172255.88"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.89"><vh>class ImportShadowedByLoopVar</vh>
+<v t="ekr.20160519172255.90"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.91"><vh>class ImportStarUsed</vh>
+<v t="ekr.20160519172255.92"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.93"><vh>class UndefinedName</vh>
+<v t="ekr.20160519172255.94"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.95"><vh>class DoctestSyntaxError</vh>
+<v t="ekr.20160519172255.96"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.97"><vh>class UndefinedExport</vh>
+<v t="ekr.20160519172255.98"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.99"><vh>class UndefinedLocal</vh>
+<v t="ekr.20160519172255.100"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.101"><vh>class DuplicateArgument</vh>
+<v t="ekr.20160519172255.102"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.103"><vh>class LateFutureImport</vh>
+<v t="ekr.20160519172255.104"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.105"><vh>class UnusedVariable</vh>
+<v t="ekr.20160519172255.106"><vh>__init__</vh></v>
+</v>
+<v t="ekr.20160519172255.107"><vh>class ReturnWithArgsInsideGenerator</vh></v>
+<v t="ekr.20160519172255.108"><vh>class ReturnOutsideFunction</vh></v>
+</v>
+<v t="ekr.20160519172255.109"><vh>@clean reporter.py</vh>
+<v t="ekr.20160519172255.111"><vh>class Reporter</vh>
+<v t="ekr.20160519172255.112"><vh>__init__</vh></v>
+<v t="ekr.20160519172255.113"><vh>unexpectedError</vh></v>
+<v t="ekr.20160519172255.114"><vh>syntaxError</vh></v>
+<v t="ekr.20160519172255.115"><vh>flake</vh></v>
+</v>
+<v t="ekr.20160519172255.116"><vh>_makeDefaultReporter</vh></v>
+</v>
 </v>
 <v t="ekr.20160520163049.1"><vh>Study</vh>
 <v t="ekr.20160519172947.1"><vh>Found:handleChildren</vh>
@@ -296,11 +296,15 @@
 <v t="ekr.20160519181035.1"><vh>getAlternatives</vh></v>
 </v>
 </v>
+<v t="ekr.20160520163727.1"><vh>Changed</vh>
+<v t="ekr.20160519172255.13"><vh>_FieldsOrder._get_fields</vh></v>
+<v t="ekr.20160520184945.151"></v>
+</v>
 <v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
 <v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
 <v t="ekr.20160519172255.12"><vh>class _FieldsOrder(dict)</vh>
-<v t="ekr.20160519172255.13"><vh>_get_fields</vh></v>
-<v t="ekr.20160519172255.14"><vh>__missing__</vh></v>
+<v t="ekr.20160519172255.13"></v>
+<v t="ekr.20160519172255.14"><vh>_FieldsOrder.__missing__</vh></v>
 </v>
 <v t="ekr.20160519181348.1"><vh>top-level getters</vh>
 <v t="ekr.20160519181035.1"></v>
@@ -329,8 +333,8 @@
 </v>
 </v>
 <v t="ekr.20160519172730.1"><vh>Scopes</vh>
-<v t="ekr.20160519172255.31"><vh>class Scope</vh>
-<v t="ekr.20160519172255.32"><vh>__repr__</vh></v>
+<v t="ekr.20160519172255.31"><vh>class Scope(dict)</vh>
+<v t="ekr.20160519172255.32"><vh>Scope.__repr__</vh></v>
 </v>
 <v t="ekr.20160519172255.33"><vh>class ClassScope (Scope)</vh></v>
 <v t="ekr.20160519172255.34"><vh>class FunctionScope (Scope)</vh>
@@ -382,17 +386,29 @@
 </v>
 </v>
 </v>
-<v t="ekr.20160520163727.1"><vh>Changed</vh>
-<v t="ekr.20160519172255.14"></v>
-<v t="ekr.20160519172255.13"></v>
+<v t="ekr.20160520195402.1"><vh>Found:Binding</vh>
+<v t="ekr.20160519172255.57"></v>
+<v t="ekr.20160519172255.16"></v>
+<v t="ekr.20160519172255.21"></v>
+<v t="ekr.20160519172255.26"></v>
+<v t="ekr.20160519172255.22"></v>
+<v t="ekr.20160519172255.25"></v>
+<v t="ekr.20160519172255.29"></v>
+<v t="ekr.20160519172255.36"></v>
+<v t="ekr.20160519172255.54"></v>
+<v t="ekr.20160519172255.72"></v>
 </v>
+<v t="ekr.20160519172255.54"></v>
+<v t="ekr.20160519172255.31"></v>
 <v t="ekr.20160520081237.1"><vh>@button test</vh>
 <v t="ekr.20160520162722.1"><vh>&lt;&lt; define s &gt;&gt;</vh></v>
 <v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
 <v t="ekr.20160520082209.1"><vh>check_all</vh></v>
 <v t="ekr.20160520162336.1"><vh>check_string</vh></v>
+<v t="ekr.20160520210414.1"><vh>compile_string</vh></v>
+<v t="ekr.20160520210256.1"><vh>read_string</vh></v>
 <v t="ekr.20160520081827.1"><vh>run_test</vh></v>
-<v t="ekr.20160520185111.1"><vh>test_traverse</vh></v>
+<v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
 </v>
 </vnodes>
 <tnodes>
@@ -808,15 +824,14 @@ __all__ = ['check', 'checkPath', 'checkRecursive', 'iterSourceCode', 'main']
 <t tx="ekr.20160519172255.38">class ModuleScope(Scope):
     pass
 </t>
-<t tx="ekr.20160519172255.39">
-def getNodeName(node):
+<t tx="ekr.20160519172255.39">def getNodeName(node):
     # Returns node.id, or node.name, or None
     if hasattr(node, 'id'):     # One of the many nodes with an id
         return node.id
     if hasattr(node, 'name'):   # a ExceptHandler node
         return node.name
 </t>
-<t tx="ekr.20160519172255.4">def check(codeString, filename, reporter=None):
+<t tx="ekr.20160519172255.4">def check(codeString, filename, reporter=None, tree=None): # EKR: added tree.
     """
     Check the Python source given by C{codeString} for flakes.
 
@@ -837,29 +852,30 @@ def getNodeName(node):
     if reporter is None:
         reporter = modReporter._makeDefaultReporter()
     # First, compile into an AST and handle syntax errors.
-    try:
-        tree = compile(codeString, filename, "exec", _ast.PyCF_ONLY_AST)
-    except SyntaxError:
-        value = sys.exc_info()[1]
-        msg = value.args[0]
-
-        (lineno, offset, text) = value.lineno, value.offset, value.text
-        g.es_print_exception() # EKR
-
-        # If there's an encoding problem with the file, the text is None.
-        if text is None:
-            # Avoid using msg, since for the only known case, it contains a
-            # bogus message that claims the encoding the file declared was
-            # unknown.
-            # EKR:
-            reporter.unexpectedError(filename, 'no text: syntax error?')
-        else:
-            reporter.syntaxError(filename, msg, lineno, offset, text)
-        return 1
-    except Exception:
-        g.es_print_exception() # EKR
-        reporter.unexpectedError(filename, 'unexpected exception')
-        return 1
+    if not tree:
+        try:
+            tree = compile(codeString, filename, "exec", _ast.PyCF_ONLY_AST)
+        except SyntaxError:
+            value = sys.exc_info()[1]
+            msg = value.args[0]
+    
+            (lineno, offset, text) = value.lineno, value.offset, value.text
+            g.es_print_exception() # EKR
+    
+            # If there's an encoding problem with the file, the text is None.
+            if text is None:
+                # Avoid using msg, since for the only known case, it contains a
+                # bogus message that claims the encoding the file declared was
+                # unknown.
+                # EKR:
+                reporter.unexpectedError(filename, 'no text: syntax error?')
+            else:
+                reporter.syntaxError(filename, msg, lineno, offset, text)
+            return 1
+        except Exception:
+            g.es_print_exception() # EKR
+            reporter.unexpectedError(filename, 'unexpected exception')
+            return 1
     # Okay, it's syntactically valid.  Now check it.
     w = checker.Checker(tree, filename)
     w.messages.sort(key=lambda m: m.lineno)
@@ -1104,6 +1120,7 @@ def scope(self):
         # then assume the rebound name is used as a global or within a loop
         value.used = self.scope[value.name].used
 
+    # g.trace(self.scope, value) # EKR
     self.scope[value.name] = value
 </t>
 <t tx="ekr.20160519172255.55">def getNodeHandler(self, node_class):
@@ -1815,18 +1832,21 @@ print(aList)
 print(['iter'.find(z) for z in fields])
 </t>
 <t tx="ekr.20160519185320.1"># flattened, word, ignore-case, head, body</t>
-<t tx="ekr.20160520081237.1">g.cls()
+<t tx="ekr.20160520081237.1"># g.cls()
 if c.isChanged():
     c.save()
 &lt;&lt; test imports &gt;&gt;
 &lt;&lt; define s &gt;&gt;
 @others
-full_traverser = False
-# 4.8 sec for pyflakes 'all'
-# 2.2 sec for FullTraverser 'all'
+gc.collect() # Stabalizes timing statistics a bit.
+stats = {}
+    # 4.8 to 5.0 sec for pyflakes 'all'
+    # 2.2 sec for FullTraverser 'all'
 run_test(scope='all', s=s)
 </t>
 <t tx="ekr.20160520081827.1">def run_test(scope, s):
+    
+    global stats
     g.trace('scope:', scope)
     g_option_fn = None
     if scope == 'test':
@@ -1838,7 +1858,11 @@ run_test(scope='all', s=s)
     check_all(files, s)
     t2 = time.clock()
     n = len(files)
-    print('%s file%s, time: %5.2f sec.' % (n, g.plural(n), t2-t1))
+    stats['total'] = t2 - t1
+    print('%s file%s' % (n, g.plural(n)))
+    if 1:
+        for key in ('read', 'parse', 'visit', 'check', 'total'):
+            print('%6s %5.2f sec' % (key, stats.get(key)))
 </t>
 <t tx="ekr.20160520082209.1">def check_all(files, s=None):
     '''Run pyflakes on all files.'''
@@ -1848,40 +1872,46 @@ run_test(scope='all', s=s)
         check_string(fn, s)
     else:
         for fn in files:
-            s = g.readFileIntoEncodedString(fn, silent=False)
+            s = read_string(fn)
             if s and s.strip():
-                if full_traverser:
-                    test_traverse(fn, s)
-                else:
-                    check_string(fn, s)
+                tree = compile_string(fn, s)
+                traverse_tree(tree)
+                check_string(fn, s, tree=tree) # EKR: added tree
             else:
                 print('can not read:', fn)
 </t>
 <t tx="ekr.20160520102401.1"></t>
-<t tx="ekr.20160520160409.1">import imp
+<t tx="ekr.20160520160409.1">import ast
+import gc
+import imp
 import sys
 import time
 import leo.core.leoGlobals as g
 import leo.core.leoTest as leoTest
 import api
-import ast
+import leo_ast
 import checker
 import messages
 import reporter
 imp.reload(api)
-imp.reload(ast)
+imp.reload(leo_ast)
 imp.reload(checker)
 imp.reload(messages)
 imp.reload(reporter)
+# g.trace(ast)
 </t>
-<t tx="ekr.20160520162336.1">def check_string(fn, s):
+<t tx="ekr.20160520162336.1">def check_string(fn, s, tree):
     
+    global stats
+    t1 = time.clock()
     sfn = g.shortFileName(fn)
     r = reporter.Reporter(
         errorStream=sys.stderr,
         warningStream=sys.stderr,
         )
-    errors = api.check(s, sfn, r)
+    errors = api.check(s, sfn, r, tree=tree)
+    t2 = time.clock()
+    stats['check'] = stats.get('check', 0.0) + t2 - t1
     if errors:
         print('pyflakes: %s error%s in %s' % (
             errors, g.plural(errors), fn))
@@ -2347,12 +2377,31 @@ def do_YieldFrom(self, node):
     # Visit the children with the new parent.
     old_parent = self.parent
     self.parent = node # Bug fix: 2016/05/18.
-    method_name = 'do_' + node.__class__.__name__
-    method = getattr(self, method_name)
-    if trace: g.trace(method_name)
+    class_name = node.__class__.__name__
+    # A tiny bit faster
+    method = self.d.get(class_name) or self.get_visitor(class_name)
+    # method_name = 'do_' + node.__class__.__name__
+    # method = getattr(self, method_name)
+    # if trace: g.trace(class_name)
     val = method(node)
     self.parent = old_parent
     return val
+    
+def do_nothing(self, node):
+    pass
+    
+def get_visitor(self, class_name):
+    '''Compute the method and put it in self.d.'''
+    method_name = 'do_' + class_name
+    if hasattr(self, method_name):
+        # g.trace(method_name)
+        method = getattr(self, method_name)
+    else:
+        g.trace('no visitor for', class_name)
+        method = self.do_nothing
+    self.d[class_name] = method
+    assert method
+    return method
 
 def visit_children(self, node):
     assert False, 'must visit children explicitly'
@@ -3438,6 +3487,7 @@ def op_name (self,node,strict=True):
     def __init__(self):
         '''Ctor for AstFullTraverser class.'''
         self.context = None
+        self.d = {} # Keys are node.__class__ strings. Values are methods.
         self.parent = None
         self.trace = False
     @others
@@ -3572,18 +3622,39 @@ def do_BinOp(self, node):
     # self.op_name(node.op)
     self.visit(node.right)
 </t>
-<t tx="ekr.20160520185111.1">def test_traverse(fn, s):
-    '''Test the speed of the FullTraverser class.'''
+<t tx="ekr.20160520195402.1"># flattened, word, ignore-case, head, body</t>
+<t tx="ekr.20160520210256.1">def read_string(fn):
+    
+    global stats
+    t1 = time.clock()
+    s = g.readFileIntoEncodedString(fn, silent=False)
+    t2 = time.clock()
+    stats['read'] = stats.get('read', 0.0) + t2 - t1
+    return s
+</t>
+<t tx="ekr.20160520210414.1">def compile_string(fn, s):
+    
+    global stats
+    t1 = time.clock()
+    tree = None
     try:
         tree = compile(s, fn, "exec", ast.PyCF_ONLY_AST)
     except SyntaxError:
         g.es_print('syntax error')
         g.es_print_exception()
-        return
     except Exception:
         g.es_print('unexpected exception')
         g.es_print_exception() # EKR
-        return
-    ast.AstFullTraverser().visit(tree)</t>
+    t2 = time.clock()
+    stats['parse'] = stats.get('parse', 0.0) + t2 - t1
+    return tree
+</t>
+<t tx="ekr.20160520210931.1">def traverse_tree(tree):
+
+    global stats
+    t1 = time.clock()
+    ast.AstFullTraverser().visit(tree)
+    t2 = time.clock()
+    stats['visit'] = stats.get('visit', 0.0) + t2 - t1</t>
 </tnodes>
 </leo_file>

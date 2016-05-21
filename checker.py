@@ -79,7 +79,6 @@ else:
             return [n.body]
         if isinstance(n, ast.Try):
             return [n.body + n.orelse] + [[hdl] for hdl in n.handlers]
-
 def getNodeName(node):
     # Returns node.id, or node.name, or None
     if hasattr(node, 'id'):     # One of the many nodes with an id
@@ -417,6 +416,7 @@ class Checker(object):
             # then assume the rebound name is used as a global or within a loop
             value.used = self.scope[value.name].used
 
+        # g.trace(self.scope, value) # EKR
         self.scope[value.name] = value
     def getNodeHandler(self, node_class):
         try:

@@ -9,6 +9,7 @@ Also, it models the Bindings and Scopes.
 # checker.py imports...
 
 import leo.core.leoGlobals as g # EKR
+import leo.core.leoAst as leo_ast # EKR
 assert g
 
 import doctest
@@ -32,6 +33,11 @@ except ImportError:     # Python 2.5
 
 import messages # EKR
 # from pyflakes import messages
+
+aft = False
+    # True: use AstFullTraverser class for traversals.
+    # This is proving to be difficult, because ast.visit doesn't have a parent arg.
+stats = {}
 
 # Globally defined names which are not attributes of the builtins module, or
 # are only present on some platforms.
@@ -241,7 +247,9 @@ class GeneratorScope(Scope):
     pass
 class ModuleScope(Scope):
     pass
-class Checker(object):
+checker_base = leo_ast.AstFullTraverser if aft else object # ekr
+
+class Checker(checker_base):
     """
     I check the cleanliness and sanity of Python code.
 
@@ -279,8 +287,10 @@ class Checker(object):
         self.exceptHandlers = [()]
         self.futuresAllowed = True
         self.root = tree
-        self.handleChildren(tree)
-            # EKR: visit the children of the module node.
+        if aft:
+            self.handleNode(tree,parent=None)
+        else:
+            self.handleChildren(tree)
         self.runDeferred(self._deferredFunctions)
         # Set _deferredFunctions to None so that deferFunction will fail
         # noisily if called after we've run through the deferred functions.
@@ -478,20 +488,26 @@ class Checker(object):
         # EKR: this the general node visiter.
         if node is None:
             return
+        # global stats
+        # stats['handleNode'] = stats.get('handleNode', 0) + 1
         if self.offset and getattr(node, 'lineno', None) is not None:
             node.lineno += self.offset[0]
             node.col_offset += self.offset[1]
         if self.traceTree:
             print('  ' * self.nodeDepth + node.__class__.__name__)
-        if self.futuresAllowed and not (isinstance(node, ast.ImportFrom) or
-                                        self.isDocstring(node)):
+        if (self.futuresAllowed and
+            not (isinstance(node, ast.ImportFrom) or self.isDocstring(node))
+        ):
             self.futuresAllowed = False
         self.nodeDepth += 1
         node.depth = self.nodeDepth
         node.parent = parent
         try:
-            # EKR: this is the only call to getNodeHandler.
-            handler = self.getNodeHandler(node.__class__)
+            if aft:
+                handler = getattr(self,'do_' + node.__class__.__name__)
+            else:
+                # EKR: this is the only call to getNodeHandler.
+                handler = self.getNodeHandler(node.__class__)
             handler(node)
         finally:
             self.nodeDepth -= 1
@@ -499,6 +515,7 @@ class Checker(object):
             print('  ' * self.nodeDepth + 'end ' + node.__class__.__name__)
 
     _getDoctestExamples = doctest.DocTestParser().get_examples
+
     def isDocstring(self, node):
         """
         Determine if the given node is a docstring, as long as it is at the
@@ -573,14 +590,20 @@ class Checker(object):
                 for scope in self.scopeStack[global_scope_index + 1:]:
                     scope[node_name] = node_value
 
+    if aft:
+        do_Global = do_Nonlocal = GLOBAL
+
     NONLOCAL = GLOBAL
     def GENERATOREXP(self, node):
         self.pushScope(GeneratorScope)
         self.handleChildren(node)
         self.popScope()
+        
+    if aft:
+        do_ListComp = do_GeneratorExp = GENERATOREXP
 
     LISTCOMP = handleChildren if PY2 else GENERATOREXP
-
+        
     DICTCOMP = SETCOMP = GENERATOREXP
     def NAME(self, node):
         """
@@ -604,6 +627,10 @@ class Checker(object):
             # must be a Param context -- this only happens for names in function
             # arguments, but these aren't dispatched through here
             raise RuntimeError("Got impossible expression context: %r" % (node.ctx,))
+            
+    if aft:
+        do_name = NAME
+
     # EKR: ctx is Del.
     def handleNodeDelete(self, node):
 
@@ -728,9 +755,15 @@ class Checker(object):
         ):
             self.scope.returnValue = node.value
         self.handleNode(node.value, node)
+
+    if aft:
+        do_return = RETURN
     def YIELD(self, node):
         self.scope.isGenerator = True
         self.handleNode(node.value, node)
+        
+    if aft:
+        do_Yield = do_Await = do_YieldFrom = YIELD
 
     AWAIT = YIELDFROM = YIELD
     def FUNCTIONDEF(self, node):
@@ -740,6 +773,9 @@ class Checker(object):
         self.addBinding(node, FunctionDefinition(node.name, node))
         if self.withDoctest:
             self.deferFunction(lambda: self.handleDoctests(node))
+            
+    if aft:
+        do_FunctionDef = do_AsyncFunctionDef = FUNCTIONDEF
 
     ASYNCFUNCTIONDEF = FUNCTIONDEF
     def LAMBDA(self, node):
@@ -822,6 +858,9 @@ class Checker(object):
             self.popScope()
 
         self.deferFunction(runFunction)
+        
+    if aft:
+        do_Lambda = LAMBDA
     def CLASSDEF(self, node):
         """
         Check names used in a class definition, including its decorators, base
@@ -842,15 +881,24 @@ class Checker(object):
             self.handleNode(stmt, node)
         self.popScope()
         self.addBinding(node, ClassDefinition(node.name, node))
+        
+    if aft:
+        do_ClassDef = CLASSDEF
     def AUGASSIGN(self, node):
         self.handleNodeLoad(node.target)
         self.handleNode(node.value, node)
         self.handleNode(node.target, node)
+
+    if aft:
+        do_AugAssign = AUGASSIGN
     def IMPORT(self, node):
         for alias in node.names:
             name = alias.asname or alias.name
             importation = Importation(name, node)
             self.addBinding(node, importation)
+
+    if aft:
+        do_Import = IMPORT
     def IMPORTFROM(self, node):
         if node.module == '__future__':
             if not self.futuresAllowed:
@@ -869,6 +917,10 @@ class Checker(object):
             if node.module == '__future__':
                 importation.used = (self.scope, node)
             self.addBinding(node, importation)
+            
+    if aft:
+        do_ImportFrom = IMPORTFROM
+
     def TRY(self, node):
         handler_names = []
         # List the exception handlers
@@ -885,6 +937,9 @@ class Checker(object):
         self.exceptHandlers.pop()
         # Process the other nodes: "except:", "else:", "finally:"
         self.handleChildren(node, omit='body')
+        
+    if aft:
+        do_Try = do_TryExcept = TRY
 
     TRYEXCEPT = TRY
     def EXCEPTHANDLER(self, node):
@@ -893,6 +948,9 @@ class Checker(object):
         if isinstance(node.name, str):
             self.handleNodeStore(node)
         self.handleChildren(node)
+        
+    if aft:
+        do_ExceptHandler = EXCEPTHANDLER
 class NullChecker:
     
     def __init__(self):

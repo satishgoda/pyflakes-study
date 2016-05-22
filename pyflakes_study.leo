@@ -447,6 +447,7 @@
 </v>
 </v>
 <v t="ekr.20160519172255.40"></v>
+<v t="ekr.20160519173152.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -460,6 +461,11 @@ Also, it models the Bindings and Scopes.
 @tabwidth -4
 
 &lt;&lt;imports&gt;&gt;
+
+aft = False
+    # True: use AstFullTraverser class for traversals.
+    # This is proving to be difficult, because ast.visit doesn't have a parent arg.
+stats = {}
 
 # Globally defined names which are not attributes of the builtins module, or
 # are only present on some platforms.
@@ -526,6 +532,7 @@ import sys
 <t tx="ekr.20160519172255.11"># checker.py imports...
 
 import leo.core.leoGlobals as g # EKR
+import leo.core.leoAst as leo_ast # EKR
 assert g
 
 import doctest
@@ -928,7 +935,9 @@ __all__ = ['check', 'checkPath', 'checkRecursive', 'iterSourceCode', 'main']
         reporter.flake(warning)
     return len(w.messages)
 </t>
-<t tx="ekr.20160519172255.40">class Checker(object):
+<t tx="ekr.20160519172255.40">checker_base = leo_ast.AstFullTraverser if aft else object # ekr
+
+class Checker(checker_base):
     """
     I check the cleanliness and sanity of Python code.
 
@@ -968,8 +977,10 @@ __all__ = ['check', 'checkPath', 'checkRecursive', 'iterSourceCode', 'main']
     self.exceptHandlers = [()]
     self.futuresAllowed = True
     self.root = tree
-    self.handleChildren(tree)
-        # EKR: visit the children of the module node.
+    if aft:
+        self.handleNode(tree,parent=None)
+    else:
+        self.handleChildren(tree)
     self.runDeferred(self._deferredFunctions)
     # Set _deferredFunctions to None so that deferFunction will fail
     # noisily if called after we've run through the deferred functions.
@@ -1335,20 +1346,26 @@ def handleNodeDelete(self, node):
     # EKR: this the general node visiter.
     if node is None:
         return
+    # global stats
+    # stats['handleNode'] = stats.get('handleNode', 0) + 1
     if self.offset and getattr(node, 'lineno', None) is not None:
         node.lineno += self.offset[0]
         node.col_offset += self.offset[1]
     if self.traceTree:
         print('  ' * self.nodeDepth + node.__class__.__name__)
-    if self.futuresAllowed and not (isinstance(node, ast.ImportFrom) or
-                                    self.isDocstring(node)):
+    if (self.futuresAllowed and
+        not (isinstance(node, ast.ImportFrom) or self.isDocstring(node))
+    ):
         self.futuresAllowed = False
     self.nodeDepth += 1
     node.depth = self.nodeDepth
     node.parent = parent
     try:
-        # EKR: this is the only call to getNodeHandler.
-        handler = self.getNodeHandler(node.__class__)
+        if aft:
+            handler = getattr(self,'do_' + node.__class__.__name__)
+        else:
+            # EKR: this is the only call to getNodeHandler.
+            handler = self.getNodeHandler(node.__class__)
         handler(node)
     finally:
         self.nodeDepth -= 1
@@ -1356,6 +1373,7 @@ def handleNodeDelete(self, node):
         print('  ' * self.nodeDepth + 'end ' + node.__class__.__name__)
 
 _getDoctestExamples = doctest.DocTestParser().get_examples
+
 </t>
 <t tx="ekr.20160519172255.64">def handleDoctests(self, node):
     try:
@@ -1418,15 +1436,21 @@ _getDoctestExamples = doctest.DocTestParser().get_examples
             for scope in self.scopeStack[global_scope_index + 1:]:
                 scope[node_name] = node_value
 
+if aft:
+    do_Global = do_Nonlocal = GLOBAL
+
 NONLOCAL = GLOBAL
 </t>
 <t tx="ekr.20160519172255.67">def GENERATOREXP(self, node):
     self.pushScope(GeneratorScope)
     self.handleChildren(node)
     self.popScope()
+    
+if aft:
+    do_ListComp = do_GeneratorExp = GENERATOREXP
 
 LISTCOMP = handleChildren if PY2 else GENERATOREXP
-
+    
 DICTCOMP = SETCOMP = GENERATOREXP
 </t>
 <t tx="ekr.20160519172255.68">def NAME(self, node):
@@ -1451,6 +1475,10 @@ DICTCOMP = SETCOMP = GENERATOREXP
         # must be a Param context -- this only happens for names in function
         # arguments, but these aren't dispatched through here
         raise RuntimeError("Got impossible expression context: %r" % (node.ctx,))
+        
+if aft:
+    do_name = NAME
+
 </t>
 <t tx="ekr.20160519172255.69">def RETURN(self, node):
     
@@ -1464,7 +1492,9 @@ DICTCOMP = SETCOMP = GENERATOREXP
     ):
         self.scope.returnValue = node.value
     self.handleNode(node.value, node)
-</t>
+
+if aft:
+    do_return = RETURN</t>
 <t tx="ekr.20160519172255.7">def checkRecursive(paths, reporter):
     """
     Recursively check all source files in C{paths}.
@@ -1483,6 +1513,9 @@ DICTCOMP = SETCOMP = GENERATOREXP
 <t tx="ekr.20160519172255.70">def YIELD(self, node):
     self.scope.isGenerator = True
     self.handleNode(node.value, node)
+    
+if aft:
+    do_Yield = do_Await = do_YieldFrom = YIELD
 
 AWAIT = YIELDFROM = YIELD
 </t>
@@ -1493,6 +1526,9 @@ AWAIT = YIELDFROM = YIELD
     self.addBinding(node, FunctionDefinition(node.name, node))
     if self.withDoctest:
         self.deferFunction(lambda: self.handleDoctests(node))
+        
+if aft:
+    do_FunctionDef = do_AsyncFunctionDef = FUNCTIONDEF
 
 ASYNCFUNCTIONDEF = FUNCTIONDEF
 </t>
@@ -1576,6 +1612,9 @@ ASYNCFUNCTIONDEF = FUNCTIONDEF
         self.popScope()
 
     self.deferFunction(runFunction)
+    
+if aft:
+    do_Lambda = LAMBDA
 </t>
 <t tx="ekr.20160519172255.73">def CLASSDEF(self, node):
     """
@@ -1597,17 +1636,25 @@ ASYNCFUNCTIONDEF = FUNCTIONDEF
         self.handleNode(stmt, node)
     self.popScope()
     self.addBinding(node, ClassDefinition(node.name, node))
+    
+if aft:
+    do_ClassDef = CLASSDEF
 </t>
 <t tx="ekr.20160519172255.74">def AUGASSIGN(self, node):
     self.handleNodeLoad(node.target)
     self.handleNode(node.value, node)
     self.handleNode(node.target, node)
-</t>
+
+if aft:
+    do_AugAssign = AUGASSIGN</t>
 <t tx="ekr.20160519172255.75">def IMPORT(self, node):
     for alias in node.names:
         name = alias.asname or alias.name
         importation = Importation(name, node)
         self.addBinding(node, importation)
+
+if aft:
+    do_Import = IMPORT
 </t>
 <t tx="ekr.20160519172255.76">def IMPORTFROM(self, node):
     if node.module == '__future__':
@@ -1627,6 +1674,10 @@ ASYNCFUNCTIONDEF = FUNCTIONDEF
         if node.module == '__future__':
             importation.used = (self.scope, node)
         self.addBinding(node, importation)
+        
+if aft:
+    do_ImportFrom = IMPORTFROM
+
 </t>
 <t tx="ekr.20160519172255.77">def TRY(self, node):
     handler_names = []
@@ -1644,6 +1695,9 @@ ASYNCFUNCTIONDEF = FUNCTIONDEF
     self.exceptHandlers.pop()
     # Process the other nodes: "except:", "else:", "finally:"
     self.handleChildren(node, omit='body')
+    
+if aft:
+    do_Try = do_TryExcept = TRY
 
 TRYEXCEPT = TRY
 </t>
@@ -1653,6 +1707,9 @@ TRYEXCEPT = TRY
     if isinstance(node.name, str):
         self.handleNodeStore(node)
     self.handleChildren(node)
+    
+if aft:
+    do_ExceptHandler = EXCEPTHANDLER
 </t>
 <t tx="ekr.20160519172255.79">"""
 Provide the class Message and its subclasses.
@@ -1831,9 +1888,11 @@ AND = OR = ADD = SUB = MULT = DIV = MOD = POW = LSHIFT = RSHIFT = \
     EQ = NOTEQ = LT = LTE = GT = GTE = IS = ISNOT = IN = NOTIN = ignore
 
 # additional node types
-COMPREHENSION = KEYWORD = handleChildren</t>
+COMPREHENSION = KEYWORD = handleChildren
+</t>
 <t tx="ekr.20160519172947.1"># flattened, word, ignore-case, head, body</t>
-<t tx="ekr.20160519173152.1"># EKR: like visitors</t>
+<t tx="ekr.20160519173152.1"># EKR: like visitors
+</t>
 <t tx="ekr.20160519173318.1"></t>
 <t tx="ekr.20160519173339.1"></t>
 <t tx="ekr.20160519180137.1">http://epydoc.sourceforge.net/manual-epytext.html
@@ -1892,6 +1951,8 @@ print(['iter'.find(z) for z in fields])
 if c.isChanged():
     c.save()
 &lt;&lt; test imports &gt;&gt;
+aft = checker.aft
+compare_traverse = False
 &lt;&lt; define s &gt;&gt;
 @others
 gc.collect() # Stabalizes timing statistics a bit.
@@ -1915,12 +1976,16 @@ run_test(scope='all', s=s)
     t2 = time.clock()
     n = len(files)
     stats['total'] = t2 - t1
-    stats['total2'] = t2 - t1 - stats.get('handle',0.0) - stats.get('visit',0.0)
+    if 'handle' in stats and 'visit' in stats:
+        stats['total2'] = t2 - t1 - stats.get('handle',0.0) - stats.get('visit',0.0)
     print('%s file%s' % (n, g.plural(n)))
     if 1:
         for key in ('read', 'parse', 'visit', 'handle', 'check', 'total', 'total2'):
-            print('%6s %5.2f sec' % (key, stats.get(key, 0.0)))
-        print('total2 = total - visit - handle')
+            if key in stats:
+                print('%6s %5.2f sec' % (key, stats.get(key)))
+        if 'total2' in stats:
+            print('total2 = total - visit - handle')
+        if checker.stats: print('checker.stats', checker.stats)
 </t>
 <t tx="ekr.20160520082209.1">def check_all(files, s=None):
     '''Run pyflakes on all files.'''
@@ -1934,8 +1999,9 @@ run_test(scope='all', s=s)
             s = read_string(fn)
             if s and s.strip():
                 tree = compile_string(fn, s)
-                traverse_tree(tree)
-                handle_tree(tree)
+                if compare_traverse:
+                    traverse_tree(tree)
+                    handle_tree(tree)
                 check_string(fn, s, tree=tree) # EKR: added tree
             else:
                 print('can not read:', fn)
@@ -2447,30 +2513,28 @@ def do_YieldFrom(self, node):
     old_parent = self.parent
     self.parent = node # Bug fix: 2016/05/18.
     class_name = node.__class__.__name__
-    # A tiny bit faster
-    method = self.d.get(class_name) or self.get_visitor(class_name)
-    # method_name = 'do_' + node.__class__.__name__
-    # method = getattr(self, method_name)
+    method_name = 'do_' + node.__class__.__name__
+    method = getattr(self, method_name)
     # if trace: g.trace(class_name)
     val = method(node)
     self.parent = old_parent
     return val
     
-def do_nothing(self, node):
-    pass
+# def do_nothing(self, node):
+    # pass
     
-def get_visitor(self, class_name):
-    '''Compute the method and put it in self.d.'''
-    method_name = 'do_' + class_name
-    if hasattr(self, method_name):
-        # g.trace(method_name)
-        method = getattr(self, method_name)
-    else:
-        g.trace('no visitor for', class_name)
-        method = self.do_nothing
-    self.d[class_name] = method
-    assert method
-    return method
+# def get_visitor(self, class_name):
+    # '''Compute the method and put it in self.d.'''
+    # method_name = 'do_' + class_name
+    # if hasattr(self, method_name):
+        # # g.trace(method_name)
+        # method = getattr(self, method_name)
+    # else:
+        # g.trace('no visitor for', class_name)
+        # method = self.do_nothing
+    # self.d[class_name] = method
+    # assert method
+    # return method
 
 def visit_children(self, node):
     assert False, 'must visit children explicitly'

@@ -1200,30 +1200,28 @@ class AstFullTraverser(object):
         old_parent = self.parent
         self.parent = node # Bug fix: 2016/05/18.
         class_name = node.__class__.__name__
-        # A tiny bit faster
-        method = self.d.get(class_name) or self.get_visitor(class_name)
-        # method_name = 'do_' + node.__class__.__name__
-        # method = getattr(self, method_name)
+        method_name = 'do_' + node.__class__.__name__
+        method = getattr(self, method_name)
         # if trace: g.trace(class_name)
         val = method(node)
         self.parent = old_parent
         return val
         
-    def do_nothing(self, node):
-        pass
+    # def do_nothing(self, node):
+        # pass
         
-    def get_visitor(self, class_name):
-        '''Compute the method and put it in self.d.'''
-        method_name = 'do_' + class_name
-        if hasattr(self, method_name):
-            # g.trace(method_name)
-            method = getattr(self, method_name)
-        else:
-            g.trace('no visitor for', class_name)
-            method = self.do_nothing
-        self.d[class_name] = method
-        assert method
-        return method
+    # def get_visitor(self, class_name):
+        # '''Compute the method and put it in self.d.'''
+        # method_name = 'do_' + class_name
+        # if hasattr(self, method_name):
+            # # g.trace(method_name)
+            # method = getattr(self, method_name)
+        # else:
+            # g.trace('no visitor for', class_name)
+            # method = self.do_nothing
+        # self.d[class_name] = method
+        # assert method
+        # return method
 
     def visit_children(self, node):
         assert False, 'must visit children explicitly'

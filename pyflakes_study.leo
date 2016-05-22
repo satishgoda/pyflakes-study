@@ -403,12 +403,14 @@
 <v t="ekr.20160519172255.59"></v>
 <v t="ekr.20160519172255.64"></v>
 <v t="ekr.20160519172255.63"><vh>Checker.handleNode (injects parent/depth fields)</vh></v>
+<v t="ekr.20160522070940.1"><vh>Checker.nodeDepth (EKR)</vh></v>
 </v>
 <v t="ekr.20160521155817.1"><vh>Checker.docstrings...</vh>
 <v t="ekr.20160519172255.61"><vh>Checker.isDocstring</vh></v>
 <v t="ekr.20160519172255.62"><vh>Checker.getDocstring</vh></v>
 </v>
 <v t="ekr.20160519172836.1"><vh>Checker.Node handlers</vh>
+<v t="ekr.20160522063947.1"><vh>Checker.MODULE (Only if new_module)</vh></v>
 <v t="ekr.20160519172255.66"></v>
 <v t="ekr.20160519172255.67"></v>
 <v t="ekr.20160519172255.68"></v>
@@ -462,6 +464,7 @@ Also, it models the Bindings and Scopes.
 
 &lt;&lt;imports&gt;&gt;
 
+new_module = False
 aft = False
     # True: use AstFullTraverser class for traversals.
     # This is proving to be difficult, because ast.visit doesn't have a parent arg.
@@ -950,7 +953,7 @@ class Checker(checker_base):
         callables which are deferred assignment checks.
     """
 
-    nodeDepth = 0
+    nodeDepth = 0 # EKR: also set in ctor.
     offset = None
     traceTree = False
 
@@ -973,25 +976,28 @@ class Checker(checker_base):
     if builtins:
         self.builtIns = self.builtIns.union(builtins)
     self.withDoctest = withDoctest
-    self.scopeStack = [ModuleScope()]
     self.exceptHandlers = [()]
     self.futuresAllowed = True
     self.root = tree
-    if aft:
-        self.handleNode(tree,parent=None)
+    if new_module:
+        self.nodeDepth = -1
+        self.handleNode(tree, parent=None)
+            # MODULE handler does all the work.
     else:
+        self.nodeDepth = 0
+        self.scopeStack = [ModuleScope()]
         self.handleChildren(tree)
-    self.runDeferred(self._deferredFunctions)
-    # Set _deferredFunctions to None so that deferFunction will fail
-    # noisily if called after we've run through the deferred functions.
-    self._deferredFunctions = None
-    self.runDeferred(self._deferredAssignments)
-    # Set _deferredAssignments to None so that deferAssignment will fail
-    # noisily if called after we've run through the deferred assignments.
-    self._deferredAssignments = None
-    del self.scopeStack[1:]
-    self.popScope()
-    self.checkDeadScopes()
+        self.runDeferred(self._deferredFunctions)
+        # Set _deferredFunctions to None so that deferFunction will fail
+        # noisily if called after we've run through the deferred functions.
+        self._deferredFunctions = None
+        self.runDeferred(self._deferredAssignments)
+        # Set _deferredAssignments to None so that deferAssignment will fail
+        # noisily if called after we've run through the deferred assignments.
+        self._deferredAssignments = None
+        del self.scopeStack[1:]
+        self.popScope()
+        self.checkDeadScopes()
 </t>
 <t tx="ekr.20160519172255.42">def deferFunction(self, callable):
     """
@@ -1351,26 +1357,23 @@ def handleNodeDelete(self, node):
     if self.offset and getattr(node, 'lineno', None) is not None:
         node.lineno += self.offset[0]
         node.col_offset += self.offset[1]
-    if self.traceTree:
-        print('  ' * self.nodeDepth + node.__class__.__name__)
+    # if self.traceTree:
+        # print('  ' * self.nodeDepth(node) + node.__class__.__name__)
     if (self.futuresAllowed and
-        not (isinstance(node, ast.ImportFrom) or self.isDocstring(node))
+        not (isinstance(node, (ast.Module, ast.ImportFrom)) or self.isDocstring(node))
+             # EKR: works regardless of new_module.
     ):
         self.futuresAllowed = False
+    # EKR: getCommonAncestor uses node.depth.
     self.nodeDepth += 1
     node.depth = self.nodeDepth
     node.parent = parent
-    try:
-        if aft:
-            handler = getattr(self,'do_' + node.__class__.__name__)
-        else:
-            # EKR: this is the only call to getNodeHandler.
-            handler = self.getNodeHandler(node.__class__)
-        handler(node)
-    finally:
-        self.nodeDepth -= 1
-    if self.traceTree:
-        print('  ' * self.nodeDepth + 'end ' + node.__class__.__name__)
+    # EKR: this is the only call to getNodeHandler.
+    handler = self.getNodeHandler(node.__class__)
+    handler(node)
+    self.nodeDepth -= 1
+    # if self.traceTree:
+        # print('  ' * self.nodeDepth(node) + 'end ' + node.__class__.__name__)
 
 _getDoctestExamples = doctest.DocTestParser().get_examples
 
@@ -3800,7 +3803,7 @@ def do_BinOp(self, node):
 <t tx="ekr.20160521023529.1">class NullChecker:
     
     def __init__(self):
-        self.nodeDepth = 0
+        # self.nodeDepth = 0
         self._nodeHandlers = {}
         
     @others
@@ -3812,17 +3815,11 @@ def do_BinOp(self, node):
 </t>
 <t tx="ekr.20160521023730.4">def handleNode(self, node, parent):
     # EKR: this the general node visiter.
-    if node is None:
-        return
-    self.nodeDepth += 1
-    node.depth = self.nodeDepth
-    node.parent = parent
-    try:
+    if node:
+        node.parent = parent
         # EKR: this is the only call to getNodeHandler.
         handler = self.getNodeHandler(node.__class__)
         handler(node)
-    finally:
-        self.nodeDepth -= 1
 
 # _getDoctestExamples = doctest.DocTestParser().get_examples
 </t>
@@ -3969,5 +3966,32 @@ ASYNCFUNCTIONDEF = FUNCTIONDEF
 <t tx="ekr.20160521154847.1"></t>
 <t tx="ekr.20160521155725.1"></t>
 <t tx="ekr.20160521155817.1"></t>
+<t tx="ekr.20160522063947.1">if new_module:
+    
+    def MODULE(self, node):
+        assert node.depth == 0
+        self.scopeStack = [ModuleScope()]
+        self.handleChildren(node)
+        # Post-module stuff: was in ctor.
+        self.runDeferred(self._deferredFunctions)
+        # Set _deferredFunctions to None so that deferFunction will fail
+        # noisily if called after we've run through the deferred functions.
+        self._deferredFunctions = None
+        self.runDeferred(self._deferredAssignments)
+        # Set _deferredAssignments to None so that deferAssignment will fail
+        # noisily if called after we've run through the deferred assignments.
+        self._deferredAssignments = None
+        del self.scopeStack[1:]
+        self.popScope()
+        self.checkDeadScopes()</t>
+<t tx="ekr.20160522070940.1"># def nodeDepth(node):
+    # '''Return the node's depth. For debugging only.'''
+    # n = 0
+    # while node:
+        # node = getattr(node, 'parent', None)
+        # if node:
+            # n += 1
+    # return n
+</t>
 </tnodes>
 </leo_file>

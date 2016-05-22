@@ -34,6 +34,7 @@ except ImportError:     # Python 2.5
 import messages # EKR
 # from pyflakes import messages
 
+new_module = False
 aft = False
     # True: use AstFullTraverser class for traversals.
     # This is proving to be difficult, because ast.visit doesn't have a parent arg.
@@ -262,7 +263,7 @@ class Checker(checker_base):
         callables which are deferred assignment checks.
     """
 
-    nodeDepth = 0
+    nodeDepth = 0 # EKR: also set in ctor.
     offset = None
     traceTree = False
 
@@ -283,25 +284,28 @@ class Checker(checker_base):
         if builtins:
             self.builtIns = self.builtIns.union(builtins)
         self.withDoctest = withDoctest
-        self.scopeStack = [ModuleScope()]
         self.exceptHandlers = [()]
         self.futuresAllowed = True
         self.root = tree
-        if aft:
-            self.handleNode(tree,parent=None)
+        if new_module:
+            self.nodeDepth = -1
+            self.handleNode(tree, parent=None)
+                # MODULE handler does all the work.
         else:
+            self.nodeDepth = 0
+            self.scopeStack = [ModuleScope()]
             self.handleChildren(tree)
-        self.runDeferred(self._deferredFunctions)
-        # Set _deferredFunctions to None so that deferFunction will fail
-        # noisily if called after we've run through the deferred functions.
-        self._deferredFunctions = None
-        self.runDeferred(self._deferredAssignments)
-        # Set _deferredAssignments to None so that deferAssignment will fail
-        # noisily if called after we've run through the deferred assignments.
-        self._deferredAssignments = None
-        del self.scopeStack[1:]
-        self.popScope()
-        self.checkDeadScopes()
+            self.runDeferred(self._deferredFunctions)
+            # Set _deferredFunctions to None so that deferFunction will fail
+            # noisily if called after we've run through the deferred functions.
+            self._deferredFunctions = None
+            self.runDeferred(self._deferredAssignments)
+            # Set _deferredAssignments to None so that deferAssignment will fail
+            # noisily if called after we've run through the deferred assignments.
+            self._deferredAssignments = None
+            del self.scopeStack[1:]
+            self.popScope()
+            self.checkDeadScopes()
     def deferAssignment(self, callable):
         """
         Schedule an assignment handler to be called just after deferred
@@ -493,29 +497,34 @@ class Checker(checker_base):
         if self.offset and getattr(node, 'lineno', None) is not None:
             node.lineno += self.offset[0]
             node.col_offset += self.offset[1]
-        if self.traceTree:
-            print('  ' * self.nodeDepth + node.__class__.__name__)
+        # if self.traceTree:
+            # print('  ' * self.nodeDepth(node) + node.__class__.__name__)
         if (self.futuresAllowed and
-            not (isinstance(node, ast.ImportFrom) or self.isDocstring(node))
+            not (isinstance(node, (ast.Module, ast.ImportFrom)) or self.isDocstring(node))
+                 # EKR: works regardless of new_module.
         ):
             self.futuresAllowed = False
+        # EKR: getCommonAncestor uses node.depth.
         self.nodeDepth += 1
         node.depth = self.nodeDepth
         node.parent = parent
-        try:
-            if aft:
-                handler = getattr(self,'do_' + node.__class__.__name__)
-            else:
-                # EKR: this is the only call to getNodeHandler.
-                handler = self.getNodeHandler(node.__class__)
-            handler(node)
-        finally:
-            self.nodeDepth -= 1
-        if self.traceTree:
-            print('  ' * self.nodeDepth + 'end ' + node.__class__.__name__)
+        # EKR: this is the only call to getNodeHandler.
+        handler = self.getNodeHandler(node.__class__)
+        handler(node)
+        self.nodeDepth -= 1
+        # if self.traceTree:
+            # print('  ' * self.nodeDepth(node) + 'end ' + node.__class__.__name__)
 
     _getDoctestExamples = doctest.DocTestParser().get_examples
 
+    # def nodeDepth(node):
+        # '''Return the node's depth. For debugging only.'''
+        # n = 0
+        # while node:
+            # node = getattr(node, 'parent', None)
+            # if node:
+                # n += 1
+        # return n
     def isDocstring(self, node):
         """
         Determine if the given node is a docstring, as long as it is at the
@@ -561,6 +570,24 @@ class Checker(checker_base):
 
     # additional node types
     COMPREHENSION = KEYWORD = handleChildren
+    if new_module:
+        
+        def MODULE(self, node):
+            assert node.depth == 0
+            self.scopeStack = [ModuleScope()]
+            self.handleChildren(node)
+            # Post-module stuff: was in ctor.
+            self.runDeferred(self._deferredFunctions)
+            # Set _deferredFunctions to None so that deferFunction will fail
+            # noisily if called after we've run through the deferred functions.
+            self._deferredFunctions = None
+            self.runDeferred(self._deferredAssignments)
+            # Set _deferredAssignments to None so that deferAssignment will fail
+            # noisily if called after we've run through the deferred assignments.
+            self._deferredAssignments = None
+            del self.scopeStack[1:]
+            self.popScope()
+            self.checkDeadScopes()
     def GLOBAL(self, node):
         """
         Keep track of globals declarations.
@@ -954,7 +981,7 @@ class Checker(checker_base):
 class NullChecker:
     
     def __init__(self):
-        self.nodeDepth = 0
+        # self.nodeDepth = 0
         self._nodeHandlers = {}
         
     def getNodeHandler(self, node_class):
@@ -970,17 +997,11 @@ class NullChecker:
             self.handleNode(node, tree)
     def handleNode(self, node, parent):
         # EKR: this the general node visiter.
-        if node is None:
-            return
-        self.nodeDepth += 1
-        node.depth = self.nodeDepth
-        node.parent = parent
-        try:
+        if node:
+            node.parent = parent
             # EKR: this is the only call to getNodeHandler.
             handler = self.getNodeHandler(node.__class__)
             handler(node)
-        finally:
-            self.nodeDepth -= 1
 
     # _getDoctestExamples = doctest.DocTestParser().get_examples
     def ignore(self, node):

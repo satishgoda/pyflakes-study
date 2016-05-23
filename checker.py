@@ -15,6 +15,7 @@ assert g
 import doctest
 import os
 import sys
+import time # ekr
 
 PY2 = sys.version_info < (3, 0)
 PY32 = sys.version_info < (3, 3)    # Python 2.5 to 3.2
@@ -142,16 +143,14 @@ def unit_test(raise_on_fail=True):
     aList = [z for z in aList if not z.startswith('_') and not z in remove]
     # Now test them.
     ft = Checker(tree=None)
-    errors, nodes, ops = 0,0,0
+    errors, nodes = 0,0
     for z in aList:
         if hasattr(ft, z):
             nodes += 1
-        # elif _op_names.get(z):
-            # ops += 1
         else:
             errors += 1
             print('Missing pyflakes visitor for: %s' % z)
-    s = '%s node types, %s op types, %s errors' % (nodes, ops, errors)
+    s = '%s node types, %s errors' % (nodes, errors)
     if raise_on_fail:
         assert not errors, s
     else:
@@ -313,6 +312,7 @@ class Checker(object):
 
     def __init__(self, tree, filename='(none)', builtins=None,
                  withDoctest='PYFLAKES_DOCTEST' in os.environ):
+        
         self._nodeHandlers = {}
         self._deferredFunctions = []
         self._deferredAssignments = []
@@ -363,6 +363,7 @@ class Checker(object):
         """
         Run the callables in C{deferred} using their associated scope stack.
         """
+        # g.trace(len(deferred))
         for handler, scope, offset in deferred:
             self.scopeStack = scope
             self.offset = offset
@@ -532,8 +533,6 @@ class Checker(object):
         # EKR: this the general node visiter.
         if node is None:
             return
-        # global stats
-        # stats['handleNode'] = stats.get('handleNode', 0) + 1
         if self.offset and getattr(node, 'lineno', None) is not None:
             node.lineno += self.offset[0]
             node.col_offset += self.offset[1]
@@ -754,14 +753,12 @@ class Checker(object):
             # Set(expr* elts)
 
             def Set(self, node):
-
                 for z in node.elts:
                     self.handleNode(z, node)
                     
             # SetComp(expr elt, comprehension* generators)
 
             def SetComp(self, node):
-                
                 # EKR: visit generators first.
                 for z in node.generators:
                     self.handleNode(z, node)
@@ -848,7 +845,8 @@ class Checker(object):
                     self.handleNode(node.dest, node)
                 for expr in node.values:
                     self.handleNode(expr, node)
-            # Raise(expr? type, expr? inst, expr? tback)
+            # Raise(expr? type, expr? inst, expr? tback)    Python 3
+            # Raise(expr? exc, expr? cause)                 Python 2
 
             def Raise(self, node):
                 
@@ -996,8 +994,10 @@ class Checker(object):
         for deco in node.decorator_list:
             self.handleNode(deco, node)
         self.LAMBDA(node)
+            # EKR: runs deferred 
         self.addBinding(node, FunctionDefinition(node.name, node))
         if self.withDoctest:
+            # g.trace('deferFunction', node.name)
             self.deferFunction(lambda: self.handleDoctests(node))
             
     if aft:
@@ -1129,6 +1129,8 @@ class Checker(object):
             self.pushScope()
             for name in args:
                 self.addBinding(node, Argument(name, node))
+                
+            # EKR: Traversing the Def/Lambda is deferred.
             if isinstance(node.body, list):
                 # case for FunctionDefs
                 for stmt in node.body:
@@ -1143,6 +1145,7 @@ class Checker(object):
                 """
                 for name, binding in self.scope.unusedAssignments():
                     self.report(messages.UnusedVariable, binding.source, name)
+            
             self.deferAssignment(checkUnusedAssignments)
 
             if PY32:
@@ -1157,6 +1160,7 @@ class Checker(object):
                 self.deferAssignment(checkReturnWithArgumentInsideGenerator)
             self.popScope()
 
+        # EKR: traversing the body of the function is deferred!
         self.deferFunction(runFunction)
         
     if aft:
@@ -1164,8 +1168,13 @@ class Checker(object):
     if new_module:
         
         def MODULE(self, node):
+            global stats
+            t1 = time.clock()
             self.scopeStack = [ModuleScope()]
             self.handleChildren(node)
+            t2 = time.clock()
+            stats['pass1'] = stats.get('pass1', 0.0) + t2-t1
+            t3 = time.clock()
             # Post-module stuff: was in ctor.
             self.runDeferred(self._deferredFunctions)
             # Set _deferredFunctions to None so that deferFunction will fail
@@ -1178,7 +1187,9 @@ class Checker(object):
             del self.scopeStack[1:]
             self.popScope()
             self.checkDeadScopes()
-            
+            t4 = time.clock()
+            stats['pass2'] = stats.get('pass2', 0.0) + t4-t3
+            # g.trace('post: %4.2f' % (t2-t1))
         if aft:
             Module = MODULE
     def NAME(self, node):

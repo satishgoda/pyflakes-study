@@ -491,10 +491,12 @@
 </v>
 </v>
 <v t="ekr.20160519172255.40"></v>
-<v t="ekr.20160519173152.1"></v>
 <v t="ekr.20160519172836.1"></v>
-<v t="ekr.20160522081903.1"></v>
-<v t="ekr.20160523090911.3"></v>
+<v t="ekr.20160523145903.1"><vh>** what happens in the post pass</vh></v>
+<v t="ekr.20160522063947.1"></v>
+<v t="ekr.20160519172255.71"></v>
+<v t="ekr.20160519172255.72"></v>
+<v t="ekr.20160520081827.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -595,6 +597,7 @@ assert g
 import doctest
 import os
 import sys
+import time # ekr
 
 PY2 = sys.version_info &lt; (3, 0)
 PY32 = sys.version_info &lt; (3, 3)    # Python 2.5 to 3.2
@@ -1020,6 +1023,7 @@ __all__ = ['check', 'checkPath', 'checkRecursive', 'iterSourceCode', 'main']
 </t>
 <t tx="ekr.20160519172255.41">def __init__(self, tree, filename='(none)', builtins=None,
              withDoctest='PYFLAKES_DOCTEST' in os.environ):
+    
     self._nodeHandlers = {}
     self._deferredFunctions = []
     self._deferredAssignments = []
@@ -1073,6 +1077,7 @@ __all__ = ['check', 'checkPath', 'checkRecursive', 'iterSourceCode', 'main']
     """
     Run the callables in C{deferred} using their associated scope stack.
     """
+    # g.trace(len(deferred))
     for handler, scope, offset in deferred:
         self.scopeStack = scope
         self.offset = offset
@@ -1407,8 +1412,6 @@ def handleNodeDelete(self, node):
     # EKR: this the general node visiter.
     if node is None:
         return
-    # global stats
-    # stats['handleNode'] = stats.get('handleNode', 0) + 1
     if self.offset and getattr(node, 'lineno', None) is not None:
         node.lineno += self.offset[0]
         node.col_offset += self.offset[1]
@@ -1588,8 +1591,10 @@ AWAIT = YIELDFROM = YIELD
     for deco in node.decorator_list:
         self.handleNode(deco, node)
     self.LAMBDA(node)
+        # EKR: runs deferred 
     self.addBinding(node, FunctionDefinition(node.name, node))
     if self.withDoctest:
+        # g.trace('deferFunction', node.name)
         self.deferFunction(lambda: self.handleDoctests(node))
         
 if aft:
@@ -1648,6 +1653,8 @@ ASYNCFUNCTIONDEF = FUNCTIONDEF
         self.pushScope()
         for name in args:
             self.addBinding(node, Argument(name, node))
+            
+        # EKR: Traversing the Def/Lambda is deferred.
         if isinstance(node.body, list):
             # case for FunctionDefs
             for stmt in node.body:
@@ -1662,6 +1669,7 @@ ASYNCFUNCTIONDEF = FUNCTIONDEF
             """
             for name, binding in self.scope.unusedAssignments():
                 self.report(messages.UnusedVariable, binding.source, name)
+        
         self.deferAssignment(checkUnusedAssignments)
 
         if PY32:
@@ -1676,6 +1684,7 @@ ASYNCFUNCTIONDEF = FUNCTIONDEF
             self.deferAssignment(checkReturnWithArgumentInsideGenerator)
         self.popScope()
 
+    # EKR: traversing the body of the function is deferred!
     self.deferFunction(runFunction)
     
 if aft:
@@ -2061,16 +2070,23 @@ TestController().run_test(scope='all', s=s)
     t2 = time.clock()
     n = len(files)
     stats['total'] = t2 - t1
+    if 1:
+        for name in ('pass1', 'pass2'):
+            stats[name] = checker.stats.get(name, 0.0)
     if 'handle' in stats and 'visit' in stats:
         stats['total2'] = t2 - t1 - stats.get('handle',0.0) - stats.get('visit',0.0)
     print('%s file%s' % (n, g.plural(n)))
     if 1:
-        for key in ('read', 'parse', 'visit', 'handle', 'check', 'total', 'total2'):
-            if key in stats:
-                print('%6s %5.2f sec' % (key, stats.get(key)))
+        keys = (
+            'read', 'parse', 'visit', 'handle', 'check',
+            '  pass1', '  pass2',
+            'total', 'total2')
+        for key in keys:
+            if key.strip() in stats:
+                print('%-7s %4.2f sec' % (key, stats.get(key.strip())))
         if 'total2' in stats:
             print('total2 = total - visit - handle')
-        if checker.stats: print('checker.stats', checker.stats)
+        # if checker.stats: print('checker.stats', checker.stats)
 </t>
 <t tx="ekr.20160520082209.1">def check_all(self, files, s=None):
     '''Run pyflakes on all files.'''
@@ -2090,6 +2106,7 @@ TestController().run_test(scope='all', s=s)
                 self.check_string(fn, s, tree=tree) # EKR: added tree
             else:
                 print('can not read:', fn)
+
 </t>
 <t tx="ekr.20160520102401.1"></t>
 <t tx="ekr.20160520160409.1">import ast
@@ -4046,8 +4063,13 @@ ASYNCFUNCTIONDEF = FUNCTIONDEF
 <t tx="ekr.20160522063947.1">if new_module:
     
     def MODULE(self, node):
+        global stats
+        t1 = time.clock()
         self.scopeStack = [ModuleScope()]
         self.handleChildren(node)
+        t2 = time.clock()
+        stats['pass1'] = stats.get('pass1', 0.0) + t2-t1
+        t3 = time.clock()
         # Post-module stuff: was in ctor.
         self.runDeferred(self._deferredFunctions)
         # Set _deferredFunctions to None so that deferFunction will fail
@@ -4060,7 +4082,9 @@ ASYNCFUNCTIONDEF = FUNCTIONDEF
         del self.scopeStack[1:]
         self.popScope()
         self.checkDeadScopes()
-        
+        t4 = time.clock()
+        stats['pass2'] = stats.get('pass2', 0.0) + t4-t3
+        # g.trace('post: %4.2f' % (t2-t1))
     if aft:
         Module = MODULE</t>
 <t tx="ekr.20160522070940.1"># def nodeDepth(node):
@@ -4309,7 +4333,8 @@ def Print(self, node):
     for expr in node.values:
         self.handleNode(expr, node)
 </t>
-<t tx="ekr.20160522081949.55"># Raise(expr? type, expr? inst, expr? tback)
+<t tx="ekr.20160522081949.55"># Raise(expr? type, expr? inst, expr? tback)    Python 3
+# Raise(expr? exc, expr? cause)                 Python 2
 
 def Raise(self, node):
     
@@ -4493,16 +4518,14 @@ From handleNode:
     aList = [z for z in aList if not z.startswith('_') and not z in remove]
     # Now test them.
     ft = Checker(tree=None)
-    errors, nodes, ops = 0,0,0
+    errors, nodes = 0,0
     for z in aList:
         if hasattr(ft, z):
             nodes += 1
-        # elif _op_names.get(z):
-            # ops += 1
         else:
             errors += 1
             print('Missing pyflakes visitor for: %s' % z)
-    s = '%s node types, %s op types, %s errors' % (nodes, ops, errors)
+    s = '%s node types, %s errors' % (nodes, errors)
     if raise_on_fail:
         assert not errors, s
     else:
@@ -4530,18 +4553,17 @@ def DictComp(self, node):
 <t tx="ekr.20160523093026.1"># Set(expr* elts)
 
 def Set(self, node):
-
     for z in node.elts:
         self.handleNode(z, node)
         </t>
 <t tx="ekr.20160523093032.1"># SetComp(expr elt, comprehension* generators)
 
 def SetComp(self, node):
-    
     # EKR: visit generators first.
     for z in node.generators:
         self.handleNode(z, node)
     self.handleNode(node.elt, node)
 </t>
+<t tx="ekr.20160523145903.1"></t>
 </tnodes>
 </leo_file>

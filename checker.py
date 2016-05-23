@@ -7,9 +7,7 @@ Also, it models the Bindings and Scopes.
 
 
 # checker.py imports...
-
 import leo.core.leoGlobals as g # EKR
-import leo.core.leoAst as leo_ast # EKR
 assert g
 
 import doctest
@@ -54,8 +52,10 @@ stats = {}
 # are only present on some platforms.
 _MAGIC_GLOBALS = ['__file__', '__builtins__', 'WindowsError']
 
+
 class _FieldsOrder(dict):
     """Fix order of AST node fields."""
+
     def _get_fields(self, node_class):
         # handle iter before target, and generators before element
         # EKR: the effect of the key is to assign 0 to 'iter' or 'generators' or 'value'
@@ -78,11 +78,13 @@ class _FieldsOrder(dict):
                 key_first = 'value'.find
             return tuple(sorted(fields, key=key_first, reverse=True))
         
+
     def __missing__(self, node_class):
         # EKR: called if self[node_class] does not exist.
         self[node_class] = fields = self._get_fields(node_class)
         # g.trace(node_class.__name__, fields)
         return fields
+
 # Python >= 3.3 uses ast.Try instead of (ast.TryExcept + ast.TryFinally)
 # EKR: used only by differentForks
 if PY32:
@@ -97,6 +99,7 @@ else:
             return [n.body]
         if isinstance(n, ast.Try):
             return [n.body + n.orelse] + [[hdl] for hdl in n.handlers]
+
 def getNodeName(node):
     # Returns node.id, or node.name, or None
     ### if node.__class__.__name__ == 'Name': g.trace(node, node.id)
@@ -104,6 +107,7 @@ def getNodeName(node):
         return node.id
     if hasattr(node, 'name'):   # a ExceptHandler node
         return node.name
+
 if PY2:
     def getNodeType(node_class):
         # workaround str.upper() which is locale-dependent
@@ -113,6 +117,7 @@ if PY2:
 else:
     def getNodeType(node_class):
         return node_class.__name__.upper()
+
 def iter_child_nodes(node, omit=None, _fields_order=_FieldsOrder()):
     """
     Yield all direct child nodes of *node*, that is, all fields that
@@ -127,6 +132,7 @@ def iter_child_nodes(node, omit=None, _fields_order=_FieldsOrder()):
         elif isinstance(field, list):
             for item in field:
                 yield item
+
 def unit_test(raise_on_fail=True):
     '''Run basic unit tests for this file.'''
     import _ast
@@ -155,6 +161,8 @@ def unit_test(raise_on_fail=True):
         assert not errors, s
     else:
         print(s)
+
+
 class Binding(object):
     """
     Represents the binding of a value to a name.
@@ -171,20 +179,27 @@ class Binding(object):
         self.source = source # EKR: a node.
         self.used = False # EKR: Set in helpers of Name.
 
+
     def __str__(self):
         return self.name
+
     def __repr__(self):
         return '<%s object %r from line %r at 0x%x>' % (
             self.__class__.__name__,
             self.name,
             self.source.lineno,
             id(self))
+
     def redefines(self, other):
         return isinstance(other, Definition) and self.name == other.name
+
+
 class Definition(Binding):
     """
     A binding that defines a function or a class.
     """
+
+
 class Importation(Definition):
     """
     A binding created by an import statement.
@@ -193,21 +208,27 @@ class Importation(Definition):
         possibly including multiple dotted components.
     @type fullName: C{str}
     """
+
     def __init__(self, name, source):
         self.fullName = name
         self.redefined = []
         name = name.split('.')[0]
         super(Importation, self).__init__(name, source)
+
     def redefines(self, other):
         if isinstance(other, Importation):
             return self.fullName == other.fullName
         else:
             # EKR: same as Binding.redefines.
             return isinstance(other, Definition) and self.name == other.name
+
+
 class Argument(Binding):
     """
     Represents binding a name as an argument.
     """
+
+
 class Assignment(Binding):
     """
     Represents binding a name with an explicit assignment.
@@ -216,10 +237,16 @@ class Assignment(Binding):
     the checker does not consider assignments in tuple/list unpacking to be
     Assignments, rather it treats them as simple Bindings.
     """
+
+
 class FunctionDefinition(Definition):
     pass
+
+
 class ClassDefinition(Definition):
     pass
+
+
 class ExportBinding(Binding):
     """
     A binding created by an C{__all__} assignment.  If the names in the list
@@ -234,6 +261,7 @@ class ExportBinding(Binding):
     Names which are imported and not otherwise used but appear in the value of
     C{__all__} will not have an unused import warning reported for them.
     """
+
     def __init__(self, name, source, scope):
         if '__all__' in scope and isinstance(source, ast.AugAssign):
             self.names = list(scope['__all__'].names)
@@ -244,14 +272,24 @@ class ExportBinding(Binding):
                 if isinstance(node, ast.Str):
                     self.names.append(node.s)
         super(ExportBinding, self).__init__(name, source)
+
+#
+# Scope classes...
+#
+
+
 class Scope(dict):
     importStarred = False       # set to True when import * is found
 
     def __repr__(self):
         scope_cls = self.__class__.__name__
         return '<%s at 0x%x %s>' % (scope_cls, id(self), dict.__repr__(self))
+
+
 class ClassScope(Scope):
     pass
+
+
 class FunctionScope(Scope):
     """
     I represent a name scope for a function.
@@ -265,12 +303,14 @@ class FunctionScope(Scope):
         '__traceback_info__',
         '__traceback_supplement__'])
 
+
     def __init__(self):
         super(FunctionScope, self).__init__()
         # Simplify: manage the special locals as globals
         self.globals = self.alwaysUsed.copy()
         self.returnValue = None     # First non-empty return
         self.isGenerator = False    # Detect a generator
+
     def unusedAssignments(self):
         """
         Return a generator for the assignments which have not been used.
@@ -283,10 +323,16 @@ class FunctionScope(Scope):
                 isinstance(binding, Assignment)
             ):
                 yield name, binding
+
+
 class GeneratorScope(Scope):
     pass
+
+
 class ModuleScope(Scope):
     pass
+
+
 class Checker(object):
     """
     I check the cleanliness and sanity of Python code.
@@ -310,6 +356,7 @@ class Checker(object):
         builtIns.update(_customBuiltIns.split(','))
     del _customBuiltIns
 
+
     def __init__(self, tree, filename='(none)', builtins=None,
                  withDoctest='PYFLAKES_DOCTEST' in os.environ):
         
@@ -320,35 +367,24 @@ class Checker(object):
         self.messages = []
         self.nodeDepth = 0
         self.filename = filename
+        # EKR: self.builtIns defined in class node.
         if builtins:
             self.builtIns = self.builtIns.union(builtins)
         self.withDoctest = withDoctest
         self.exceptHandlers = [()]
         self.futuresAllowed = True
         self.root = tree
-        if new_module:
-            self.handleNode(tree, parent=None)
-                # MODULE handler does all the work.
-        else:
-            self.scopeStack = [ModuleScope()]
-            self.handleChildren(tree)
-            self.runDeferred(self._deferredFunctions)
-            # Set _deferredFunctions to None so that deferFunction will fail
-            # noisily if called after we've run through the deferred functions.
-            self._deferredFunctions = None
-            self.runDeferred(self._deferredAssignments)
-            # Set _deferredAssignments to None so that deferAssignment will fail
-            # noisily if called after we've run through the deferred assignments.
-            self._deferredAssignments = None
-            del self.scopeStack[1:]
-            self.popScope()
-            self.checkDeadScopes()
+        self.pass_name = 'no pass' # EKR.
+        self.handleNode(tree, parent=None)
+            # EKR: new MODULE handler does all the work.
+
     def deferAssignment(self, callable):
         """
         Schedule an assignment handler to be called just after deferred
         function handlers.
         """
         self._deferredAssignments.append((callable, self.scopeStack[:], self.offset))
+
     def deferFunction(self, callable):
         """
         Schedule a function handler to be called just before completion.
@@ -359,6 +395,7 @@ class Checker(object):
         restored, however it will contain any new bindings added to it.
         """
         self._deferredFunctions.append((callable, self.scopeStack[:], self.offset))
+
     def runDeferred(self, deferred):
         """
         Run the callables in C{deferred} using their associated scope stack.
@@ -368,11 +405,14 @@ class Checker(object):
             self.scopeStack = scope
             self.offset = offset
             handler()
+
     @property
     def scope(self):
         return self.scopeStack[-1]
+
     def popScope(self):
         self.deadScopes.append(self.scopeStack.pop())
+
     def checkDeadScopes(self):
         """
         Look at scopes which have been fully examined and report names in them
@@ -406,10 +446,13 @@ class Checker(object):
                         else:
                             messg = messages.RedefinedWhileUnused
                         self.report(messg, node, value.name, value.source)
+
     def pushScope(self, scopeClass=FunctionScope):
         self.scopeStack.append(scopeClass())
+
     def report(self, messageClass, *args, **kwargs):
         self.messages.append(messageClass(self.filename, *args, **kwargs))
+
     def getParent(self, node):
         # Lookup the first parent which is not Tuple, List or Starred
         # EKR: handleNode sets node.parent.
@@ -417,6 +460,7 @@ class Checker(object):
             node = node.parent
             if not hasattr(node, 'elts') and not hasattr(node, 'ctx'):
                 return node
+
     def getCommonAncestor(self, lnode, rnode, stop):
         if stop in (lnode, rnode) or not (hasattr(lnode, 'parent') and
                                           hasattr(rnode, 'parent')):
@@ -429,11 +473,13 @@ class Checker(object):
         if (lnode.depth < rnode.depth):
             return self.getCommonAncestor(lnode, rnode.parent, stop)
         return self.getCommonAncestor(lnode.parent, rnode.parent, stop)
+
     def descendantOf(self, node, ancestors, stop):
         for a in ancestors:
             if self.getCommonAncestor(node, a, stop):
                 return True
         return False
+
     def differentForks(self, lnode, rnode):
         """True, if lnode and rnode are located on different forks of IF/TRY"""
         ancestor = self.getCommonAncestor(lnode, rnode, self.root)
@@ -444,6 +490,7 @@ class Checker(object):
                    self.descendantOf(rnode, items, ancestor):
                     return True
         return False
+
     def addBinding(self, node, value):
         """
         Called when a binding is altered.
@@ -483,7 +530,9 @@ class Checker(object):
 
         # g.trace(self.scope, value) # EKR
         self.scope[value.name] = value
+
     # EKR: like visitors
+
     # EKR: not used when using aft code.
 
     def getNodeHandler(self, node_class):
@@ -494,10 +543,12 @@ class Checker(object):
             nodeType = getNodeType(node_class)
         self._nodeHandlers[node_class] = handler = getattr(self, nodeType)
         return handler
+
     def handleChildren(self, tree, omit=None):
         # EKR: iter_child_nodes uses _FieldsOrder class.
         for node in iter_child_nodes(tree, omit=omit):
             self.handleNode(node, tree)
+
     def handleDoctests(self, node):
         try:
             (docstring, node_lineno) = self.getDocstring(node.body[0])
@@ -529,6 +580,7 @@ class Checker(object):
         if not underscore_in_builtins:
             self.builtIns.remove('_')
         self.popScope()
+
     def handleNode(self, node, parent):
         # EKR: this the general node visiter.
         if node is None:
@@ -550,9 +602,6 @@ class Checker(object):
         # EKR: this is the only call to getNodeHandler.
         if aft:
             handler = getattr(self, node.__class__.__name__)
-            # handler = getattr(self,
-                # node.__class__.__name__,
-                # self.getNodeHandler(node.__class__))
             handler(node)
         else:
             handler = self.getNodeHandler(node.__class__)
@@ -563,14 +612,7 @@ class Checker(object):
 
     _getDoctestExamples = doctest.DocTestParser().get_examples
 
-    # def nodeDepth(node):
-        # '''Return the node's depth. For debugging only.'''
-        # n = 0
-        # while node:
-            # node = getattr(node, 'parent', None)
-            # if node:
-                # n += 1
-        # return n
+
     def isDocstring(self, node):
         """
         Determine if the given node is a docstring, as long as it is at the
@@ -578,6 +620,7 @@ class Checker(object):
         """
         return isinstance(node, ast.Str) or (isinstance(node, ast.Expr) and
                                              isinstance(node.value, ast.Str))
+
     def getDocstring(self, node):
         if isinstance(node, ast.Expr):
             node = node.value
@@ -586,6 +629,7 @@ class Checker(object):
         # Computed incorrectly if the docstring has backslash
         doctest_lineno = node.lineno - node.s.count('\n') - 1
         return (node.s, doctest_lineno)
+
     def ignore(self, node):
             pass
 
@@ -602,7 +646,9 @@ class Checker(object):
         MatMult= ignore
             # operators are also constant node instances.
             
+
         if aft:
+
             # 2: arguments = (expr* args, identifier? vararg,
             #                 identifier? kwarg, expr* defaults)
             # 3: arguments = (arg*  args, arg? vararg,
@@ -635,22 +681,26 @@ class Checker(object):
             def arg(self, node):
                 if getattr(node, 'annotation', None):
                     self.handleNode(node.annotation, node)
+
             # Attribute(expr value, identifier attr, expr_context ctx)
 
             def Attribute(self, node):
                 self.handleNode(node.value, node)
                 # self.handleNode(node.ctx, node)
+
             # BinOp(expr left, operator op, expr right)
 
             def BinOp(self, node):
                 self.handleNode(node.left, node)
                 # self.op_name(node.op)
                 self.handleNode(node.right, node)
+
             # BoolOp(boolop op, expr* values)
 
             def BoolOp(self, node):
                 for z in node.values:
                     self.handleNode(z, node)
+
             # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
             def Call(self, node):
@@ -664,6 +714,7 @@ class Checker(object):
                     self.handleNode(node.starargs, node)
                 if getattr(node, 'kwargs', None):
                     self.handleNode(node.kwargs, node)
+
             # Compare(expr left, cmpop* ops, expr* comparators)
 
             def Compare(self, node):
@@ -677,6 +728,7 @@ class Checker(object):
                 self.handleNode(node.left, node)
                 for z in node.comparators:
                     self.handleNode(z, node)
+
             # comprehension (expr target, expr iter, expr* ifs)
 
             def comprehension(self, node):
@@ -685,6 +737,7 @@ class Checker(object):
                 self.handleNode(node.target, node) # A name.
                 for z in node.ifs:
                     self.handleNode(z, node)
+
             # Dict(expr* keys, expr* values)
 
             def Dict(self, node):
@@ -693,6 +746,7 @@ class Checker(object):
                 for i in range(len(node.keys)):
                     self.handleNode(node.keys[i], node)
                     self.handleNode(node.values[i], node)
+
             # DictComp(expr key, expr value, comprehension* generators)
 
             def DictComp(self, node):
@@ -702,29 +756,36 @@ class Checker(object):
                     self.handleNode(z, node)
                 self.handleNode(node.value, node)
                 self.handleNode(node.key, node)
+
             # Expr(expr value)
 
             def Expr(self, node):
                 self.handleNode(node.value, node)
+
             def Expression(self, node):
                 '''An inner expression'''
                 self.handleNode(node.body, node)
+
             def ExtSlice(self, node):
                 for z in node.dims:
                     self.handleNode(z, node)
+
             # IfExp(expr test, expr body, expr orelse)
 
             def IfExp(self, node):
                 self.handleNode(node.body, node)
                 self.handleNode(node.test, node)
                 self.handleNode(node.orelse, node)
+
             def Index(self, node):
                 self.handleNode(node.value, node)
+
             # keyword = (identifier arg, expr value)
 
             def keyword(self, node):
                 # node.arg is a string.
                 self.handleNode(node.value, node)
+
             # List(expr* elts, expr_context ctx)
 
             def List(self, node):
@@ -732,37 +793,26 @@ class Checker(object):
                     self.handleNode(z, node)
                 # self.handleNode(node.ctx, node)
 
-            # ListComp(expr elt, comprehension* generators)
 
-            def ListComp(self, node):
-                
-                # EKR: visit generators first.
-                for z in node.generators:
-                    self.handleNode(z, node)
-                self.handleNode(node.elt, node)
             def NameConstant(self, node): # Python 3 only.
                 self.handleChildren(node)
                 # self.handleNode(node.value, node)
                 # s = repr(node.value)
                 # return 'bool' if s in ('True', 'False') else s
+
             # Python 2.x only
             # Repr(expr value)
 
             def Repr(self, node):
                 self.handleNode(node.value, node)
+
             # Set(expr* elts)
 
             def Set(self, node):
                 for z in node.elts:
                     self.handleNode(z, node)
                     
-            # SetComp(expr elt, comprehension* generators)
 
-            def SetComp(self, node):
-                # EKR: visit generators first.
-                for z in node.generators:
-                    self.handleNode(z, node)
-                self.handleNode(node.elt, node)
             def Slice(self, node):
                 if getattr(node, 'lower', None):
                     self.handleNode(node.lower, node)
@@ -770,6 +820,7 @@ class Checker(object):
                     self.handleNode(node.upper, node)
                 if getattr(node, 'step', None):
                     self.handleNode(node.step, node)
+
             # Subscript(expr value, slice slice, expr_context ctx)
 
             def Subscript(self, node):
@@ -777,23 +828,27 @@ class Checker(object):
                 self.handleNode(node.value, node)
                 self.handleNode(node.slice, node)
                 # self.handleNode(node.ctx, node)
+
             # Tuple(expr* elts, expr_context ctx)
 
             def Tuple(self, node):
                 for z in node.elts:
                     self.handleNode(z, node)
                 # self.handleNode(node.ctx, node)
+
             # UnaryOp(unaryop op, expr operand)
 
             def UnaryOp(self, node):
                 # self.op_name(node.op)
                 self.handleNode(node.operand, node)
+
             # Assert(expr test, expr? msg)
 
             def Assert(self, node):
                 self.handleNode(node.test, node)
                 if node.msg:
                     self.handleNode(node.msg, node)
+
             # Assign(expr* targets, expr value)
 
             def Assign(self, node):
@@ -802,11 +857,13 @@ class Checker(object):
                 for z in node.targets:
                     self.handleNode(z, node)
                 
+
             # Delete(expr* targets)
 
             def Delete(self, node):
                 for z in node.targets:
                     self.handleNode(z, node)
+
             # Python 2.x only
             # Exec(expr body, expr? globals, expr? locals)
 
@@ -816,6 +873,7 @@ class Checker(object):
                     self.handleNode(node.globals, node)
                 if getattr(node, 'locals', None):
                     self.handleNode(node.locals, node)
+
             # For(expr target, expr iter, stmt* body, stmt* orelse)
 
             def For(self, node):
@@ -829,6 +887,7 @@ class Checker(object):
                     self.handleNode(z, node)
 
             AsyncFor = For
+
             # If(expr test, stmt* body, stmt* orelse)
 
             def If(self, node):
@@ -837,6 +896,7 @@ class Checker(object):
                     self.handleNode(z, node)
                 for z in node.orelse:
                     self.handleNode(z, node)
+
             # Python 2.x only
             # Print(expr? dest, expr* values, bool nl)
 
@@ -845,6 +905,7 @@ class Checker(object):
                     self.handleNode(node.dest, node)
                 for expr in node.values:
                     self.handleNode(expr, node)
+
             # Raise(expr? type, expr? inst, expr? tback)    Python 3
             # Raise(expr? exc, expr? cause)                 Python 2
 
@@ -863,11 +924,13 @@ class Checker(object):
                         self.handleNode(node.inst, node)
                     if getattr(node, 'tback', None):
                         self.handleNode(node.tback, node)
+
             # Starred(expr value, expr_context ctx)
 
             def Starred(self, node):
 
                 self.handleNode(node.value, node)
+
             # TryFinally(stmt* body, stmt* finalbody)
 
             def TryFinally(self, node):
@@ -875,6 +938,7 @@ class Checker(object):
                     self.handleNode(z, node)
                 for z in node.finalbody:
                     self.handleNode(z, node)
+
             # While(expr test, stmt* body, stmt* orelse)
 
             def While(self, node):
@@ -883,6 +947,7 @@ class Checker(object):
                     self.handleNode(z, node)
                 for z in node.orelse:
                     self.handleNode(z, node)
+
             # 2:  With(expr context_expr, expr? optional_vars,
             #          stmt* body)
             # 3:  With(withitem* items,
@@ -907,16 +972,6 @@ class Checker(object):
                     self.handleNode(z, node)
                     
             AsyncWith = With
-            #  Yield(expr? value)
-
-            def Yield(self, node):
-                if node.value:
-                    self.handleNode(node.value, node)
-            # YieldFrom(expr value)
-
-            def YieldFrom(self, node):
-
-                self.handleNode(node.value, node)
     else:
      
         CONTINUE = BREAK = PASS = ignore
@@ -950,6 +1005,7 @@ class Checker(object):
         
         # additional node types
         COMPREHENSION = KEYWORD = handleChildren
+
     def AUGASSIGN(self, node):
         self.handleNodeLoad(node.target)
         self.handleNode(node.value, node)
@@ -957,6 +1013,7 @@ class Checker(object):
 
     if aft:
         AugAssign = AUGASSIGN
+
     def CLASSDEF(self, node):
         """
         Check names used in a class definition, including its decorators, base
@@ -973,6 +1030,7 @@ class Checker(object):
         self.pushScope(ClassScope)
         if self.withDoctest:
             self.deferFunction(lambda: self.handleDoctests(node))
+        # EKR: Unlike def's & lambda's, we *do* traverse the class's body.
         for stmt in node.body:
             self.handleNode(stmt, node)
         self.popScope()
@@ -980,6 +1038,7 @@ class Checker(object):
         
     if aft:
         ClassDef = CLASSDEF
+
     def EXCEPTHANDLER(self, node):
         # 3.x: in addition to handling children, we must handle the name of
         # the exception, which is not a Name node, but a simple string.
@@ -990,11 +1049,11 @@ class Checker(object):
     if aft:
         ExceptHandler = EXCEPTHANDLER
 
+
     def FUNCTIONDEF(self, node):
         for deco in node.decorator_list:
             self.handleNode(deco, node)
-        self.LAMBDA(node)
-            # EKR: runs deferred 
+        self.LAMBDA(node) # EKR: defer's traversal of the body!
         self.addBinding(node, FunctionDefinition(node.name, node))
         if self.withDoctest:
             # g.trace('deferFunction', node.name)
@@ -1004,17 +1063,19 @@ class Checker(object):
         FunctionDef = AsyncFunctionDef = FUNCTIONDEF
 
     ASYNCFUNCTIONDEF = FUNCTIONDEF
+
     def GENERATOREXP(self, node):
         self.pushScope(GeneratorScope)
         self.handleChildren(node)
         self.popScope()
         
     if aft:
-        ListComp = GeneratorExp = GENERATOREXP
+        ListComp = SetComp = GeneratorExp = GENERATOREXP
 
     LISTCOMP = handleChildren if PY2 else GENERATOREXP
         
     DICTCOMP = SETCOMP = GENERATOREXP
+
     def GLOBAL(self, node):
         """
         Keep track of globals declarations.
@@ -1048,6 +1109,7 @@ class Checker(object):
         Global = Nonlocal = GLOBAL
 
     NONLOCAL = GLOBAL
+
     def IMPORT(self, node):
         for alias in node.names:
             name = alias.asname or alias.name
@@ -1056,6 +1118,7 @@ class Checker(object):
 
     if aft:
         Import = IMPORT
+
     def IMPORTFROM(self, node):
         if node.module == '__future__':
             if not self.futuresAllowed:
@@ -1078,9 +1141,61 @@ class Checker(object):
     if aft:
         ImportFrom = IMPORTFROM
 
+
     def LAMBDA(self, node):
-        args = []
-        annotations = []
+        
+        annotations, args, defaults = self.get_function_args(node)
+        # Pass 1: visit *only* annotations and defaults.
+        for child in annotations + defaults:
+            if child:
+                self.handleNode(child, node)
+        # EKR: The dog that isn't barking:
+        # pass 1 defers traversing the def's/lambda's body!
+
+        def runFunction():
+
+            self.pushScope()
+            for name in args:
+                self.addBinding(node, Argument(name, node))
+                
+            # EKR: Traversing the Def/Lambda is deferred until now.
+            if isinstance(node.body, list):
+                # case for FunctionDefs
+                for stmt in node.body:
+                    self.handleNode(stmt, node)
+            else:
+                # case for Lambdas
+                self.handleNode(node.body, node)
+
+            def checkUnusedAssignments():
+                """
+                Check to see if any assignments have not been used.
+                """
+                for name, binding in self.scope.unusedAssignments():
+                    self.report(messages.UnusedVariable, binding.source, name)
+            
+            self.deferAssignment(checkUnusedAssignments)
+
+            if PY32:
+                def checkReturnWithArgumentInsideGenerator():
+                    """
+                    Check to see if there is any return statement with
+                    arguments but the function is a generator.
+                    """
+                    if self.scope.isGenerator and self.scope.returnValue:
+                        self.report(messages.ReturnWithArgsInsideGenerator,
+                                    self.scope.returnValue)
+                self.deferAssignment(checkReturnWithArgumentInsideGenerator)
+
+            self.popScope()
+        self.deferFunction(runFunction)
+        
+    if aft:
+        Lambda = LAMBDA
+
+    def get_function_args(self, node):
+
+        annotations, args = [], []
 
         if PY2:
             def addArgs(arglist):
@@ -1119,79 +1234,41 @@ class Checker(object):
             for (idx, arg) in enumerate(args):
                 if arg in args[:idx]:
                     self.report(messages.DuplicateArgument, node, arg)
+                    
+        return annotations, args, defaults
 
-        for child in annotations + defaults:
-            if child:
-                self.handleNode(child, node)
-
-        def runFunction():
-
-            self.pushScope()
-            for name in args:
-                self.addBinding(node, Argument(name, node))
-                
-            # EKR: Traversing the Def/Lambda is deferred.
-            if isinstance(node.body, list):
-                # case for FunctionDefs
-                for stmt in node.body:
-                    self.handleNode(stmt, node)
-            else:
-                # case for Lambdas
-                self.handleNode(node.body, node)
-
-            def checkUnusedAssignments():
-                """
-                Check to see if any assignments have not been used.
-                """
-                for name, binding in self.scope.unusedAssignments():
-                    self.report(messages.UnusedVariable, binding.source, name)
-            
-            self.deferAssignment(checkUnusedAssignments)
-
-            if PY32:
-                def checkReturnWithArgumentInsideGenerator():
-                    """
-                    Check to see if there is any return statement with
-                    arguments but the function is a generator.
-                    """
-                    if self.scope.isGenerator and self.scope.returnValue:
-                        self.report(messages.ReturnWithArgsInsideGenerator,
-                                    self.scope.returnValue)
-                self.deferAssignment(checkReturnWithArgumentInsideGenerator)
-            self.popScope()
-
-        # EKR: traversing the body of the function is deferred!
-        self.deferFunction(runFunction)
-        
-    if aft:
-        Lambda = LAMBDA
-    if new_module:
-        
-        def MODULE(self, node):
-            global stats
-            t1 = time.clock()
-            self.scopeStack = [ModuleScope()]
-            self.handleChildren(node)
-            t2 = time.clock()
-            stats['pass1'] = stats.get('pass1', 0.0) + t2-t1
-            t3 = time.clock()
-            # Post-module stuff: was in ctor.
-            self.runDeferred(self._deferredFunctions)
+    def MODULE(self, node):
+        global stats
+        t1 = time.clock()
+        self.pass_name = 'pass 1'
+        self.scopeStack = [ModuleScope()]
+        self.handleChildren(node)
+        t2 = time.clock()
+        stats['pass1'] = stats.get('pass1', 0.0) + t2-t1
+        t3 = time.clock()
+        # Post-module stuff: was in ctor.
+        self.pass_name = 'deferred functions'
+        self.runDeferred(self._deferredFunctions)
+        self._deferredFunctions = None
             # Set _deferredFunctions to None so that deferFunction will fail
             # noisily if called after we've run through the deferred functions.
-            self._deferredFunctions = None
-            self.runDeferred(self._deferredAssignments)
+        t4 = time.clock()
+        stats['pass2'] = stats.get('pass2', 0.0) + t4-t3
+        t5 = time.clock()
+        self.pass_name = 'deferred assignments'
+        self.runDeferred(self._deferredAssignments)
+        self._deferredAssignments = None
             # Set _deferredAssignments to None so that deferAssignment will fail
             # noisily if called after we've run through the deferred assignments.
-            self._deferredAssignments = None
-            del self.scopeStack[1:]
-            self.popScope()
-            self.checkDeadScopes()
-            t4 = time.clock()
-            stats['pass2'] = stats.get('pass2', 0.0) + t4-t3
-            # g.trace('post: %4.2f' % (t2-t1))
-        if aft:
-            Module = MODULE
+        del self.scopeStack[1:]
+        self.popScope()
+        self.checkDeadScopes()
+        t6 = time.clock()
+        stats['pass3'] = stats.get('pass3', 0.0) + t6-t5
+        # g.trace('post: %4.2f' % (t2-t1))
+    if aft:
+        Module = MODULE
+
     def NAME(self, node):
         """
         Handle occurrence of Name (which can be a load/store/delete access.)
@@ -1217,6 +1294,7 @@ class Checker(object):
             
     if aft:
         Name = NAME
+
 
     # EKR: ctx is Del.
     def handleNodeDelete(self, node):
@@ -1248,6 +1326,7 @@ class Checker(object):
                 del self.scope[name]
             except KeyError:
                 self.report(messages.UndefinedName, node, name)
+
     def handleNodeLoad(self, node):
         # EKR: ctx is Load or AugLoad.
         name = getNodeName(node)
@@ -1292,8 +1371,10 @@ class Checker(object):
         # protected with a NameError handler?
         if 'NameError' not in self.exceptHandlers[-1]:
             self.report(messages.UndefinedName, node, name)
+
     # EKR: called by Name and ExceptHandler.
     # EKR: ctx is Store or AugStore.
+
     def handleNodeStore(self, node):
         name = getNodeName(node)
         if not name:
@@ -1324,12 +1405,14 @@ class Checker(object):
         else:
             binding = Assignment(name, node)
         self.addBinding(node, binding)
+
     def isLiteralTupleUnpacking(self, node):
         if isinstance(node, ast.Assign):
             for child in node.targets + [node.value]:
                 if not hasattr(child, 'elts'):
                     return False
             return True
+
     def RETURN(self, node):
         
         if isinstance(self.scope, ClassScope):
@@ -1345,6 +1428,7 @@ class Checker(object):
 
     if aft:
         Return = RETURN
+
     def TRY(self, node):
         handler_names = []
         # List the exception handlers
@@ -1366,6 +1450,7 @@ class Checker(object):
         Try = TryExcept = TRY
 
     TRYEXCEPT = TRY
+
     def YIELD(self, node):
         self.scope.isGenerator = True
         self.handleNode(node.value, node)
@@ -1374,11 +1459,14 @@ class Checker(object):
         Yield = Await = YieldFrom = YIELD
 
     AWAIT = YIELDFROM = YIELD
+
+
 class NullChecker:
     '''A do-nothing checker for timing comparisons.'''
     def __init__(self):
         self._nodeHandlers = {}
         
+
     def getNodeHandler(self, node_class):
         try:
             return self._nodeHandlers[node_class]
@@ -1386,10 +1474,12 @@ class NullChecker:
             nodeType = getNodeType(node_class)
         self._nodeHandlers[node_class] = handler = getattr(self, nodeType)
         return handler
+
     def handleChildren(self, tree, omit=None):
         # EKR: iter_child_nodes uses _FieldsOrder class.
         for node in iter_child_nodes(tree, omit=omit):
             self.handleNode(node, tree)
+
     def handleNode(self, node, parent):
         # EKR: this the general node visiter.
         if node:
@@ -1399,6 +1489,7 @@ class NullChecker:
             handler(node)
 
     # _getDoctestExamples = doctest.DocTestParser().get_examples
+
     def ignore(self, node):
         pass
 
@@ -1429,30 +1520,37 @@ class NullChecker:
 
     # additional node types
     COMPREHENSION = KEYWORD = handleChildren
+
     def GLOBAL(self, node):
         pass
 
     NONLOCAL = GLOBAL
+
     def GENERATOREXP(self, node):
         self.handleChildren(node)
 
     LISTCOMP = handleChildren if PY2 else GENERATOREXP
 
     DICTCOMP = SETCOMP = GENERATOREXP
+
     def NAME(self, node):
         pass
+
     def RETURN(self, node):
         self.handleNode(node.value, node)
+
     def YIELD(self, node):
         self.handleNode(node.value, node)
 
     AWAIT = YIELDFROM = YIELD
+
     def FUNCTIONDEF(self, node):
         for deco in node.decorator_list:
             self.handleNode(deco, node)
         self.LAMBDA(node)
 
     ASYNCFUNCTIONDEF = FUNCTIONDEF
+
     def LAMBDA(self, node):
         annotations = []
         if PY2:
@@ -1488,6 +1586,7 @@ class NullChecker:
         else:
             # case for Lambdas
             self.handleNode(node.body, node)
+
     def CLASSDEF(self, node):
         """
         Check names used in a class definition, including its decorators, base
@@ -1503,17 +1602,22 @@ class NullChecker:
                 self.handleNode(keywordNode, node)
         for stmt in node.body:
             self.handleNode(stmt, node)
+
     def AUGASSIGN(self, node):
         self.handleNode(node.value, node)
+
     def IMPORT(self, node):
         pass
+
     def IMPORTFROM(self, node):
         pass
+
     def TRY(self, node):
         for child in node.body:
             self.handleNode(child, node)
         self.handleChildren(node, omit='body')
 
     TRYEXCEPT = TRY
+
     def EXCEPTHANDLER(self, node):
         self.handleChildren(node)

@@ -34,16 +34,16 @@ except ImportError:     # Python 2.5
 import messages # EKR
 # from pyflakes import messages
 
-# Stats for all:
-# jit:  checker: 2.60 total: 5.35
-# aft:  checker: 2.17 total: 4.90
-# None: checker: 2.48 total: 5.51
+# Stats:
+# jit:  not significantly better than original.
+# aft:  checker: 1.96 total: 4.51 # 10% overall improvement.
+# None: checker: 2.60 total: 4.98
 
-new_module = False
+new_module = True
 aft = True
     # True: use AstFullTraverser class for traversals.
     # This is proving to be difficult, because ast.visit doesn't have a parent arg.
-jit = False
+# jit = False
     # This is only slightly faster than the default handleChildren method.
 
     # True: create node handlers in getNodeHandler.
@@ -290,6 +290,7 @@ class Checker(object):
         self._deferredAssignments = []
         self.deadScopes = []
         self.messages = []
+        self.nodeDepth = 0
         self.filename = filename
         if builtins:
             self.builtIns = self.builtIns.union(builtins)
@@ -298,11 +299,9 @@ class Checker(object):
         self.futuresAllowed = True
         self.root = tree
         if new_module:
-            self.nodeDepth = -1
             self.handleNode(tree, parent=None)
                 # MODULE handler does all the work.
         else:
-            self.nodeDepth = 0
             self.scopeStack = [ModuleScope()]
             self.handleChildren(tree)
             self.runDeferred(self._deferredFunctions)
@@ -456,60 +455,16 @@ class Checker(object):
         # g.trace(self.scope, value) # EKR
         self.scope[value.name] = value
     # EKR: like visitors
-    trace_dict = {}
+    # EKR: not used when using aft code.
 
     def getNodeHandler(self, node_class):
-        
-        if jit:
-            # Create self.X corresponding to node_class.__name__
-            name = node_class.__name__
-            handler = getattr(self, name, None)
-            if handler:
-                return handler
-            try:
-                fields = _FieldsOrder()[node_class]
-                if False and fields != self.trace_dict.get(name,[]):
-                    g.trace(name, fields)
-                    self.trace_dict[name] = fields
-            except AttributeError:
-                fields = None
-            
-            if fields:
-                # Create handler equivalent handleChildren specialized for the node.
-                
-                def special_iter(node): # omit, fields=fields, 
-                    '''iter_child_nodes with fixed fields.'''
-                    for name in fields:
-                        field = getattr(node, name, None)
-                        if isinstance(field, ast.AST):
-                            yield field
-                        elif isinstance(field, list):
-                            for item in field:
-                                yield item
-                
-                def handler(tree, omit=None):
-                    '''A "specialized" handler" for the given Ast node.'''
-                    for node in special_iter(tree):
-                        self.handleNode(node, parent=tree)
-            else:
-                # Should not happen: all constant nodes have been assigned to ignore.
-                g.trace(node_class.__name__)
-                handler = self.ignore
-            setattr(self, name, handler)
-            return handler
-        elif aft:
-            handler = self._nodeHandlers.get(node_class)
-            if not handler:
-                handler = getattr(self, 'do_'+node_class.__name__)
-                self._nodeHandlers[node_class] = handler
-            return handler
-        else:
-            try:
-                return self._nodeHandlers[node_class]
-            except KeyError:
-                nodeType = getNodeType(node_class)
-            self._nodeHandlers[node_class] = handler = getattr(self, nodeType)
-            return handler
+
+        try:
+            return self._nodeHandlers[node_class]
+        except KeyError:
+            nodeType = getNodeType(node_class)
+        self._nodeHandlers[node_class] = handler = getattr(self, nodeType)
+        return handler
     def handleChildren(self, tree, omit=None):
         # EKR: iter_child_nodes uses _FieldsOrder class.
         for node in iter_child_nodes(tree, omit=omit):
@@ -566,10 +521,11 @@ class Checker(object):
         node.depth = self.nodeDepth
         node.parent = parent
         # EKR: this is the only call to getNodeHandler.
-        if jit:
-            handler = getattr(self,
-                node.__class__.__name__,
-                self.getNodeHandler(node.__class__))
+        if aft:
+            handler = getattr(self, node.__class__.__name__)
+            # handler = getattr(self,
+                # node.__class__.__name__,
+                # self.getNodeHandler(node.__class__))
             handler(node)
         else:
             handler = self.getNodeHandler(node.__class__)
@@ -606,7 +562,7 @@ class Checker(object):
     def ignore(self, node):
             pass
 
-    if jit:
+    if aft:
         alias = ignore
         Continue = Break = Pass = ignore
         Num = Str = Bytes = Ellipsis = ignore
@@ -616,223 +572,15 @@ class Checker(object):
         BitOr = BitXor = BitAnd = FloorDiv = Invert = Not = UAdd = USub = ignore
         Eq = NotEq = Lt = LtE = Gt = GtE = Is = IsNot = In = NotIn = ignore
             # operators are also constant node instances.
-    if aft:
-        do_alias = ignore
-        do_Continue = do_Break = do_Pass = ignore
-        do_Num = do_Str = do_Bytes = do_Ellipsis = ignore
-        do_Load = do_Store = do_Del = do_AugLoad = do_AugStore = do_Param = ignore
-            # expression contexts are (constant) node instances
-        do_And = do_Or = do_Add = do_Sub = do_Mult = do_Div = do_Mod = do_Pow = do_LShift = do_RShift = ignore
-        do_BitOr = do_BitXor = do_BitAnd = do_FloorDiv = do_Invert = do_Not = do_UAdd = do_USub = ignore
-        do_Eq = do_NotEq = do_Lt = do_LtE = do_Gt = do_GtE = do_Is = do_IsNot = do_In = do_NotIn = ignore
             
-    if aft or jit:
-        if aft and not jit:
-            if 0:
-                # 2: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
-                # 3: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list,
-                #                expr? returns)
-
-                def do_FunctionDef(self, node):
-
-                    old_context = self.context
-                    self.context = node
-                    # Visit the tree in token order.
-                    for z in node.decorator_list:
-                        self.visit(z, node)
-                    assert g.isString(node.name)
-                    self.visit(node.args, node)
-                    if getattr(node, 'returns', None): # Python 3.
-                        self.visit(node.returns, node)
-                    for z in node.body:
-                        self.visit(z, node)
-                    self.context = old_context
-                # 2: ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
-                # 3: ClassDef(identifier name, expr* bases,
-                #             keyword* keywords, expr? starargs, expr? kwargs
-                #             stmt* body, expr* decorator_list)
-                #
-                # keyword arguments supplied to call (NULL identifier for **kwargs)
-                # keyword = (identifier? arg, expr value)
-
-                def do_ClassDef(self, node):
-                    old_context = self.context
-                    self.context = node
-                    for z in node.bases:
-                        self.visit(z, node)
-                    if getattr(node, 'keywords', None): # Python 3
-                        for keyword in node.keywords:
-                            self.visit(keyword.value, node)
-                    if getattr(node, 'starargs', None): # Python 3
-                        self.visit(node.starargs, node)
-                    if getattr(node, 'kwargs', None): # Python 3
-                        self.visit(node.kwargs, node)
-                    for z in node.body:
-                        self.visit(z, node)
-                    for z in node.decorator_list:
-                        self.visit(z, node)
-                    self.context = old_context
-                def do_Interactive(self, node):
-                    assert False, 'Interactive context not supported'
-                def do_Module(self, node):
-                    self.context = node
-                    for z in node.body:
-                        self.visit(z, node)
-                    self.context = None
-                # Lambda(arguments args, expr body)
-
-                def do_Lambda(self, node):
-                    old_context = self.context
-                    self.context = node
-                    self.visit(node.args, node)
-                    self.visit(node.body, node)
-                    self.context = old_context
-                # AugAssign(expr target, operator op, expr value)
-
-                def do_AugAssign(self, node):
-                    # g.trace('FT',Utils().format(node),g.callers())
-                    # EKR: Visit value first.
-                    self.visit(node.value, node)
-                    self.visit(node.target, node)
-                    
-                # Not used in this class, but may be called by subclasses.
-
-                def do_AugLoad(self, node):
-                    pass
-
-                def do_Del(self, node):
-                    pass
-
-                def do_Load(self, node):
-                    pass
-
-                def do_Param(self, node):
-                    pass
-
-                def do_Store(self, node):
-                    pass
-                # Python 2: ExceptHandler(expr? type, expr? name, stmt* body)
-                # Python 3: ExceptHandler(expr? type, identifier? name, stmt* body)
-
-                def do_ExceptHandler(self, node):
-                    if node.type:
-                        self.visit(node.type, node)
-                    if node.name and isinstance(node.name, ast.Name):
-                        self.visit(node.name, node)
-                    for z in node.body:
-                        self.visit(z, node)
-                # GeneratorExp(expr elt, comprehension* generators)
-
-                def do_GeneratorExp(self, node):
-                    # EKR: visit generators first.
-                    for z in node.generators:
-                        self.visit(z, node)
-                    self.visit(node.elt, node)
-                # Global(identifier* names)
-
-                def do_Global(self, node):
-                    pass
-                # Import(alias* names)
-
-                def do_Import(self, node):
-                    pass
-                # ImportFrom(identifier? module, alias* names, int? level)
-
-                def do_ImportFrom(self, node):
-                    # for z in node.names:
-                        # self.visit(z, node)
-                    pass
-                def kind(self, node):
-                    return node.__class__.__name__
-                # Name(identifier id, expr_context ctx)
-
-                def do_Name(self, node):
-                    # self.visit(node.ctx, node)
-                    pass
-
-                # Nonlocal(identifier* names)
-
-                def do_Nonlocal(self, node):
-
-                    pass
-                # Return(expr? value)
-
-                def do_Return(self, node):
-                    if node.value:
-                        self.visit(node.value, node)
-                # Python 3 only: Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
-
-                def do_Try(self, node):
-                    for z in node.body:
-                        self.visit(z, node)
-                    for z in node.handlers:
-                        self.visit(z, node)
-                    for z in node.orelse:
-                        self.visit(z, node)
-                    for z in node.finalbody:
-                        self.visit(z, node)
-                # TryExcept(stmt* body, excepthandler* handlers, stmt* orelse)
-
-                def do_TryExcept(self, node):
-                    for z in node.body:
-                        self.visit(z, node)
-                    for z in node.handlers:
-                        self.visit(z, node)
-                    for z in node.orelse:
-                        self.visit(z, node)
-                def visit_list(self, aList, node):
-                    '''Visit all ast nodes in aList.'''
-                    assert isinstance(aList, (list, tuple)), repr(aList)
-                    for z in aList:
-                        self.handleNode(z, node)
-                    return None
-                if 0:
-                    # identifier name, identifier? asname)
-
-                    def do_alias(self, node):
-                        pass
-                    def do_Break(self, tree):
-                        pass
-                    def do_Bytes(self, node):
-                        pass # Python 3.x only.
-                    # Eq | NotEq | Lt | LtE | Gt | GtE | Is | IsNot | In | NotIn
-
-                    def do_Eq(self, node): pass
-
-                    def do_Gt(self, node): pass
-
-                    def do_GtE(self, node): pass
-
-                    def do_In(self, node): pass
-
-                    def do_Is(self, node): pass
-
-                    def do_IsNot(self, node): pass
-
-                    def do_Lt(self, node): pass
-
-                    def do_LtE(self, node): pass
-
-                    def do_NotEq(self, node): pass
-
-                    def do_NotIn(self, node): pass
-                    def do_Continue(self, tree):
-                        pass
-                    def do_Ellipsis(self, node):
-                        pass
-                    def do_Num(self, node):
-                        pass # Num(object n) # a number as a PyObject.
-                    def do_Pass(self, node):
-                        pass
-                    def do_Str(self, node):
-                        pass # represents a string constant.
+        if aft:
             # 2: arguments = (expr* args, identifier? vararg,
             #                 identifier? kwarg, expr* defaults)
             # 3: arguments = (arg*  args, arg? vararg,
             #                 arg* kwonlyargs, expr* kw_defaults,
             #                 arg? kwarg, expr* defaults)
 
-            def do_arguments(self, node):
+            def arguments(self, node):
 
                 for z in node.args:
                     self.handleNode(z, node)
@@ -855,28 +603,28 @@ class Checker(object):
 
             # 3: arg = (identifier arg, expr? annotation)
 
-            def do_arg(self, node):
+            def arg(self, node):
                 if getattr(node, 'annotation', None):
                     self.handleNode(node.annotation, node)
             # Attribute(expr value, identifier attr, expr_context ctx)
 
-            def do_Attribute(self, node):
+            def Attribute(self, node):
                 self.handleNode(node.value, node)
                 # self.handleNode(node.ctx, node)
             # BinOp(expr left, operator op, expr right)
 
-            def do_BinOp(self, node):
+            def BinOp(self, node):
                 self.handleNode(node.left, node)
                 # self.op_name(node.op)
                 self.handleNode(node.right, node)
             # BoolOp(boolop op, expr* values)
 
-            def do_BoolOp(self, node):
+            def BoolOp(self, node):
                 for z in node.values:
                     self.handleNode(z, node)
             # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
-            def do_Call(self, node):
+            def Call(self, node):
                 # Call the nodes in token order.
                 self.handleNode(node.func, node)
                 for z in node.args:
@@ -889,7 +637,7 @@ class Checker(object):
                     self.handleNode(node.kwargs, node)
             # Compare(expr left, cmpop* ops, expr* comparators)
 
-            def do_Compare(self, node):
+            def Compare(self, node):
                 # Visit all nodes in token order.
                 self.handleNode(node.left, node)
                 assert len(node.ops) == len(node.comparators)
@@ -902,7 +650,7 @@ class Checker(object):
                     self.handleNode(z, node)
             # comprehension (expr target, expr iter, expr* ifs)
 
-            def do_comprehension(self, node):
+            def comprehension(self, node):
                 # EKR: visit iter first.
                 self.handleNode(node.iter, node) # An attribute.
                 self.handleNode(node.target, node) # A name.
@@ -910,7 +658,7 @@ class Checker(object):
                     self.handleNode(z, node)
             # Dict(expr* keys, expr* values)
 
-            def do_Dict(self, node):
+            def Dict(self, node):
                 # Visit all nodes in token order.
                 assert len(node.keys) == len(node.values)
                 for i in range(len(node.keys)):
@@ -918,42 +666,42 @@ class Checker(object):
                     self.handleNode(node.values[i], node)
             # Expr(expr value)
 
-            def do_Expr(self, node):
+            def Expr(self, node):
                 self.handleNode(node.value, node)
-            def do_Expression(self, node):
+            def Expression(self, node):
                 '''An inner expression'''
                 self.handleNode(node.body, node)
-            def do_ExtSlice(self, node):
+            def ExtSlice(self, node):
                 for z in node.dims:
                     self.handleNode(z, node)
             # IfExp(expr test, expr body, expr orelse)
 
-            def do_IfExp(self, node):
+            def IfExp(self, node):
                 self.handleNode(node.body, node)
                 self.handleNode(node.test, node)
                 self.handleNode(node.orelse, node)
-            def do_Index(self, node):
+            def Index(self, node):
                 self.handleNode(node.value, node)
             # keyword = (identifier arg, expr value)
 
-            def do_keyword(self, node):
+            def keyword(self, node):
                 # node.arg is a string.
                 self.handleNode(node.value, node)
             # List(expr* elts, expr_context ctx)
 
-            def do_List(self, node):
+            def List(self, node):
                 for z in node.elts:
                     self.handleNode(z, node)
                 # self.handleNode(node.ctx, node)
             # ListComp(expr elt, comprehension* generators)
 
-            def do_ListComp(self, node):
+            def ListComp(self, node):
                 
                 # EKR: visit generators first.
                 for z in node.generators:
                     self.handleNode(z, node)
                 self.handleNode(node.elt, node)
-            def do_NameConstant(self, node): # Python 3 only.
+            def NameConstant(self, node): # Python 3 only.
                 self.handleChildren(node)
                 # self.handleNode(node.value, node)
                 # s = repr(node.value)
@@ -961,9 +709,9 @@ class Checker(object):
             # Python 2.x only
             # Repr(expr value)
 
-            def do_Repr(self, node):
+            def Repr(self, node):
                 self.handleNode(node.value, node)
-            def do_Slice(self, node):
+            def Slice(self, node):
                 if getattr(node, 'lower', None):
                     self.handleNode(node.lower, node)
                 if getattr(node, 'upper', None):
@@ -972,31 +720,31 @@ class Checker(object):
                     self.handleNode(node.step, node)
             # Subscript(expr value, slice slice, expr_context ctx)
 
-            def do_Subscript(self, node):
+            def Subscript(self, node):
                 # EKR: Visit value first.
                 self.handleNode(node.value, node)
                 self.handleNode(node.slice, node)
                 # self.handleNode(node.ctx, node)
             # Tuple(expr* elts, expr_context ctx)
 
-            def do_Tuple(self, node):
+            def Tuple(self, node):
                 for z in node.elts:
                     self.handleNode(z, node)
                 # self.handleNode(node.ctx, node)
             # UnaryOp(unaryop op, expr operand)
 
-            def do_UnaryOp(self, node):
+            def UnaryOp(self, node):
                 # self.op_name(node.op)
                 self.handleNode(node.operand, node)
             # Assert(expr test, expr? msg)
 
-            def do_Assert(self, node):
+            def Assert(self, node):
                 self.handleNode(node.test, node)
                 if node.msg:
                     self.handleNode(node.msg, node)
             # Assign(expr* targets, expr value)
 
-            def do_Assign(self, node):
+            def Assign(self, node):
                 # EKR: Visit value first.
                 self.handleNode(node.value, node)
                 for z in node.targets:
@@ -1004,13 +752,13 @@ class Checker(object):
                 
             # Delete(expr* targets)
 
-            def do_Delete(self, node):
+            def Delete(self, node):
                 for z in node.targets:
                     self.handleNode(z, node)
             # Python 2.x only
             # Exec(expr body, expr? globals, expr? locals)
 
-            def do_Exec(self, node):
+            def Exec(self, node):
                 self.handleNode(node.body, node)
                 if getattr(node, 'globals', None):
                     self.handleNode(node.globals, node)
@@ -1018,7 +766,7 @@ class Checker(object):
                     self.handleNode(node.locals, node)
             # For(expr target, expr iter, stmt* body, stmt* orelse)
 
-            def do_For(self, node):
+            def For(self, node):
                 
                 # EKR: visit iter first.
                 self.handleNode(node.iter, node)
@@ -1029,7 +777,7 @@ class Checker(object):
                     self.handleNode(z, node)
             # If(expr test, stmt* body, stmt* orelse)
 
-            def do_If(self, node):
+            def If(self, node):
                 self.handleNode(node.test, node)
                 for z in node.body:
                     self.handleNode(z, node)
@@ -1038,17 +786,21 @@ class Checker(object):
             # Python 2.x only
             # Print(expr? dest, expr* values, bool nl)
 
-            def do_Print(self, node):
+            def Print(self, node):
                 if getattr(node, 'dest', None):
                     self.handleNode(node.dest, node)
                 for expr in node.values:
                     self.handleNode(expr, node)
             # Raise(expr? type, expr? inst, expr? tback)
 
-            def do_Raise(self, node):
+            def Raise(self, node):
                 
-                if 1:
-                    self.handleChildren(node)
+                # self.handleChildren(node)
+                if g.isPython3:
+                    if getattr(node, 'exc', None):
+                        self.handleNode(node.exc, node)
+                    if getattr(node, 'cause', None):
+                        self.handleNode(node.cause, node)
                 else:
                     if getattr(node, 'type', None):
                         self.handleNode(node.type, node)
@@ -1058,19 +810,19 @@ class Checker(object):
                         self.handleNode(node.tback, node)
             # Starred(expr value, expr_context ctx)
 
-            def do_Starred(self, node):
+            def Starred(self, node):
 
                 self.handleNode(node.value, node)
             # TryFinally(stmt* body, stmt* finalbody)
 
-            def do_TryFinally(self, node):
+            def TryFinally(self, node):
                 for z in node.body:
                     self.handleNode(z, node)
                 for z in node.finalbody:
                     self.handleNode(z, node)
             # While(expr test, stmt* body, stmt* orelse)
 
-            def do_While(self, node):
+            def While(self, node):
                 self.handleNode(node.test, node) # Bug fix: 2013/03/23.
                 for z in node.body:
                     self.handleNode(z, node)
@@ -1082,7 +834,7 @@ class Checker(object):
             #          stmt* body)
             # withitem = (expr context_expr, expr? optional_vars)
 
-            def do_With(self, node):
+            def With(self, node):
                 if getattr(node, 'context_expr', None):
                     self.handleNode(node.context_expr, node)
                 if getattr(node, 'optional_vars', None):
@@ -1100,12 +852,12 @@ class Checker(object):
                     self.handleNode(z, node)
             #  Yield(expr? value)
 
-            def do_Yield(self, node):
+            def Yield(self, node):
                 if node.value:
                     self.handleNode(node.value, node)
             # YieldFrom(expr value)
 
-            def do_YieldFrom(self, node):
+            def YieldFrom(self, node):
 
                 self.handleNode(node.value, node)
     else:
@@ -1144,8 +896,6 @@ class Checker(object):
         self.handleNode(node.target, node)
 
     if aft:
-        do_AugAssign = AUGASSIGN
-    if jit:
         AugAssign = AUGASSIGN
     def CLASSDEF(self, node):
         """
@@ -1169,8 +919,6 @@ class Checker(object):
         self.addBinding(node, ClassDefinition(node.name, node))
         
     if aft:
-        do_ClassDef = CLASSDEF
-    if jit:
         ClassDef = CLASSDEF
     def EXCEPTHANDLER(self, node):
         # 3.x: in addition to handling children, we must handle the name of
@@ -1180,8 +928,6 @@ class Checker(object):
         self.handleChildren(node)
         
     if aft:
-        do_ExceptHandler = EXCEPTHANDLER
-    if jit:
         ExceptHandler = EXCEPTHANDLER
 
     def FUNCTIONDEF(self, node):
@@ -1193,8 +939,6 @@ class Checker(object):
             self.deferFunction(lambda: self.handleDoctests(node))
             
     if aft:
-        do_FunctionDef = do_AsyncFunctionDef = FUNCTIONDEF
-    if jit:
         FunctionDef = AsyncFunctionDef = FUNCTIONDEF
 
     ASYNCFUNCTIONDEF = FUNCTIONDEF
@@ -1204,8 +948,6 @@ class Checker(object):
         self.popScope()
         
     if aft:
-        do_ListComp = do_GeneratorExp = GENERATOREXP
-    if jit:
         ListComp = GeneratorExp = GENERATOREXP
 
     LISTCOMP = handleChildren if PY2 else GENERATOREXP
@@ -1241,8 +983,6 @@ class Checker(object):
                     scope[node_name] = node_value
 
     if aft:
-        do_Global = do_Nonlocal = GLOBAL
-    if jit:
         Global = Nonlocal = GLOBAL
 
     NONLOCAL = GLOBAL
@@ -1253,8 +993,6 @@ class Checker(object):
             self.addBinding(node, importation)
 
     if aft:
-        do_Import = IMPORT
-    if jit:
         Import = IMPORT
     def IMPORTFROM(self, node):
         if node.module == '__future__':
@@ -1276,8 +1014,6 @@ class Checker(object):
             self.addBinding(node, importation)
             
     if aft:
-        do_ImportFrom = IMPORTFROM
-    if jit:
         ImportFrom = IMPORTFROM
 
     def LAMBDA(self, node):
@@ -1362,13 +1098,10 @@ class Checker(object):
         self.deferFunction(runFunction)
         
     if aft:
-        do_Lambda = LAMBDA
-    if jit:
         Lambda = LAMBDA
     if new_module:
         
         def MODULE(self, node):
-            assert node.depth == 0
             self.scopeStack = [ModuleScope()]
             self.handleChildren(node)
             # Post-module stuff: was in ctor.
@@ -1384,9 +1117,7 @@ class Checker(object):
             self.popScope()
             self.checkDeadScopes()
             
-        # if aft:
-            # do_Module = MODULE
-        if jit:
+        if aft:
             Module = MODULE
     def NAME(self, node):
         """
@@ -1412,8 +1143,6 @@ class Checker(object):
             raise RuntimeError("Got impossible expression context: %r" % (node.ctx,))
             
     if aft:
-        do_Name = NAME
-    if jit:
         Name = NAME
 
     # EKR: ctx is Del.
@@ -1542,8 +1271,6 @@ class Checker(object):
         self.handleNode(node.value, node)
 
     if aft:
-        do_Return = RETURN
-    if jit:
         Return = RETURN
     def TRY(self, node):
         handler_names = []
@@ -1563,8 +1290,6 @@ class Checker(object):
         self.handleChildren(node, omit='body')
         
     if aft:
-        do_Try = do_TryExcept = TRY
-    if jit:
         Try = TryExcept = TRY
 
     TRYEXCEPT = TRY
@@ -1573,8 +1298,6 @@ class Checker(object):
         self.handleNode(node.value, node)
         
     if aft:
-        do_Yield = do_Await = do_YieldFrom = YIELD
-    if jit:
         Yield = Await = YieldFrom = YIELD
 
     AWAIT = YIELDFROM = YIELD

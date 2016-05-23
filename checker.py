@@ -126,6 +126,36 @@ def iter_child_nodes(node, omit=None, _fields_order=_FieldsOrder()):
         elif isinstance(field, list):
             for item in field:
                 yield item
+def unit_test(raise_on_fail=True):
+    '''Run basic unit tests for this file.'''
+    import _ast
+    # import leo.core.leoAst as leoAst
+    # Compute all fields to test.
+    aList = sorted(dir(_ast))
+    remove = [
+        'Interactive', 'Suite', # Not necessary.
+        'PyCF_ONLY_AST', # A constant,
+        'AST', # The base class,
+    ]
+    aList = [z for z in aList if not z[0].islower()]
+        # Remove base classes
+    aList = [z for z in aList if not z.startswith('_') and not z in remove]
+    # Now test them.
+    ft = Checker(tree=None)
+    errors, nodes, ops = 0,0,0
+    for z in aList:
+        if hasattr(ft, z):
+            nodes += 1
+        # elif _op_names.get(z):
+            # ops += 1
+        else:
+            errors += 1
+            print('Missing pyflakes visitor for: %s' % z)
+    s = '%s node types, %s op types, %s errors' % (nodes, ops, errors)
+    if raise_on_fail:
+        assert not errors, s
+    else:
+        print(s)
 class Binding(object):
     """
     Represents the binding of a value to a name.
@@ -258,8 +288,6 @@ class GeneratorScope(Scope):
     pass
 class ModuleScope(Scope):
     pass
-### checker_base = leo_ast.AstFullTraverser if aft else object # ekr
-
 class Checker(object):
     """
     I check the cleanliness and sanity of Python code.
@@ -571,6 +599,8 @@ class Checker(object):
         And = Or = Add = Sub = Mult = Div = Mod = Pow = LShift = RShift = ignore
         BitOr = BitXor = BitAnd = FloorDiv = Invert = Not = UAdd = USub = ignore
         Eq = NotEq = Lt = LtE = Gt = GtE = Is = IsNot = In = NotIn = ignore
+        # EKR: MatMult is new in Python 3.5
+        MatMult= ignore
             # operators are also constant node instances.
             
         if aft:
@@ -664,6 +694,15 @@ class Checker(object):
                 for i in range(len(node.keys)):
                     self.handleNode(node.keys[i], node)
                     self.handleNode(node.values[i], node)
+            # DictComp(expr key, expr value, comprehension* generators)
+
+            def DictComp(self, node):
+                
+                # EKR: visit generators first, then value.
+                for z in node.generators:
+                    self.handleNode(z, node)
+                self.handleNode(node.value, node)
+                self.handleNode(node.key, node)
             # Expr(expr value)
 
             def Expr(self, node):
@@ -693,6 +732,7 @@ class Checker(object):
                 for z in node.elts:
                     self.handleNode(z, node)
                 # self.handleNode(node.ctx, node)
+
             # ListComp(expr elt, comprehension* generators)
 
             def ListComp(self, node):
@@ -711,6 +751,21 @@ class Checker(object):
 
             def Repr(self, node):
                 self.handleNode(node.value, node)
+            # Set(expr* elts)
+
+            def Set(self, node):
+
+                for z in node.elts:
+                    self.handleNode(z, node)
+                    
+            # SetComp(expr elt, comprehension* generators)
+
+            def SetComp(self, node):
+                
+                # EKR: visit generators first.
+                for z in node.generators:
+                    self.handleNode(z, node)
+                self.handleNode(node.elt, node)
             def Slice(self, node):
                 if getattr(node, 'lower', None):
                     self.handleNode(node.lower, node)
@@ -775,6 +830,8 @@ class Checker(object):
                     self.handleNode(z, node)
                 for z in node.orelse:
                     self.handleNode(z, node)
+
+            AsyncFor = For
             # If(expr test, stmt* body, stmt* orelse)
 
             def If(self, node):
@@ -850,6 +907,8 @@ class Checker(object):
                                 self.handleNode(item.optional_vars, node)
                 for z in node.body:
                     self.handleNode(z, node)
+                    
+            AsyncWith = With
             #  Yield(expr? value)
 
             def Yield(self, node):
@@ -874,6 +933,9 @@ class Checker(object):
         AND = OR = ADD = SUB = MULT = DIV = MOD = POW = LSHIFT = RSHIFT = \
             BITOR = BITXOR = BITAND = FLOORDIV = INVERT = NOT = UADD = USUB = \
             EQ = NOTEQ = LT = LTE = GT = GTE = IS = ISNOT = IN = NOTIN = ignore
+            
+        # EKR: MatMult is new in Python 3.5
+        MATMULT = ignore
 
         # "stmt" type nodes
         DELETE = PRINT = FOR = ASYNCFOR = WHILE = IF = WITH = WITHITEM = \
@@ -1302,9 +1364,8 @@ class Checker(object):
 
     AWAIT = YIELDFROM = YIELD
 class NullChecker:
-    
+    '''A do-nothing checker for timing comparisons.'''
     def __init__(self):
-        # self.nodeDepth = 0
         self._nodeHandlers = {}
         
     def getNodeHandler(self, node_class):

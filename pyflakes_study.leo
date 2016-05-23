@@ -330,11 +330,11 @@
 </v>
 <v t="ekr.20160520163727.1"><vh>Changed</vh>
 <v t="ekr.20160519172255.13"><vh>_FieldsOrder._get_fields</vh></v>
-<v t="ekr.20160520184945.151"></v>
 </v>
 <v t="ekr.20160520081237.1"><vh>@button test</vh>
 <v t="ekr.20160520162722.1"><vh>&lt;&lt; define s &gt;&gt;</vh></v>
 <v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
+<v t="ekr.20160523085953.1"><vh>class TestController</vh>
 <v t="ekr.20160520082209.1"><vh>check_all</vh></v>
 <v t="ekr.20160520162336.1"><vh>check_string</vh></v>
 <v t="ekr.20160520210414.1"><vh>compile_string</vh></v>
@@ -343,19 +343,21 @@
 <v t="ekr.20160520081827.1"><vh>run_test</vh></v>
 <v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
 </v>
+</v>
 <v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
 <v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
 <v t="ekr.20160519172255.12"><vh>class _FieldsOrder(dict)</vh>
 <v t="ekr.20160519172255.13"></v>
 <v t="ekr.20160519172255.14"><vh>_FieldsOrder.__missing__</vh></v>
 </v>
-<v t="ekr.20160519181348.1"><vh>top-level getters</vh>
+<v t="ekr.20160519181348.1"><vh>top-level</vh>
 <v t="ekr.20160519181035.1"></v>
 <v t="ekr.20160519172255.39"><vh>getNodeName</vh></v>
 <v t="ekr.20160519180953.1"><vh>getNodeType (returns uppercase class name)</vh></v>
 <v t="ekr.20160519172255.15"><vh>iter_child_nodes</vh></v>
+<v t="ekr.20160523090911.3"><vh>unit_test</vh></v>
 </v>
-<v t="ekr.20160519172710.1"><vh>Bindings &amp; Definitions</vh>
+<v t="ekr.20160519172710.1"><vh>Binding &amp; Definition classes</vh>
 <v t="ekr.20160519172255.16"></v>
 <v t="ekr.20160519172255.21"></v>
 <v t="ekr.20160519172255.22"></v>
@@ -365,7 +367,7 @@
 <v t="ekr.20160519172255.28"><vh>class ClassDefinition (Definition)</vh></v>
 <v t="ekr.20160519172255.29"></v>
 </v>
-<v t="ekr.20160519172730.1"><vh>Scopes</vh>
+<v t="ekr.20160519172730.1"><vh>Scope classes</vh>
 <v t="ekr.20160519172255.31"><vh>class Scope(dict)</vh></v>
 <v t="ekr.20160519172255.33"><vh>class ClassScope (Scope)</vh></v>
 <v t="ekr.20160519172255.34"></v>
@@ -415,15 +417,19 @@
 <v t="ekr.20160522081949.17"><vh>ft.Compare</vh></v>
 <v t="ekr.20160522081949.19"><vh>ft.comprehension</vh></v>
 <v t="ekr.20160522081949.20"><vh>ft.Dict</vh></v>
+<v t="ekr.20160523092835.1"><vh>ft.DictComp (new)</vh></v>
 <v t="ekr.20160522081949.22"><vh>ft.Expr</vh></v>
 <v t="ekr.20160522081949.23"><vh>ft.Expression</vh></v>
 <v t="ekr.20160522081949.24"><vh>ft.ExtSlice</vh></v>
 <v t="ekr.20160522081949.26"><vh>ft.ifExp (ternary operator)</vh></v>
 <v t="ekr.20160522081949.27"><vh>ft.Index</vh></v>
 <v t="ekr.20160522081949.28"><vh>ft.keyword</vh></v>
-<v t="ekr.20160522081949.29"><vh>ft.List &amp; ListComp</vh></v>
+<v t="ekr.20160522081949.29"><vh>ft.List</vh></v>
+<v t="ekr.20160523092211.1"><vh>ft.ListComp</vh></v>
 <v t="ekr.20160522082410.1"><vh>ft.NameConstant</vh></v>
 <v t="ekr.20160522081949.32"><vh>ft.Repr</vh></v>
+<v t="ekr.20160523093026.1"><vh>ft.Set (new)</vh></v>
+<v t="ekr.20160523093032.1"><vh>ft.SetComp (new)</vh></v>
 <v t="ekr.20160522081949.33"><vh>ft.Slice</vh></v>
 <v t="ekr.20160522081949.35"><vh>ft.Subscript</vh></v>
 <v t="ekr.20160522081949.36"><vh>ft.Tuple</vh></v>
@@ -437,7 +443,7 @@
 <v t="ekr.20160522081949.48"><vh>ft.For</vh></v>
 <v t="ekr.20160522081949.50"><vh>ft.If</vh></v>
 <v t="ekr.20160522081949.54"><vh>ft.Print</vh></v>
-<v t="ekr.20160522081949.55"><vh>ft.Raise (**** Buggy ****)</vh></v>
+<v t="ekr.20160522081949.55"><vh>ft.Raise</vh></v>
 <v t="ekr.20160522081949.57"><vh>ft.Starred (Python 3)</vh></v>
 <v t="ekr.20160522081949.60"><vh>ft.TryFinally</vh></v>
 <v t="ekr.20160522081949.61"><vh>ft.While</vh></v>
@@ -488,7 +494,7 @@
 <v t="ekr.20160519173152.1"></v>
 <v t="ekr.20160519172836.1"></v>
 <v t="ekr.20160522081903.1"></v>
-<v t="ekr.20160523071727.1"><vh>** To do</vh></v>
+<v t="ekr.20160523090911.3"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -987,9 +993,7 @@ __all__ = ['check', 'checkPath', 'checkRecursive', 'iterSourceCode', 'main']
         reporter.flake(warning)
     return len(w.messages)
 </t>
-<t tx="ekr.20160519172255.40">### checker_base = leo_ast.AstFullTraverser if aft else object # ekr
-
-class Checker(object):
+<t tx="ekr.20160519172255.40">class Checker(object):
     """
     I check the cleanliness and sanity of Python code.
 
@@ -1933,6 +1937,8 @@ if aft:
     And = Or = Add = Sub = Mult = Div = Mod = Pow = LShift = RShift = ignore
     BitOr = BitXor = BitAnd = FloorDiv = Invert = Not = UAdd = USub = ignore
     Eq = NotEq = Lt = LtE = Gt = GtE = Is = IsNot = In = NotIn = ignore
+    # EKR: MatMult is new in Python 3.5
+    MatMult= ignore
         # operators are also constant node instances.
         
     &lt;&lt; default node handlers &gt;&gt;
@@ -1950,6 +1956,9 @@ else:
     AND = OR = ADD = SUB = MULT = DIV = MOD = POW = LSHIFT = RSHIFT = \
         BITOR = BITXOR = BITAND = FLOORDIV = INVERT = NOT = UADD = USUB = \
         EQ = NOTEQ = LT = LTE = GT = GTE = IS = ISNOT = IN = NOTIN = ignore
+        
+    # EKR: MatMult is new in Python 3.5
+    MATMULT = ignore
 
     # "stmt" type nodes
     DELETE = PRINT = FOR = ASYNCFOR = WHILE = IF = WITH = WITHITEM = \
@@ -2027,18 +2036,19 @@ print(['iter'.find(z) for z in fields])
 if c.isChanged():
     c.save()
 &lt;&lt; test imports &gt;&gt;
+checker.unit_test()
 aft = checker.aft
 compare_traverse = False
 &lt;&lt; define s &gt;&gt;
 @others
-gc.collect() # Stabalizes timing statistics a bit.
+gc.collect() # Stabilizes timing statistics a bit.
 stats = {}
 print('aft: %s' % checker.aft)
-run_test(scope='all', s=s)
+TestController().run_test(scope='all', s=s)
 </t>
-<t tx="ekr.20160520081827.1">def run_test(scope, s):
+<t tx="ekr.20160520081827.1">def run_test(self, scope, s):
     
-    global stats
+    stats = self.stats
     g.trace('scope:', scope)
     g_option_fn = None
     if scope == 'test':
@@ -2047,7 +2057,7 @@ run_test(scope='all', s=s)
         files = leoTest.LinterTable().get_files_for_scope(scope, fn=g_option_fn)
         s = None
     t1 = time.clock()
-    check_all(files, s)
+    self.check_all(files, s)
     t2 = time.clock()
     n = len(files)
     stats['total'] = t2 - t1
@@ -2062,22 +2072,22 @@ run_test(scope='all', s=s)
             print('total2 = total - visit - handle')
         if checker.stats: print('checker.stats', checker.stats)
 </t>
-<t tx="ekr.20160520082209.1">def check_all(files, s=None):
+<t tx="ekr.20160520082209.1">def check_all(self, files, s=None):
     '''Run pyflakes on all files.'''
     # from pyflakes import api, reporter
     if s:
         fn = '&lt;test string&gt;'
-        tree = compile_string(fn, s)
+        tree = self.compile_string(fn, s)
         check_string(fn, s, tree)
     else:
         for fn in files:
-            s = read_string(fn)
+            s = self.read_string(fn)
             if s and s.strip():
-                tree = compile_string(fn, s)
+                tree = self.compile_string(fn, s)
                 if compare_traverse:
-                    traverse_tree(tree)
-                    handle_tree(tree)
-                check_string(fn, s, tree=tree) # EKR: added tree
+                    self.traverse_tree(tree)
+                    self.handle_tree(tree)
+                self.check_string(fn, s, tree=tree) # EKR: added tree
             else:
                 print('can not read:', fn)
 </t>
@@ -2101,9 +2111,8 @@ imp.reload(messages)
 imp.reload(reporter)
 # g.trace(ast)
 </t>
-<t tx="ekr.20160520162336.1">def check_string(fn, s, tree):
+<t tx="ekr.20160520162336.1">def check_string(self, fn, s, tree):
     
-    global stats
     t1 = time.clock()
     sfn = g.shortFileName(fn)
     r = reporter.Reporter(
@@ -2112,7 +2121,7 @@ imp.reload(reporter)
         )
     errors = api.check(s, sfn, r, tree=tree)
     t2 = time.clock()
-    stats['check'] = stats.get('check', 0.0) + t2 - t1
+    self.stats['check'] = self.stats.get('check', 0.0) + t2 - t1
     if errors:
         print('pyflakes: %s error%s in %s' % (
             errors, g.plural(errors), fn))
@@ -3831,18 +3840,16 @@ def do_BinOp(self, node):
     self.visit(node.right)
 </t>
 <t tx="ekr.20160520195402.1"># flattened, word, ignore-case, head, body</t>
-<t tx="ekr.20160520210256.1">def read_string(fn):
+<t tx="ekr.20160520210256.1">def read_string(self, fn):
     
-    global stats
     t1 = time.clock()
     s = g.readFileIntoEncodedString(fn, silent=False)
     t2 = time.clock()
-    stats['read'] = stats.get('read', 0.0) + t2 - t1
+    self.stats['read'] = self.stats.get('read', 0.0) + t2 - t1
     return s
 </t>
-<t tx="ekr.20160520210414.1">def compile_string(fn, s):
+<t tx="ekr.20160520210414.1">def compile_string(self, fn, s):
     
-    global stats
     t1 = time.clock()
     tree = None
     try:
@@ -3854,28 +3861,26 @@ def do_BinOp(self, node):
         g.es_print('unexpected exception')
         g.es_print_exception() # EKR
     t2 = time.clock()
-    stats['parse'] = stats.get('parse', 0.0) + t2 - t1
+    self.stats['parse'] = self.stats.get('parse', 0.0) + t2 - t1
     return tree
 </t>
-<t tx="ekr.20160520210931.1">def traverse_tree(tree):
+<t tx="ekr.20160520210931.1">def traverse_tree(self, tree):
 
     global stats
     t1 = time.clock()
     leo_ast.AstFullTraverser().visit(tree)
     t2 = time.clock()
     stats['visit'] = stats.get('visit', 0.0) + t2 - t1</t>
-<t tx="ekr.20160521023438.1">def handle_tree(tree):
+<t tx="ekr.20160521023438.1">def handle_tree(self, tree):
 
-    global stats
     t1 = time.clock()
     checker.NullChecker().handleChildren(tree)
     t2 = time.clock()
-    stats['handle'] = stats.get('handle', 0.0) + t2 - t1
+    self.stats['handle'] = self.stats.get('handle', 0.0) + t2 - t1
 </t>
 <t tx="ekr.20160521023529.1">class NullChecker:
-    
+    '''A do-nothing checker for timing comparisons.'''
     def __init__(self):
-        # self.nodeDepth = 0
         self._nodeHandlers = {}
         
     @others
@@ -4203,14 +4208,7 @@ def List(self, node):
     for z in node.elts:
         self.handleNode(z, node)
     # self.handleNode(node.ctx, node)
-# ListComp(expr elt, comprehension* generators)
 
-def ListComp(self, node):
-    
-    # EKR: visit generators first.
-    for z in node.generators:
-        self.handleNode(z, node)
-    self.handleNode(node.elt, node)
 </t>
 <t tx="ekr.20160522081949.32"># Python 2.x only
 # Repr(expr value)
@@ -4291,7 +4289,8 @@ def For(self, node):
         self.handleNode(z, node)
     for z in node.orelse:
         self.handleNode(z, node)
-</t>
+
+AsyncFor = For</t>
 <t tx="ekr.20160522081949.50"># If(expr test, stmt* body, stmt* orelse)
 
 def If(self, node):
@@ -4373,6 +4372,8 @@ def With(self, node):
                     self.handleNode(item.optional_vars, node)
     for z in node.body:
         self.handleNode(z, node)
+        
+AsyncWith = With
 </t>
 <t tx="ekr.20160522081949.63">#  Yield(expr? value)
 
@@ -4469,8 +4470,78 @@ From handleNode:
     else:
         handler = self.getNodeHandler(node.__class__)
         handler(node)</t>
-<t tx="ekr.20160523071727.1">* Add missing nodes.
-- unit_test()
-    - use dir(node) ?</t>
+<t tx="ekr.20160523085953.1">class TestController:
+    
+    def __init__(self):
+        '''Ctor for TestController class.'''
+        self.stats = {}
+        
+    @others</t>
+<t tx="ekr.20160523090911.3">def unit_test(raise_on_fail=True):
+    '''Run basic unit tests for this file.'''
+    import _ast
+    # import leo.core.leoAst as leoAst
+    # Compute all fields to test.
+    aList = sorted(dir(_ast))
+    remove = [
+        'Interactive', 'Suite', # Not necessary.
+        'PyCF_ONLY_AST', # A constant,
+        'AST', # The base class,
+    ]
+    aList = [z for z in aList if not z[0].islower()]
+        # Remove base classes
+    aList = [z for z in aList if not z.startswith('_') and not z in remove]
+    # Now test them.
+    ft = Checker(tree=None)
+    errors, nodes, ops = 0,0,0
+    for z in aList:
+        if hasattr(ft, z):
+            nodes += 1
+        # elif _op_names.get(z):
+            # ops += 1
+        else:
+            errors += 1
+            print('Missing pyflakes visitor for: %s' % z)
+    s = '%s node types, %s op types, %s errors' % (nodes, ops, errors)
+    if raise_on_fail:
+        assert not errors, s
+    else:
+        print(s)
+</t>
+<t tx="ekr.20160523092211.1"># ListComp(expr elt, comprehension* generators)
+
+def ListComp(self, node):
+    
+    # EKR: visit generators first.
+    for z in node.generators:
+        self.handleNode(z, node)
+    self.handleNode(node.elt, node)
+</t>
+<t tx="ekr.20160523092835.1"># DictComp(expr key, expr value, comprehension* generators)
+
+def DictComp(self, node):
+    
+    # EKR: visit generators first, then value.
+    for z in node.generators:
+        self.handleNode(z, node)
+    self.handleNode(node.value, node)
+    self.handleNode(node.key, node)
+</t>
+<t tx="ekr.20160523093026.1"># Set(expr* elts)
+
+def Set(self, node):
+
+    for z in node.elts:
+        self.handleNode(z, node)
+        </t>
+<t tx="ekr.20160523093032.1"># SetComp(expr elt, comprehension* generators)
+
+def SetComp(self, node):
+    
+    # EKR: visit generators first.
+    for z in node.generators:
+        self.handleNode(z, node)
+    self.handleNode(node.elt, node)
+</t>
 </tnodes>
 </leo_file>

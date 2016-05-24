@@ -378,7 +378,7 @@
 <v t="ekr.20160520082209.1"><vh>check_all</vh></v>
 <v t="ekr.20160520162336.1"><vh>check_string</vh></v>
 <v t="ekr.20160520210414.1"><vh>compile_string</vh></v>
-<v t="ekr.20160521023438.1"><vh>handle_tree</vh></v>
+<v t="ekr.20160521023438.1"><vh>handle_tree (TestController)</vh></v>
 <v t="ekr.20160523172328.1"><vh>print_stats</vh></v>
 <v t="ekr.20160520210256.1"><vh>read_string</vh></v>
 <v t="ekr.20160520081827.1"><vh>run_test</vh></v>
@@ -533,13 +533,22 @@
 </v>
 </v>
 </v>
+<v t="ekr.20160519172255.63"></v>
 <v t="ekr.20160523180522.1"><vh>re: passes</vh>
 <v t="ekr.20160519172255.73"></v>
 <v t="ekr.20160519172255.71"></v>
 <v t="ekr.20160519172255.72"></v>
 <v t="ekr.20160523173355.1"></v>
 <v t="ekr.20160522063947.1"></v>
-<v t="ekr.20160519172255.63"></v>
+</v>
+<v t="ekr.20160524053437.1"><vh>Found:.handleChildren</vh>
+<v t="ekr.20160519172255.64"></v>
+<v t="ekr.20160519172255.59"></v>
+<v t="ekr.20160519172255.78"></v>
+<v t="ekr.20160522082410.1"></v>
+<v t="ekr.20160519172255.67"></v>
+<v t="ekr.20160519172255.77"></v>
+<v t="ekr.20160523181737.1"></v>
 </v>
 </vnodes>
 <tnodes>
@@ -565,10 +574,13 @@ aft = True
     # This is proving to be difficult, because ast.visit doesn't have a parent arg.
 # jit = False
     # This is only slightly faster than the default handleChildren method.
-
     # True: create node handlers in getNodeHandler.
 stats = {}
-n_pass_nodes = [None, 0, 0] # Only Passes 1 &amp; 2 traverse nodes.
+    # Timing stats.
+n_pass_nodes = [None, 0, 0]
+    # Only Passes 1 &amp; 2 traverse nodes.
+    # The sum is the number of calls to handleNodes
+n_ignore = n_handleChildren = n_FunctionDef = n_null_nodes = 0
 
 # Globally defined names which are not attributes of the builtins module, or
 # are only present on some platforms.
@@ -1459,6 +1471,8 @@ def handleNodeDelete(self, node):
 <t tx="ekr.20160519172255.59">
 def handleChildren(self, tree, omit=None):
     # EKR: iter_child_nodes uses _FieldsOrder class.
+    global n_handleChildren ; n_handleChildren += 1
+    
     for node in iter_child_nodes(tree, omit=omit):
         self.handleNode(node, tree)
 </t>
@@ -1506,13 +1520,19 @@ def getDocstring(self, node):
     doctest_lineno = node.lineno - node.s.count('\n') - 1
     return (node.s, doctest_lineno)
 </t>
-<t tx="ekr.20160519172255.63">
+<t tx="ekr.20160519172255.63">null_trace_n = 0
+
 def handleNode(self, node, parent):
     # EKR: this the general node visiter.
-    global n_pass_nodes
-    if node is None:
-        return
-    assert 0 &lt; self.pass_n &lt; 3, g.callers()
+    global n_pass_nodes, n_null_nodes
+    assert node, g.callers()
+    # if node is None:
+        # n_null_nodes += 1
+        # self.null_trace_n += 1
+        # if self.null_trace_n &lt; 10:
+            # g.trace(g.callers())
+        # return
+    # The following will fail unless 0 &lt; self.pass_n &lt; 3
     n_pass_nodes[self.pass_n] += 1
     if self.offset and getattr(node, 'lineno', None) is not None:
         node.lineno += self.offset[0]
@@ -1611,9 +1631,17 @@ if aft:
 NONLOCAL = GLOBAL
 </t>
 <t tx="ekr.20160519172255.67">
+# GeneratorExp(expr elt, comprehension* generators)
+
 def GENERATOREXP(self, node):
     self.pushScope(GeneratorScope)
-    self.handleChildren(node)
+    if aft:
+        # EKR: call generators first.
+        for z in node.generators:
+            self.handleNode(z, node)
+        self.handleNode(node.elt, node)
+    else:
+        self.handleChildren(node)
     self.popScope()
     
 if aft:
@@ -1663,7 +1691,8 @@ def RETURN(self, node):
         not self.scope.returnValue
     ):
         self.scope.returnValue = node.value
-    self.handleNode(node.value, node)
+    if node.value: # EKR
+        self.handleNode(node.value, node)
 
 if aft:
     Return = RETURN</t>
@@ -1694,6 +1723,8 @@ AWAIT = YIELDFROM = YIELD
 </t>
 <t tx="ekr.20160519172255.71">
 def FUNCTIONDEF(self, node):
+    
+    global n_FunctionDef ; n_FunctionDef += 1
     for deco in node.decorator_list:
         self.handleNode(deco, node)
     self.LAMBDA(node) # EKR: defer's traversal of the body!
@@ -1807,20 +1838,41 @@ def TRY(self, node):
         self.handleNode(child, node)
     self.exceptHandlers.pop()
     # Process the other nodes: "except:", "else:", "finally:"
-    self.handleChildren(node, omit='body')
+    if aft:
+        for z in node.handlers:
+            self.handleNode(z, node)
+        for z in node.orelse:
+            self.handleNode(z, node)
+        for z in node.finalbody:
+            self.handleNode(z, node)
+    else:
+        self.handleChildren(node, omit='body')
     
 if aft:
     Try = TryExcept = TRY
 
 TRYEXCEPT = TRY
 </t>
-<t tx="ekr.20160519172255.78">
+<t tx="ekr.20160519172255.78"># Python 2: ExceptHandler(expr? type, expr? name, stmt* body)
+# Python 3: ExceptHandler(expr? type, identifier? name, stmt* body)
+
 def EXCEPTHANDLER(self, node):
     # 3.x: in addition to handling children, we must handle the name of
     # the exception, which is not a Name node, but a simple string.
-    if isinstance(node.name, str):
-        self.handleNodeStore(node)
-    self.handleChildren(node)
+    if aft:
+        if g.isPython3:
+            if isinstance(node.name, str):
+                self.handleNodeStore(node)
+        elif node.name:
+            self.handleNode(node.name, node)
+        if node.type:
+            self.handleNode(node.type, node)
+        for z in node.body:
+            self.handleNode(z, node)
+    else:
+        if isinstance(node.name, str):
+            self.handleNodeStore(node)  
+        self.handleChildren(node)
     
 if aft:
     ExceptHandler = EXCEPTHANDLER
@@ -1979,9 +2031,13 @@ Provide the class Message and its subclasses.
 #</t>
 <t tx="ekr.20160519172836.1">
 def ignore(self, node):
-        pass
+    
+    global n_ignore ; n_ignore += 1
+    # if n_ignore &lt; 10: g.trace(node.__class__.__name__, g.callers())
+    # pass
 
 if aft:
+    # EKR: It's not feasible to ignore these nodes any other way.
     alias = ignore
     Continue = Break = Pass = ignore
     Num = Str = Bytes = Ellipsis = ignore
@@ -4405,8 +4461,7 @@ def Print(self, node):
 # Raise(expr? exc, expr? cause)                 Python 2
 
 def Raise(self, node):
-    
-    # self.handleChildren(node)
+
     if g.isPython3:
         if getattr(node, 'exc', None):
             self.handleNode(node.exc, node)
@@ -4474,7 +4529,12 @@ AsyncWith = With
 </t>
 <t tx="ekr.20160522082410.1">
 def NameConstant(self, node): # Python 3 only.
-    self.handleChildren(node)
+
+    assert aft
+    assert isinstance(node.value, (bool, str, None.__class__)), node.value.__class__.__name__
+    # g.trace(node.value)
+    # if node.value:
+    #     self.handleNode(node.value, node)
     # self.handleNode(node.value, node)
     # s = repr(node.value)
     # return 'bool' if s in ('True', 'False') else s
@@ -4579,14 +4639,18 @@ def unit_test(raise_on_fail=True):
         # Remove base classes
     aList = [z for z in aList if not z.startswith('_') and not z in remove]
     # Now test them.
-    ft = Checker(tree=None)
+    # Create a real tree so handleNode doesn't have to test for an empty tree.
+    fn, s = '&lt;test&gt;', 'pass'
+    tree = compile(s, fn, "exec", ast.PyCF_ONLY_AST)
+    ft = Checker(tree)
     errors, nodes = 0,0
-    for z in aList:
-        if hasattr(ft, z):
-            nodes += 1
-        else:
-            errors += 1
-            print('Missing pyflakes visitor for: %s' % z)
+    if aft:
+        for z in aList:
+            if hasattr(ft, z):
+                nodes += 1
+            else:
+                errors += 1
+                print('Missing pyflakes visitor for: %s' % z)
     s = '%s node types, %s errors' % (nodes, errors)
     if raise_on_fail:
         assert not errors, s
@@ -4629,7 +4693,14 @@ def Set(self, node):
     print('nodes visited...')
     for i in (1,2):
         print('  pass%s: %7s' % (i, checker.n_pass_nodes[i]))
-    print('  total: %7s' % sum(checker.n_pass_nodes[i] for i in (1,2)))
+    n_handleNode = sum(checker.n_pass_nodes[i] for i in (1,2))
+    print('  total: %7s' % n_handleNode)
+    print('method calls...')
+    print('  handleNode:     %7s' % n_handleNode)
+    # print('    null nodes:   %7s' % checker.n_null_nodes)
+    print('  handleChildren: %7s' % checker.n_handleChildren)
+    print('  FunctionDef:    %7s' % checker.n_FunctionDef)
+    print('  ignore:         %7s' % checker.n_ignore)
     print('times (sec.)...')
     keys = (
         'read', 'parse', 'visit', 'handle', 'check',
@@ -5051,7 +5122,11 @@ class TestWriter:
     self.pass_n = 1
     # This looks like it is a full pass.
     # In fact, traversing of def/lambda happens in pass 2.
-    self.handleChildren(node)
+    if aft:
+        for z in node.body:
+            self.handleNode(z, node)
+    else:
+        self.handleChildren(node)
     t2 = time.clock()
     stats['pass1'] = stats.get('pass1', 0.0) + t2-t1
 </t>
@@ -5088,5 +5163,6 @@ class TestWriter:
     t2 = time.clock()
     stats['pass3'] = stats.get('pass3', 0.0) + t2-t1
 </t>
+<t tx="ekr.20160524053437.1"># flattened, word, ignore-case, head, body</t>
 </tnodes>
 </leo_file>

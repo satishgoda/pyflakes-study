@@ -370,24 +370,6 @@
 <v t="ekr.20160519172255.13"><vh>_FieldsOrder._get_fields</vh></v>
 </v>
 </v>
-<v t="ekr.20160523172144.1"><vh>----------------</vh></v>
-<v t="ekr.20160520081237.1"><vh>@button test</vh>
-<v t="ekr.20160520162722.1"><vh>&lt;&lt; define s &gt;&gt;</vh></v>
-<v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
-<v t="ekr.20160523085953.1"><vh>class TestController</vh>
-<v t="ekr.20160520082209.1"><vh>check_all</vh></v>
-<v t="ekr.20160520162336.1"><vh>check_string</vh></v>
-<v t="ekr.20160520210414.1"><vh>compile_string</vh></v>
-<v t="ekr.20160521023438.1"><vh>handle_tree (TestController)</vh></v>
-<v t="ekr.20160523172328.1"><vh>print_stats</vh></v>
-<v t="ekr.20160520210256.1"><vh>read_string</vh></v>
-<v t="ekr.20160520081827.1"><vh>run_test</vh></v>
-<v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
-</v>
-</v>
-<v t="ekr.20160520081827.1"></v>
-<v t="ekr.20160523172121.1"><vh>----------------</vh></v>
-<v t="ekr.20160523172328.1"></v>
 <v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
 <v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
 <v t="ekr.20160519172255.12"><vh>class _FieldsOrder(dict)</vh>
@@ -438,28 +420,33 @@
 <v t="ekr.20160519172255.53"></v>
 </v>
 <v t="ekr.20160519172255.54"></v>
-<v t="ekr.20160519173152.1"><vh>Checker.handle (traversers)...</vh>
-<v t="ekr.20160519172255.55"><vh>Checker.getNodeHandler</vh></v>
-<v t="ekr.20160519172255.59"><vh>Checker.handleChildren</vh></v>
-<v t="ekr.20160519172255.64"><vh>Checker.handleDoctests</vh></v>
-<v t="ekr.20160519172255.63"><vh>Checker.handleNode (injects parent/depth fields)</vh></v>
-</v>
 <v t="ekr.20160521155817.1"><vh>Checker.docstrings...</vh>
 <v t="ekr.20160519172255.61"><vh>Checker.isDocstring</vh></v>
 <v t="ekr.20160519172255.62"><vh>Checker.getDocstring</vh></v>
 </v>
 <v t="ekr.20160519172836.1"><vh>Checker.Node handlers</vh>
+<v t="ekr.20160519173152.1"><vh> Checker.traversers...</vh>
+<v t="ekr.20160519172255.64"><vh>Checker.handleDoctests</vh></v>
+<v t="ekr.20160519172255.63"><vh>Checker.handleNode (injects parent/depth fields)</vh></v>
+</v>
+<v t="ekr.20160524091908.1"><vh>&lt;&lt; non-aft handlers &gt;&gt;</vh>
+<v t="ekr.20160519172255.55"><vh>Checker.getNodeHandler</vh></v>
+<v t="ekr.20160519172255.59"><vh>Checker.handleChildren</vh></v>
+</v>
 <v t="ekr.20160522081903.1"><vh>&lt;&lt; default node handlers &gt;&gt;</vh>
 <v t="ekr.20160522081949.10"><vh>ft.operators &amp; operands</vh>
+<v t="ekr.20160524091403.1"><vh>ft.alias</vh></v>
 <v t="ekr.20160522081949.11"><vh>ft.arguments &amp; arg</vh></v>
 <v t="ekr.20160522081949.12"><vh>ft.Attribute</vh></v>
 <v t="ekr.20160522081949.13"><vh>ft.BinOp</vh></v>
 <v t="ekr.20160522081949.14"><vh>ft.BoolOp</vh></v>
+<v t="ekr.20160524091135.1"><vh>ft.Bytes</vh></v>
 <v t="ekr.20160522081949.16"><vh>ft.Call</vh></v>
 <v t="ekr.20160522081949.17"><vh>ft.Compare</vh></v>
 <v t="ekr.20160522081949.19"><vh>ft.comprehension</vh></v>
 <v t="ekr.20160522081949.20"><vh>ft.Dict</vh></v>
 <v t="ekr.20160523092835.1"><vh>ft.DictComp (new)</vh></v>
+<v t="ekr.20160524091305.1"><vh>ft.Ellipsis</vh></v>
 <v t="ekr.20160522081949.22"><vh>ft.Expr</vh></v>
 <v t="ekr.20160522081949.23"><vh>ft.Expression</vh></v>
 <v t="ekr.20160522081949.24"><vh>ft.ExtSlice</vh></v>
@@ -468,9 +455,11 @@
 <v t="ekr.20160522081949.28"><vh>ft.keyword</vh></v>
 <v t="ekr.20160522081949.29"><vh>ft.List</vh></v>
 <v t="ekr.20160522082410.1"><vh>ft.NameConstant</vh></v>
+<v t="ekr.20160524091057.1"><vh>ft.Num</vh></v>
 <v t="ekr.20160522081949.32"><vh>ft.Repr</vh></v>
 <v t="ekr.20160523093026.1"><vh>ft.Set (new)</vh></v>
 <v t="ekr.20160522081949.33"><vh>ft.Slice</vh></v>
+<v t="ekr.20160524091119.1"><vh>ft.Str</vh></v>
 <v t="ekr.20160522081949.35"><vh>ft.Subscript</vh></v>
 <v t="ekr.20160522081949.36"><vh>ft.Tuple</vh></v>
 <v t="ekr.20160522081949.37"><vh>ft.UnaryOp</vh></v>
@@ -478,10 +467,13 @@
 <v t="ekr.20160522081949.38"><vh>ft.statements</vh>
 <v t="ekr.20160522081949.40"><vh>ft.Assert</vh></v>
 <v t="ekr.20160522081949.41"><vh>ft.Assign</vh></v>
+<v t="ekr.20160524084528.1"><vh>ft.Break</vh></v>
+<v t="ekr.20160524084549.1"><vh>ft.Continue</vh></v>
 <v t="ekr.20160522081949.45"><vh>ft.Delete</vh></v>
 <v t="ekr.20160522081949.47"><vh>ft.Exec</vh></v>
 <v t="ekr.20160522081949.48"><vh>ft.For</vh></v>
 <v t="ekr.20160522081949.50"><vh>ft.If</vh></v>
+<v t="ekr.20160524084621.1"><vh>ft.Pass</vh></v>
 <v t="ekr.20160522081949.54"><vh>ft.Print</vh></v>
 <v t="ekr.20160522081949.55"><vh>ft.Raise</vh></v>
 <v t="ekr.20160522081949.57"><vh>ft.Starred (Python 3)</vh></v>
@@ -533,14 +525,31 @@
 </v>
 </v>
 </v>
-<v t="ekr.20160519172255.63"></v>
+<v t="ekr.20160523172144.1"><vh>----------------</vh></v>
+<v t="ekr.20160520081237.1"><vh>@button test</vh>
+<v t="ekr.20160520162722.1"><vh>&lt;&lt; define s &gt;&gt;</vh></v>
+<v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
+<v t="ekr.20160523085953.1"><vh>class TestController</vh>
+<v t="ekr.20160520082209.1"><vh>check_all</vh></v>
+<v t="ekr.20160520162336.1"><vh>check_string</vh></v>
+<v t="ekr.20160520210414.1"><vh>compile_string</vh></v>
+<v t="ekr.20160521023438.1"><vh>handle_tree (TestController)</vh></v>
+<v t="ekr.20160523172328.1"><vh>print_stats</vh></v>
+<v t="ekr.20160520210256.1"><vh>read_string</vh></v>
+<v t="ekr.20160520081827.1"><vh>run_test</vh></v>
+<v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
+</v>
+</v>
+<v t="ekr.20160520081827.1"></v>
+<v t="ekr.20160523172121.1"><vh>----------------</vh></v>
+<v t="ekr.20160523172328.1"></v>
 <v t="ekr.20160523180522.1"><vh>re: passes</vh>
+<v t="ekr.20160523173355.1"></v>
 <v t="ekr.20160519172255.73"></v>
 <v t="ekr.20160519172255.71"></v>
+<v t="ekr.20160519172255.63"></v>
 <v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160523173355.1"></v>
 <v t="ekr.20160522063947.1"></v>
-</v>
 <v t="ekr.20160524053437.1"><vh>Found:.handleChildren</vh>
 <v t="ekr.20160519172255.64"></v>
 <v t="ekr.20160519172255.59"></v>
@@ -550,6 +559,17 @@
 <v t="ekr.20160519172255.77"></v>
 <v t="ekr.20160523181737.1"></v>
 </v>
+</v>
+<v t="ekr.20160519172255.40"></v>
+<v t="ekr.20160519172836.1"></v>
+<v t="ekr.20160524083450.1"><vh>re: suppressing calls to ignore</vh>
+<v t="ekr.20160522081949.13"></v>
+<v t="ekr.20160522081949.14"></v>
+<v t="ekr.20160522081949.17"></v>
+<v t="ekr.20160522081949.50"></v>
+</v>
+<v t="ekr.20160523090911.3"></v>
+<v t="ekr.20160524081129.1"><vh>Post</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -566,8 +586,8 @@ Also, it models the Bindings and Scopes.
 
 # Stats:
 # jit:  not significantly better than original.
-# aft:  checker: 1.96 total: 4.51 # 10% overall improvement.
-# None: checker: 2.60 total: 4.98
+# aft:  checker: 1.97 total: 3.84 # 20% overall improvement.
+# None: checker: 2.44 total: 4.99
 
 aft = True
     # True: use AstFullTraverser class for traversals.
@@ -1344,8 +1364,6 @@ def addBinding(self, node, value):
     self.scope[value.name] = value
 </t>
 <t tx="ekr.20160519172255.55">
-# EKR: not used when using aft code.
-
 def getNodeHandler(self, node_class):
 
     try:
@@ -1548,11 +1566,11 @@ def handleNode(self, node, parent):
     self.nodeDepth += 1
     node.depth = self.nodeDepth
     node.parent = parent
-    # EKR: this is the only call to getNodeHandler.
     if aft:
         handler = getattr(self, node.__class__.__name__)
         handler(node)
     else:
+        # EKR: this is the only call to getNodeHandler.
         handler = self.getNodeHandler(node.__class__)
         handler(node)
     self.nodeDepth -= 1
@@ -1560,7 +1578,6 @@ def handleNode(self, node, parent):
         # print('  ' * self.nodeDepth(node) + 'end ' + node.__class__.__name__)
 
 _getDoctestExamples = doctest.DocTestParser().get_examples
-
 </t>
 <t tx="ekr.20160519172255.64">
 def handleDoctests(self, node):
@@ -2030,28 +2047,25 @@ Provide the class Message and its subclasses.
 # Scope classes...
 #</t>
 <t tx="ekr.20160519172836.1">
+ignore_kinds = {}
+
 def ignore(self, node):
     
+    # EKR: Ignoring a node is not strictly the same as not calling handleNode
+    # because handleNode sets node.parent and node.depth fields.
+    # However, these fields aren't used for ignored nodes.
+    
     global n_ignore ; n_ignore += 1
-    # if n_ignore &lt; 10: g.trace(node.__class__.__name__, g.callers())
-    # pass
+    if aft:
+        name = node.__class__.__name__
+        if name not in self.ignore_kinds:
+            self.ignore_kinds[name] = True
+            g.trace(name, g.callers())
 
 if aft:
-    # EKR: It's not feasible to ignore these nodes any other way.
-    alias = ignore
-    Continue = Break = Pass = ignore
-    Num = Str = Bytes = Ellipsis = ignore
-    Load = Store = Del = AugLoad = AugStore = Param = ignore
-        # expression contexts are (constant) node instances
-    And = Or = Add = Sub = Mult = Div = Mod = Pow = LShift = RShift = ignore
-    BitOr = BitXor = BitAnd = FloorDiv = Invert = Not = UAdd = USub = ignore
-    Eq = NotEq = Lt = LtE = Gt = GtE = Is = IsNot = In = NotIn = ignore
-    # EKR: MatMult is new in Python 3.5
-    MatMult= ignore
-        # operators are also constant node instances.
-        
     &lt;&lt; default node handlers &gt;&gt;
 else:
+    &lt;&lt; non-aft handlers &gt;&gt;
  
     CONTINUE = BREAK = PASS = ignore
     NUM = STR = BYTES = ELLIPSIS = ignore
@@ -2144,7 +2158,7 @@ print(aList)
 print(['iter'.find(z) for z in fields])
 </t>
 <t tx="ekr.20160519185320.1"># flattened, word, ignore-case, head, body</t>
-<t tx="ekr.20160520081237.1">g.cls()
+<t tx="ekr.20160520081237.1"># g.cls()
 if c.isChanged():
     c.save()
 &lt;&lt; test imports &gt;&gt;
@@ -2153,7 +2167,7 @@ aft = checker.aft
 compare_traverse = False
 &lt;&lt; define s &gt;&gt;
 @others
-gc.collect() # Stabilizes timing statistics a bit.
+gc.collect() # Runs a full collection. Stabilizes timing statistics a bit.
 stats = {}
 print('aft: %s' % checker.aft)
 TestController().run_test(scope='all', s=s)
@@ -4248,6 +4262,8 @@ def BinOp(self, node):
 # BoolOp(boolop op, expr* values)
 
 def BoolOp(self, node):
+    
+    # self.handleNode(node.op)
     for z in node.values:
         self.handleNode(z, node)
 </t>
@@ -4274,12 +4290,11 @@ def Compare(self, node):
     self.handleNode(node.left, node)
     assert len(node.ops) == len(node.comparators)
     for i in range(len(node.ops)):
-        self.handleNode(node.ops[i], node)
-        self.handleNode(node.comparators[i], node)
-    # There were ignored.
-    self.handleNode(node.left, node)
-    for z in node.comparators:
-        self.handleNode(z, node)
+        if not isinstance(node.ops[i], ast.cmpop):
+            # Could be a name, etc.
+            self.handleNode(node.ops[i], node)
+        if not isinstance(node.comparators[i], ast.cmpop):
+            self.handleNode(node.comparators[i], node)
 </t>
 <t tx="ekr.20160522081949.19">
 # comprehension (expr target, expr iter, expr* ifs)
@@ -4440,7 +4455,9 @@ AsyncFor = For</t>
 # If(expr test, stmt* body, stmt* orelse)
 
 def If(self, node):
-    self.handleNode(node.test, node)
+
+    if not isinstance(node.test, ast.operator):
+        self.handleNode(node.test, node)
     for z in node.body:
         self.handleNode(z, node)
     for z in node.orelse:
@@ -4634,20 +4651,32 @@ def unit_test(raise_on_fail=True):
         'Interactive', 'Suite', # Not necessary.
         'PyCF_ONLY_AST', # A constant,
         'AST', # The base class,
+        # Grammar symbols...
+        'expr', 'mod', 'stmt',
+        'boolop', 'cmpop', 'unaryop', 'operator',
+        # Field names...
+        'expr_context', 'excepthandler', 'slice', 'withitem',
     ]
-    aList = [z for z in aList if not z[0].islower()]
-        # Remove base classes
     aList = [z for z in aList if not z.startswith('_') and not z in remove]
     # Now test them.
     # Create a real tree so handleNode doesn't have to test for an empty tree.
     fn, s = '&lt;test&gt;', 'pass'
     tree = compile(s, fn, "exec", ast.PyCF_ONLY_AST)
     ft = Checker(tree)
-    errors, nodes = 0,0
+    operator_classes = (
+        ast.cmpop, ast.boolop,
+        ast.expr_context,
+        ast.operator, ast.unaryop,
+    )
+    errors, nodes, operators = 0, 0, 0
     if aft:
         for z in aList:
+            class_ = getattr(ast, z, None)
+            class_name = class_.__name__
             if hasattr(ft, z):
                 nodes += 1
+            elif aft and issubclass(class_, operator_classes):
+                operators += 1
             else:
                 errors += 1
                 print('Missing pyflakes visitor for: %s' % z)
@@ -5164,5 +5193,39 @@ class TestWriter:
     stats['pass3'] = stats.get('pass3', 0.0) + t2-t1
 </t>
 <t tx="ekr.20160524053437.1"># flattened, word, ignore-case, head, body</t>
+<t tx="ekr.20160524081129.1">@language rest
+@wrap
+
+Big picture:
+- Super fast, catches many common coding mistakes.
+- Can be made 10% to 20% faster.
+- Traverses the tree once, but in an unusual order.
+</t>
+<t tx="ekr.20160524083450.1"></t>
+<t tx="ekr.20160524084528.1">
+def Break(self, node):
+    pass</t>
+<t tx="ekr.20160524084549.1">
+def Continue(self, node):
+    pass</t>
+<t tx="ekr.20160524084621.1">
+def Pass(self, node):
+    pass</t>
+<t tx="ekr.20160524091057.1">
+def Num(self, node):
+    pass</t>
+<t tx="ekr.20160524091119.1">
+def Str(self, node):
+    pass</t>
+<t tx="ekr.20160524091135.1">
+def Bytes(self, node):
+    pass</t>
+<t tx="ekr.20160524091305.1">
+def Ellipsis(self, node):
+    pass</t>
+<t tx="ekr.20160524091403.1">
+def alias(self, node):
+    pass</t>
+<t tx="ekr.20160524091908.1">@others</t>
 </tnodes>
 </leo_file>

@@ -35,8 +35,8 @@ import messages # EKR
 
 # Stats:
 # jit:  not significantly better than original.
-# aft:  checker: 1.96 total: 4.51 # 10% overall improvement.
-# None: checker: 2.60 total: 4.98
+# aft:  checker: 1.97 total: 3.84 # 20% overall improvement.
+# None: checker: 2.44 total: 4.99
 
 aft = True
     # True: use AstFullTraverser class for traversals.
@@ -146,20 +146,32 @@ def unit_test(raise_on_fail=True):
         'Interactive', 'Suite', # Not necessary.
         'PyCF_ONLY_AST', # A constant,
         'AST', # The base class,
+        # Grammar symbols...
+        'expr', 'mod', 'stmt',
+        'boolop', 'cmpop', 'unaryop', 'operator',
+        # Field names...
+        'expr_context', 'excepthandler', 'slice', 'withitem',
     ]
-    aList = [z for z in aList if not z[0].islower()]
-        # Remove base classes
     aList = [z for z in aList if not z.startswith('_') and not z in remove]
     # Now test them.
     # Create a real tree so handleNode doesn't have to test for an empty tree.
     fn, s = '<test>', 'pass'
     tree = compile(s, fn, "exec", ast.PyCF_ONLY_AST)
     ft = Checker(tree)
-    errors, nodes = 0,0
+    operator_classes = (
+        ast.cmpop, ast.boolop,
+        ast.expr_context,
+        ast.operator, ast.unaryop,
+    )
+    errors, nodes, operators = 0, 0, 0
     if aft:
         for z in aList:
+            class_ = getattr(ast, z, None)
+            class_name = class_.__name__
             if hasattr(ft, z):
                 nodes += 1
+            elif aft and issubclass(class_, operator_classes):
+                operators += 1
             else:
                 errors += 1
                 print('Missing pyflakes visitor for: %s' % z)
@@ -504,99 +516,6 @@ class Checker(object):
         # g.trace(self.scope, value) # EKR
         self.scope[value.name] = value
 
-    # EKR: like visitors
-
-    # EKR: not used when using aft code.
-
-    def getNodeHandler(self, node_class):
-
-        try:
-            return self._nodeHandlers[node_class]
-        except KeyError:
-            nodeType = getNodeType(node_class)
-        self._nodeHandlers[node_class] = handler = getattr(self, nodeType)
-        return handler
-
-    def handleChildren(self, tree, omit=None):
-        # EKR: iter_child_nodes uses _FieldsOrder class.
-        global n_handleChildren ; n_handleChildren += 1
-        
-        for node in iter_child_nodes(tree, omit=omit):
-            self.handleNode(node, tree)
-
-    def handleDoctests(self, node):
-        try:
-            (docstring, node_lineno) = self.getDocstring(node.body[0])
-            examples = docstring and self._getDoctestExamples(docstring)
-        except (ValueError, IndexError):
-            # e.g. line 6 of the docstring for <string> has inconsistent
-            # leading whitespace: ...
-            return
-        if not examples:
-            return
-        node_offset = self.offset or (0, 0)
-        self.pushScope()
-        underscore_in_builtins = '_' in self.builtIns
-        if not underscore_in_builtins:
-            self.builtIns.add('_')
-        for example in examples:
-            try:
-                tree = compile(example.source, "<doctest>", "exec", ast.PyCF_ONLY_AST)
-            except SyntaxError:
-                e = sys.exc_info()[1]
-                position = (node_lineno + example.lineno + e.lineno,
-                            example.indent + 4 + (e.offset or 0))
-                self.report(messages.DoctestSyntaxError, node, position)
-            else:
-                self.offset = (node_offset[0] + node_lineno + example.lineno,
-                               node_offset[1] + example.indent + 4)
-                self.handleChildren(tree)
-                self.offset = node_offset
-        if not underscore_in_builtins:
-            self.builtIns.remove('_')
-        self.popScope()
-    null_trace_n = 0
-
-    def handleNode(self, node, parent):
-        # EKR: this the general node visiter.
-        global n_pass_nodes, n_null_nodes
-        assert node, g.callers()
-        # if node is None:
-            # n_null_nodes += 1
-            # self.null_trace_n += 1
-            # if self.null_trace_n < 10:
-                # g.trace(g.callers())
-            # return
-        # The following will fail unless 0 < self.pass_n < 3
-        n_pass_nodes[self.pass_n] += 1
-        if self.offset and getattr(node, 'lineno', None) is not None:
-            node.lineno += self.offset[0]
-            node.col_offset += self.offset[1]
-        # if self.traceTree:
-            # print('  ' * self.nodeDepth(node) + node.__class__.__name__)
-        if (self.futuresAllowed and
-            not (isinstance(node, (ast.Module, ast.ImportFrom)) or self.isDocstring(node))
-                 # EKR: works regardless of new_module.
-        ):
-            self.futuresAllowed = False
-        # EKR: getCommonAncestor uses node.depth.
-        self.nodeDepth += 1
-        node.depth = self.nodeDepth
-        node.parent = parent
-        # EKR: this is the only call to getNodeHandler.
-        if aft:
-            handler = getattr(self, node.__class__.__name__)
-            handler(node)
-        else:
-            handler = self.getNodeHandler(node.__class__)
-            handler(node)
-        self.nodeDepth -= 1
-        # if self.traceTree:
-            # print('  ' * self.nodeDepth(node) + 'end ' + node.__class__.__name__)
-
-    _getDoctestExamples = doctest.DocTestParser().get_examples
-
-
     def isDocstring(self, node):
         """
         Determine if the given node is a docstring, as long as it is at the
@@ -614,28 +533,27 @@ class Checker(object):
         doctest_lineno = node.lineno - node.s.count('\n') - 1
         return (node.s, doctest_lineno)
 
+    ignore_kinds = {}
+
     def ignore(self, node):
         
+        # EKR: Ignoring a node is not strictly the same as not calling handleNode
+        # because handleNode sets node.parent and node.depth fields.
+        # However, these fields aren't used for ignored nodes.
+        
         global n_ignore ; n_ignore += 1
-        # if n_ignore < 10: g.trace(node.__class__.__name__, g.callers())
-        # pass
+        if aft:
+            name = node.__class__.__name__
+            if name not in self.ignore_kinds:
+                self.ignore_kinds[name] = True
+                g.trace(name, g.callers())
 
     if aft:
-        # EKR: It's not feasible to ignore these nodes any other way.
-        alias = ignore
-        Continue = Break = Pass = ignore
-        Num = Str = Bytes = Ellipsis = ignore
-        Load = Store = Del = AugLoad = AugStore = Param = ignore
-            # expression contexts are (constant) node instances
-        And = Or = Add = Sub = Mult = Div = Mod = Pow = LShift = RShift = ignore
-        BitOr = BitXor = BitAnd = FloorDiv = Invert = Not = UAdd = USub = ignore
-        Eq = NotEq = Lt = LtE = Gt = GtE = Is = IsNot = In = NotIn = ignore
-        # EKR: MatMult is new in Python 3.5
-        MatMult= ignore
-            # operators are also constant node instances.
-            
 
         if aft:
+
+            def alias(self, node):
+                pass
 
             # 2: arguments = (expr* args, identifier? vararg,
             #                 identifier? kwarg, expr* defaults)
@@ -686,8 +604,13 @@ class Checker(object):
             # BoolOp(boolop op, expr* values)
 
             def BoolOp(self, node):
+                
+                # self.handleNode(node.op)
                 for z in node.values:
                     self.handleNode(z, node)
+
+            def Bytes(self, node):
+                pass
 
             # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
@@ -710,12 +633,11 @@ class Checker(object):
                 self.handleNode(node.left, node)
                 assert len(node.ops) == len(node.comparators)
                 for i in range(len(node.ops)):
-                    self.handleNode(node.ops[i], node)
-                    self.handleNode(node.comparators[i], node)
-                # There were ignored.
-                self.handleNode(node.left, node)
-                for z in node.comparators:
-                    self.handleNode(z, node)
+                    if not isinstance(node.ops[i], ast.cmpop):
+                        # Could be a name, etc.
+                        self.handleNode(node.ops[i], node)
+                    if not isinstance(node.comparators[i], ast.cmpop):
+                        self.handleNode(node.comparators[i], node)
 
             # comprehension (expr target, expr iter, expr* ifs)
 
@@ -744,6 +666,9 @@ class Checker(object):
                     self.handleNode(z, node)
                 self.handleNode(node.value, node)
                 self.handleNode(node.key, node)
+
+            def Ellipsis(self, node):
+                pass
 
             # Expr(expr value)
 
@@ -793,6 +718,9 @@ class Checker(object):
                 # s = repr(node.value)
                 # return 'bool' if s in ('True', 'False') else s
 
+            def Num(self, node):
+                pass
+
             # Python 2.x only
             # Repr(expr value)
 
@@ -813,6 +741,9 @@ class Checker(object):
                     self.handleNode(node.upper, node)
                 if getattr(node, 'step', None):
                     self.handleNode(node.step, node)
+
+            def Str(self, node):
+                pass
 
             # Subscript(expr value, slice slice, expr_context ctx)
 
@@ -851,6 +782,12 @@ class Checker(object):
                     self.handleNode(z, node)
                 
 
+            def Break(self, node):
+                pass
+
+            def Continue(self, node):
+                pass
+
             # Delete(expr* targets)
 
             def Delete(self, node):
@@ -884,11 +821,16 @@ class Checker(object):
             # If(expr test, stmt* body, stmt* orelse)
 
             def If(self, node):
-                self.handleNode(node.test, node)
+
+                if not isinstance(node.test, ast.operator):
+                    self.handleNode(node.test, node)
                 for z in node.body:
                     self.handleNode(z, node)
                 for z in node.orelse:
                     self.handleNode(z, node)
+
+            def Pass(self, node):
+                pass
 
             # Python 2.x only
             # Print(expr? dest, expr* values, bool nl)
@@ -965,6 +907,22 @@ class Checker(object):
                     
             AsyncWith = With
     else:
+
+        def getNodeHandler(self, node_class):
+
+            try:
+                return self._nodeHandlers[node_class]
+            except KeyError:
+                nodeType = getNodeType(node_class)
+            self._nodeHandlers[node_class] = handler = getattr(self, nodeType)
+            return handler
+
+        def handleChildren(self, tree, omit=None):
+            # EKR: iter_child_nodes uses _FieldsOrder class.
+            global n_handleChildren ; n_handleChildren += 1
+            
+            for node in iter_child_nodes(tree, omit=omit):
+                self.handleNode(node, tree)
      
         CONTINUE = BREAK = PASS = ignore
         NUM = STR = BYTES = ELLIPSIS = ignore
@@ -997,6 +955,80 @@ class Checker(object):
         
         # additional node types
         COMPREHENSION = KEYWORD = handleChildren
+
+    # EKR: like visitors
+
+    def handleDoctests(self, node):
+        try:
+            (docstring, node_lineno) = self.getDocstring(node.body[0])
+            examples = docstring and self._getDoctestExamples(docstring)
+        except (ValueError, IndexError):
+            # e.g. line 6 of the docstring for <string> has inconsistent
+            # leading whitespace: ...
+            return
+        if not examples:
+            return
+        node_offset = self.offset or (0, 0)
+        self.pushScope()
+        underscore_in_builtins = '_' in self.builtIns
+        if not underscore_in_builtins:
+            self.builtIns.add('_')
+        for example in examples:
+            try:
+                tree = compile(example.source, "<doctest>", "exec", ast.PyCF_ONLY_AST)
+            except SyntaxError:
+                e = sys.exc_info()[1]
+                position = (node_lineno + example.lineno + e.lineno,
+                            example.indent + 4 + (e.offset or 0))
+                self.report(messages.DoctestSyntaxError, node, position)
+            else:
+                self.offset = (node_offset[0] + node_lineno + example.lineno,
+                               node_offset[1] + example.indent + 4)
+                self.handleChildren(tree)
+                self.offset = node_offset
+        if not underscore_in_builtins:
+            self.builtIns.remove('_')
+        self.popScope()
+    null_trace_n = 0
+
+    def handleNode(self, node, parent):
+        # EKR: this the general node visiter.
+        global n_pass_nodes, n_null_nodes
+        assert node, g.callers()
+        # if node is None:
+            # n_null_nodes += 1
+            # self.null_trace_n += 1
+            # if self.null_trace_n < 10:
+                # g.trace(g.callers())
+            # return
+        # The following will fail unless 0 < self.pass_n < 3
+        n_pass_nodes[self.pass_n] += 1
+        if self.offset and getattr(node, 'lineno', None) is not None:
+            node.lineno += self.offset[0]
+            node.col_offset += self.offset[1]
+        # if self.traceTree:
+            # print('  ' * self.nodeDepth(node) + node.__class__.__name__)
+        if (self.futuresAllowed and
+            not (isinstance(node, (ast.Module, ast.ImportFrom)) or self.isDocstring(node))
+                 # EKR: works regardless of new_module.
+        ):
+            self.futuresAllowed = False
+        # EKR: getCommonAncestor uses node.depth.
+        self.nodeDepth += 1
+        node.depth = self.nodeDepth
+        node.parent = parent
+        if aft:
+            handler = getattr(self, node.__class__.__name__)
+            handler(node)
+        else:
+            # EKR: this is the only call to getNodeHandler.
+            handler = self.getNodeHandler(node.__class__)
+            handler(node)
+        self.nodeDepth -= 1
+        # if self.traceTree:
+            # print('  ' * self.nodeDepth(node) + 'end ' + node.__class__.__name__)
+
+    _getDoctestExamples = doctest.DocTestParser().get_examples
 
     def AUGASSIGN(self, node):
         self.handleNodeLoad(node.target)

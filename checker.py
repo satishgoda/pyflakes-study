@@ -38,7 +38,7 @@ import messages # EKR
 # aft:  checker: 1.97 total: 3.84 # 20% overall improvement.
 # None: checker: 2.44 total: 4.99
 
-aft = True
+aft = False
     # True: use AstFullTraverser class for traversals.
     # This is proving to be difficult, because ast.visit doesn't have a parent arg.
 # jit = False

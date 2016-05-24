@@ -347,6 +347,24 @@
 <v t="ekr.20160519172255.36"></v>
 <v t="ekr.20160519172255.68"></v>
 </v>
+<v t="ekr.20160524120333.1"><vh>Found:scopeStack</vh>
+<v t="ekr.20160519172255.54"></v>
+<v t="ekr.20160522063947.1"><vh>Checker.MODULE (New: EKR)</vh>
+<v t="ekr.20160523181737.1"><vh>Checker.pass1</vh></v>
+<v t="ekr.20160523181742.1"><vh>Checker.pass2</vh></v>
+<v t="ekr.20160523181745.1"><vh>Checker.pass3</vh></v>
+<v t="ekr.20160519172255.47"><vh>Checker.checkDeadScopes (pass4)</vh></v>
+</v>
+<v t="ekr.20160519172255.66"></v>
+<v t="ekr.20160519172255.57"></v>
+<v t="ekr.20160519172255.56"></v>
+<v t="ekr.20160519172255.43"><vh>Checker.deferAssignment</vh></v>
+<v t="ekr.20160519172255.42"><vh>Checker.deferFunction</vh></v>
+<v t="ekr.20160519172255.44"><vh>Checker.runDeferred</vh></v>
+<v t="ekr.20160519172255.45"><vh>Checker.scope (property)</vh></v>
+<v t="ekr.20160519172255.46"><vh>Checker.popScope</vh></v>
+<v t="ekr.20160519172255.48"><vh>Checker.pushScope</vh></v>
+</v>
 </v>
 <v t="ekr.20160524093200.1"><vh>Recent code</vh>
 <v t="ekr.20160519172255.13"><vh>_FieldsOrder._get_fields (changed)</vh></v>
@@ -356,12 +374,7 @@
 <v t="ekr.20160519172255.71"><vh>Checker.FUNCTIONDEF</vh></v>
 <v t="ekr.20160519172255.63"><vh>Checker.handleNode (injects parent/depth fields)</vh></v>
 <v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160522063947.1"><vh>Checker.MODULE (New: EKR)</vh>
-<v t="ekr.20160523181737.1"><vh>Checker.pass1</vh></v>
-<v t="ekr.20160523181742.1"><vh>Checker.pass2</vh></v>
-<v t="ekr.20160523181745.1"><vh>Checker.pass3</vh></v>
-<v t="ekr.20160519172255.47"><vh>Checker.checkDeadScopes (pass4)</vh></v>
-</v>
+<v t="ekr.20160522063947.1"></v>
 <v t="ekr.20160524053437.1"><vh>Found:.handleChildren</vh>
 <v t="ekr.20160519172255.64"><vh>Checker.handleDoctests</vh></v>
 <v t="ekr.20160519172255.59"><vh>Checker.handleChildren</vh></v>
@@ -422,14 +435,14 @@
 <v t="ekr.20160519172255.40"><vh>class Checker</vh>
 <v t="ekr.20160519172255.41"><vh>Checker.__init__</vh></v>
 <v t="ekr.20160521155725.1"><vh>Checker.defer...</vh>
-<v t="ekr.20160519172255.43"><vh>Checker.deferAssignment</vh></v>
-<v t="ekr.20160519172255.42"><vh>Checker.deferFunction</vh></v>
-<v t="ekr.20160519172255.44"><vh>Checker.runDeferred</vh></v>
+<v t="ekr.20160519172255.43"></v>
+<v t="ekr.20160519172255.42"></v>
+<v t="ekr.20160519172255.44"></v>
 </v>
 <v t="ekr.20160519173318.1"><vh>Checker.scopes...</vh>
-<v t="ekr.20160519172255.45"><vh>Checker.scope (property)</vh></v>
-<v t="ekr.20160519172255.46"><vh>Checker.popScope</vh></v>
-<v t="ekr.20160519172255.48"><vh>Checker.pushScope</vh></v>
+<v t="ekr.20160519172255.45"></v>
+<v t="ekr.20160519172255.46"></v>
+<v t="ekr.20160519172255.48"></v>
 </v>
 <v t="ekr.20160519172255.49"><vh>Checker.report</vh></v>
 <v t="ekr.20160519173339.1"><vh>Checker.tree structure</vh>
@@ -555,7 +568,7 @@
 </v>
 </v>
 <v t="ekr.20160523172121.1"><vh>----------------</vh></v>
-<v t="ekr.20160524081129.1"><vh>Post: Big picture</vh></v>
+<v t="ekr.20160519172255.40"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -575,7 +588,7 @@ Also, it models the Bindings and Scopes.
 # aft:  checker: 1.97 total: 3.84 # 20% overall improvement.
 # None: checker: 2.44 total: 4.99
 
-aft = True
+aft = False
     # True: use AstFullTraverser class for traversals.
     # This is proving to be difficult, because ast.visit doesn't have a parent arg.
 # jit = False
@@ -5177,14 +5190,6 @@ class TestWriter:
     stats['pass3'] = stats.get('pass3', 0.0) + t2-t1
 </t>
 <t tx="ekr.20160524053437.1"># flattened, word, ignore-case, head, body</t>
-<t tx="ekr.20160524081129.1">@language rest
-@wrap
-
-Big picture:
-- Super fast, catches many common coding mistakes.
-- Can be made 10% to 20% faster.
-- Traverses the tree once, but in an unusual order.
-</t>
 <t tx="ekr.20160524083450.1"></t>
 <t tx="ekr.20160524084528.1">
 def Break(self, node):
@@ -5212,5 +5217,6 @@ def alias(self, node):
     pass</t>
 <t tx="ekr.20160524091908.1">@others</t>
 <t tx="ekr.20160524093200.1"></t>
+<t tx="ekr.20160524120333.1"># flattened, ignore-case, head, body</t>
 </tnodes>
 </leo_file>

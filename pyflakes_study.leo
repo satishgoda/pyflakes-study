@@ -388,13 +388,6 @@
 <v t="ekr.20160520081827.1"></v>
 <v t="ekr.20160523172328.1"></v>
 <v t="ekr.20160523172121.1"><vh>----------------</vh></v>
-<v t="ekr.20160523180522.1"><vh>re: passes</vh>
-<v t="ekr.20160519172255.73"><vh>Checker.CLASSDEF</vh></v>
-<v t="ekr.20160519172255.71"><vh>Checker.FUNCTIONDEF</vh></v>
-<v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160523173355.1"></v>
-<v t="ekr.20160522063947.1"><vh>Checker.MODULE (New: EKR)</vh></v>
-</v>
 <v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
 <v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
 <v t="ekr.20160519172255.12"><vh>class _FieldsOrder(dict)</vh>
@@ -435,7 +428,6 @@
 <v t="ekr.20160519173318.1"><vh>Checker.scopes...</vh>
 <v t="ekr.20160519172255.45"><vh>Checker.scope (property)</vh></v>
 <v t="ekr.20160519172255.46"><vh>Checker.popScope</vh></v>
-<v t="ekr.20160519172255.47"><vh>Checker.checkDeadScopes</vh></v>
 <v t="ekr.20160519172255.48"><vh>Checker.pushScope</vh></v>
 </v>
 <v t="ekr.20160519172255.49"><vh>Checker.report</vh></v>
@@ -499,15 +491,20 @@
 </v>
 </v>
 <v t="ekr.20160519172255.74"><vh>Checker.AUGASSIGN</vh></v>
-<v t="ekr.20160519172255.73"></v>
+<v t="ekr.20160519172255.73"><vh>Checker.CLASSDEF</vh></v>
 <v t="ekr.20160519172255.78"><vh>Checker.EXCEPTHANDLER</vh></v>
-<v t="ekr.20160519172255.71"></v>
+<v t="ekr.20160519172255.71"><vh>Checker.FUNCTIONDEF</vh></v>
 <v t="ekr.20160519172255.67"><vh>Checker.GENERATOREXP &amp; comprehensions</vh></v>
 <v t="ekr.20160519172255.66"></v>
 <v t="ekr.20160519172255.75"><vh>Checker.IMPORT</vh></v>
 <v t="ekr.20160519172255.76"><vh>Checker.IMPORTFROM</vh></v>
 <v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160522063947.1"></v>
+<v t="ekr.20160522063947.1"><vh>Checker.MODULE (New: EKR)</vh>
+<v t="ekr.20160523181737.1"><vh>Checker.pass1</vh></v>
+<v t="ekr.20160523181742.1"><vh>Checker.pass2</vh></v>
+<v t="ekr.20160523181745.1"><vh>Checker.pass3</vh></v>
+<v t="ekr.20160519172255.47"><vh>Checker.checkDeadScopes (pass4)</vh></v>
+</v>
 <v t="ekr.20160519172255.68"></v>
 <v t="ekr.20160519172255.69"><vh>Checker.RETURN</vh></v>
 <v t="ekr.20160519172255.77"><vh>Checker.TRY &amp; TRYEXCEPT</vh></v>
@@ -536,6 +533,14 @@
 </v>
 </v>
 </v>
+<v t="ekr.20160523180522.1"><vh>re: passes</vh>
+<v t="ekr.20160519172255.73"></v>
+<v t="ekr.20160519172255.71"></v>
+<v t="ekr.20160519172255.72"></v>
+<v t="ekr.20160523173355.1"></v>
+<v t="ekr.20160522063947.1"></v>
+</v>
+<v t="ekr.20160519172255.63"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -555,7 +560,6 @@ Also, it models the Bindings and Scopes.
 # aft:  checker: 1.96 total: 4.51 # 10% overall improvement.
 # None: checker: 2.60 total: 4.98
 
-new_module = True
 aft = True
     # True: use AstFullTraverser class for traversals.
     # This is proving to be difficult, because ast.visit doesn't have a parent arg.
@@ -564,6 +568,7 @@ aft = True
 
     # True: create node handlers in getNodeHandler.
 stats = {}
+n_pass_nodes = [0, 0, 0]
 
 # Globally defined names which are not attributes of the builtins module, or
 # are only present on some platforms.
@@ -1117,7 +1122,7 @@ def __init__(self, tree, filename='(none)', builtins=None,
     self.exceptHandlers = [()]
     self.futuresAllowed = True
     self.root = tree
-    self.pass_name = 'no pass' # EKR.
+    self.pass_n = 0 # EKR.
     self.handleNode(tree, parent=None)
         # EKR: new MODULE handler does all the work.
 </t>
@@ -1167,6 +1172,8 @@ def checkDeadScopes(self):
     Look at scopes which have been fully examined and report names in them
     which were imported but unused.
     """
+    global stats
+    t1 = time.clock()
     for scope in self.deadScopes:
         if isinstance(scope.get('__all__'), ExportBinding):
             all_names = set(scope['__all__'].names)
@@ -1179,7 +1186,6 @@ def checkDeadScopes(self):
                                 scope['__all__'].source, name)
         else:
             all_names = []
-
         # Look for imported names that aren't used.
         for value in scope.values():
             if isinstance(value, Importation):
@@ -1195,6 +1201,8 @@ def checkDeadScopes(self):
                     else:
                         messg = messages.RedefinedWhileUnused
                     self.report(messg, node, value.name, value.source)
+    t2 = time.clock()
+    stats['pass4'] = stats.get('pass4', 0.0) + t2-t1
 </t>
 <t tx="ekr.20160519172255.48">
 def pushScope(self, scopeClass=FunctionScope):
@@ -1499,6 +1507,8 @@ def getDocstring(self, node):
 <t tx="ekr.20160519172255.63">
 def handleNode(self, node, parent):
     # EKR: this the general node visiter.
+    global n_pass_nodes
+    n_pass_nodes[self.pass_n] += 1
     if node is None:
         return
     if self.offset and getattr(node, 'lineno', None) is not None:
@@ -4098,33 +4108,18 @@ def CLASSDEF(self, node):
 <t tx="ekr.20160522063947.1">
 def MODULE(self, node):
     global stats
-    t1 = time.clock()
-    self.pass_name = 'pass 1'
     self.scopeStack = [ModuleScope()]
-    self.handleChildren(node)
-    t2 = time.clock()
-    stats['pass1'] = stats.get('pass1', 0.0) + t2-t1
-    t3 = time.clock()
-    # Post-module stuff: was in ctor.
-    self.pass_name = 'deferred functions'
-    self.runDeferred(self._deferredFunctions)
-    self._deferredFunctions = None
-        # Set _deferredFunctions to None so that deferFunction will fail
-        # noisily if called after we've run through the deferred functions.
-    t4 = time.clock()
-    stats['pass2'] = stats.get('pass2', 0.0) + t4-t3
-    t5 = time.clock()
-    self.pass_name = 'deferred assignments'
-    self.runDeferred(self._deferredAssignments)
-    self._deferredAssignments = None
-        # Set _deferredAssignments to None so that deferAssignment will fail
-        # noisily if called after we've run through the deferred assignments.
+    self.pass1(node)
+        # Traverse all top-level symbols.
+    self.pass2(node)
+        # Traverse all def/lambda bodies.
+    self.pass3(node)
+        # Check deferred assignments.
     del self.scopeStack[1:]
     self.popScope()
     self.checkDeadScopes()
-    t6 = time.clock()
-    stats['pass3'] = stats.get('pass3', 0.0) + t6-t5
-    # g.trace('post: %4.2f' % (t2-t1))
+        # Pass 4.
+
 if aft:
     Module = MODULE</t>
 <t tx="ekr.20160522070940.1">
@@ -4620,7 +4615,7 @@ def Set(self, node):
     stats = self.stats
     # compute...
     stats['total'] = t2 - t1
-    for name in ('pass1', 'pass2', 'pass3',):
+    for name in ('pass1', 'pass2', 'pass3', 'pass4', ):
         stats[name] = checker.stats.get(name, 0.0)
     if 'handle' in stats and 'visit' in stats:
         handle_t = stats.get('handle',0.0)
@@ -4628,25 +4623,28 @@ def Set(self, node):
         stats['total2'] = t2 - t1 - handle_t - visit_t
     # print...
     print('%s file%s' % (n, g.plural(n)))
+    for i in range(3):
+        print('pass%s nodes: %7s' % (i+1, checker.n_pass_nodes[i]))
+    print('      total: %7s' % sum(checker.n_pass_nodes[i] for i in range(3)))
     keys = (
         'read', 'parse', 'visit', 'handle', 'check',
-        '  pass1', '  pass2', '  pass3',
+        '  pass1', '  pass2', '  pass3', '  pass4',
         'total', 'total2')
     for key in keys:
         if key.strip() in stats:
             print('%-7s %5.2f sec' % (key, stats.get(key.strip())))
     if 'total2' in stats:
         print('total2 = total - visit - handle')
-    # if checker.stats: print('checker.stats', checker.stats)
 </t>
 <t tx="ekr.20160523173355.1">
 def runFunction():
+    '''A function that will be run in pass 2.'''
 
     self.pushScope()
     for name in args:
         self.addBinding(node, Argument(name, node))
         
-    # EKR: Traversing the Def/Lambda is deferred until now.
+    # EKR: *Now* traverse the body of the Def/Lambda.
     if isinstance(node.body, list):
         # case for FunctionDefs
         for stmt in node.body:
@@ -4654,6 +4652,8 @@ def runFunction():
     else:
         # case for Lambdas
         self.handleNode(node.body, node)
+        
+    # EKR: defer checking assignments until pass 3.
 
     def checkUnusedAssignments():
         """
@@ -5036,5 +5036,41 @@ class TestWriter:
     @others
 </t>
 <t tx="ekr.20160523180522.1"></t>
+<t tx="ekr.20160523181737.1">def pass1(self, node):
+    
+    global stats
+    t1 = time.clock()
+    self.pass_n = 1
+    # This looks like it is a full pass.
+    # In fact, traversing of def/lambda happens in pass 2.
+    self.handleChildren(node)
+    t2 = time.clock()
+    stats['pass1'] = stats.get('pass1', 0.0) + t2-t1
+</t>
+<t tx="ekr.20160523181742.1">def pass2(self, node):
+    
+    global stats
+    t1 = time.clock()
+    # Traverse the bodies of all def's &amp; lambda's.
+    self.pass_n = 2
+    self.runDeferred(self._deferredFunctions)
+    self._deferredFunctions = None
+        # Set _deferredFunctions to None so that deferFunction will fail
+        # noisily if called after we've run through the deferred functions.
+    t2 = time.clock()
+    stats['pass2'] = stats.get('pass2', 0.0) + t2-t1
+</t>
+<t tx="ekr.20160523181745.1">def pass3(self, node):
+    
+    global stats
+    t1 = time.clock()
+    self.pass_n = 3
+    self.runDeferred(self._deferredAssignments)
+    self._deferredAssignments = None
+        # Set _deferredAssignments to None so that deferAssignment will fail
+        # noisily if called after we've run through the deferred assignments.
+    t2 = time.clock()
+    stats['pass3'] = stats.get('pass3', 0.0) + t2-t1
+</t>
 </tnodes>
 </leo_file>

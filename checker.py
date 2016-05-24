@@ -38,7 +38,6 @@ import messages # EKR
 # aft:  checker: 1.96 total: 4.51 # 10% overall improvement.
 # None: checker: 2.60 total: 4.98
 
-new_module = True
 aft = True
     # True: use AstFullTraverser class for traversals.
     # This is proving to be difficult, because ast.visit doesn't have a parent arg.
@@ -47,6 +46,7 @@ aft = True
 
     # True: create node handlers in getNodeHandler.
 stats = {}
+n_pass_nodes = [0, 0, 0]
 
 # Globally defined names which are not attributes of the builtins module, or
 # are only present on some platforms.
@@ -374,7 +374,7 @@ class Checker(object):
         self.exceptHandlers = [()]
         self.futuresAllowed = True
         self.root = tree
-        self.pass_name = 'no pass' # EKR.
+        self.pass_n = 0 # EKR.
         self.handleNode(tree, parent=None)
             # EKR: new MODULE handler does all the work.
 
@@ -412,40 +412,6 @@ class Checker(object):
 
     def popScope(self):
         self.deadScopes.append(self.scopeStack.pop())
-
-    def checkDeadScopes(self):
-        """
-        Look at scopes which have been fully examined and report names in them
-        which were imported but unused.
-        """
-        for scope in self.deadScopes:
-            if isinstance(scope.get('__all__'), ExportBinding):
-                all_names = set(scope['__all__'].names)
-                if not scope.importStarred and \
-                   os.path.basename(self.filename) != '__init__.py':
-                    # Look for possible mistakes in the export list
-                    undefined = all_names.difference(scope)
-                    for name in undefined:
-                        self.report(messages.UndefinedExport,
-                                    scope['__all__'].source, name)
-            else:
-                all_names = []
-
-            # Look for imported names that aren't used.
-            for value in scope.values():
-                if isinstance(value, Importation):
-                    used = value.used or value.name in all_names
-                    if not used:
-                        messg = messages.UnusedImport
-                        self.report(messg, value.source, value.name)
-                    for node in value.redefined:
-                        if isinstance(self.getParent(node), ast.For):
-                            messg = messages.ImportShadowedByLoopVar
-                        elif used:
-                            continue
-                        else:
-                            messg = messages.RedefinedWhileUnused
-                        self.report(messg, node, value.name, value.source)
 
     def pushScope(self, scopeClass=FunctionScope):
         self.scopeStack.append(scopeClass())
@@ -583,6 +549,8 @@ class Checker(object):
 
     def handleNode(self, node, parent):
         # EKR: this the general node visiter.
+        global n_pass_nodes
+        n_pass_nodes[self.pass_n] += 1
         if node is None:
             return
         if self.offset and getattr(node, 'lineno', None) is not None:
@@ -1153,12 +1121,13 @@ class Checker(object):
         # pass 1 defers traversing the def's/lambda's body!
 
         def runFunction():
+            '''A function that will be run in pass 2.'''
 
             self.pushScope()
             for name in args:
                 self.addBinding(node, Argument(name, node))
                 
-            # EKR: Traversing the Def/Lambda is deferred until now.
+            # EKR: *Now* traverse the body of the Def/Lambda.
             if isinstance(node.body, list):
                 # case for FunctionDefs
                 for stmt in node.body:
@@ -1166,6 +1135,8 @@ class Checker(object):
             else:
                 # case for Lambdas
                 self.handleNode(node.body, node)
+                
+            # EKR: defer checking assignments until pass 3.
 
             def checkUnusedAssignments():
                 """
@@ -1239,35 +1210,90 @@ class Checker(object):
 
     def MODULE(self, node):
         global stats
-        t1 = time.clock()
-        self.pass_name = 'pass 1'
         self.scopeStack = [ModuleScope()]
+        self.pass1(node)
+            # Traverse all top-level symbols.
+        self.pass2(node)
+            # Traverse all def/lambda bodies.
+        self.pass3(node)
+            # Check deferred assignments.
+        del self.scopeStack[1:]
+        self.popScope()
+        self.checkDeadScopes()
+            # Pass 4.
+
+    if aft:
+        Module = MODULE
+    def pass1(self, node):
+        
+        global stats
+        t1 = time.clock()
+        self.pass_n = 1
+        # This looks like it is a full pass.
+        # In fact, traversing of def/lambda happens in pass 2.
         self.handleChildren(node)
         t2 = time.clock()
         stats['pass1'] = stats.get('pass1', 0.0) + t2-t1
-        t3 = time.clock()
-        # Post-module stuff: was in ctor.
-        self.pass_name = 'deferred functions'
+    def pass2(self, node):
+        
+        global stats
+        t1 = time.clock()
+        # Traverse the bodies of all def's & lambda's.
+        self.pass_n = 2
         self.runDeferred(self._deferredFunctions)
         self._deferredFunctions = None
             # Set _deferredFunctions to None so that deferFunction will fail
             # noisily if called after we've run through the deferred functions.
-        t4 = time.clock()
-        stats['pass2'] = stats.get('pass2', 0.0) + t4-t3
-        t5 = time.clock()
-        self.pass_name = 'deferred assignments'
+        t2 = time.clock()
+        stats['pass2'] = stats.get('pass2', 0.0) + t2-t1
+    def pass3(self, node):
+        
+        global stats
+        t1 = time.clock()
+        self.pass_n = 3
         self.runDeferred(self._deferredAssignments)
         self._deferredAssignments = None
             # Set _deferredAssignments to None so that deferAssignment will fail
             # noisily if called after we've run through the deferred assignments.
-        del self.scopeStack[1:]
-        self.popScope()
-        self.checkDeadScopes()
-        t6 = time.clock()
-        stats['pass3'] = stats.get('pass3', 0.0) + t6-t5
-        # g.trace('post: %4.2f' % (t2-t1))
-    if aft:
-        Module = MODULE
+        t2 = time.clock()
+        stats['pass3'] = stats.get('pass3', 0.0) + t2-t1
+
+    def checkDeadScopes(self):
+        """
+        Look at scopes which have been fully examined and report names in them
+        which were imported but unused.
+        """
+        global stats
+        t1 = time.clock()
+        for scope in self.deadScopes:
+            if isinstance(scope.get('__all__'), ExportBinding):
+                all_names = set(scope['__all__'].names)
+                if not scope.importStarred and \
+                   os.path.basename(self.filename) != '__init__.py':
+                    # Look for possible mistakes in the export list
+                    undefined = all_names.difference(scope)
+                    for name in undefined:
+                        self.report(messages.UndefinedExport,
+                                    scope['__all__'].source, name)
+            else:
+                all_names = []
+            # Look for imported names that aren't used.
+            for value in scope.values():
+                if isinstance(value, Importation):
+                    used = value.used or value.name in all_names
+                    if not used:
+                        messg = messages.UnusedImport
+                        self.report(messg, value.source, value.name)
+                    for node in value.redefined:
+                        if isinstance(self.getParent(node), ast.For):
+                            messg = messages.ImportShadowedByLoopVar
+                        elif used:
+                            continue
+                        else:
+                            messg = messages.RedefinedWhileUnused
+                        self.report(messg, node, value.name, value.source)
+        t2 = time.clock()
+        stats['pass4'] = stats.get('pass4', 0.0) + t2-t1
 
     def NAME(self, node):
         """

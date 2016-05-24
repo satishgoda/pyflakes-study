@@ -46,7 +46,7 @@ aft = True
 
     # True: create node handlers in getNodeHandler.
 stats = {}
-n_pass_nodes = [0, 0, 0]
+n_pass_nodes = [None, 0, 0] # Only Passes 1 & 2 traverse nodes.
 
 # Globally defined names which are not attributes of the builtins module, or
 # are only present on some platforms.
@@ -374,7 +374,7 @@ class Checker(object):
         self.exceptHandlers = [()]
         self.futuresAllowed = True
         self.root = tree
-        self.pass_n = 0 # EKR.
+        self.pass_n = 1 # EKR.
         self.handleNode(tree, parent=None)
             # EKR: new MODULE handler does all the work.
 
@@ -550,9 +550,10 @@ class Checker(object):
     def handleNode(self, node, parent):
         # EKR: this the general node visiter.
         global n_pass_nodes
-        n_pass_nodes[self.pass_n] += 1
         if node is None:
             return
+        assert 0 < self.pass_n < 3, g.callers()
+        n_pass_nodes[self.pass_n] += 1
         if self.offset and getattr(node, 'lineno', None) is not None:
             node.lineno += self.offset[0]
             node.col_offset += self.offset[1]
@@ -1123,6 +1124,7 @@ class Checker(object):
         def runFunction():
             '''A function that will be run in pass 2.'''
 
+            assert self.pass_n == 2, self.pass_n
             self.pushScope()
             for name in args:
                 self.addBinding(node, Argument(name, node))
@@ -1142,6 +1144,7 @@ class Checker(object):
                 """
                 Check to see if any assignments have not been used.
                 """
+                assert self.pass_n == 3, self.pass_n
                 for name, binding in self.scope.unusedAssignments():
                     self.report(messages.UnusedVariable, binding.source, name)
             
@@ -1153,6 +1156,7 @@ class Checker(object):
                     Check to see if there is any return statement with
                     arguments but the function is a generator.
                     """
+                    assert self.pass_n == 3, self.pass_n
                     if self.scope.isGenerator and self.scope.returnValue:
                         self.report(messages.ReturnWithArgsInsideGenerator,
                                     self.scope.returnValue)
@@ -1241,6 +1245,10 @@ class Checker(object):
         # Traverse the bodies of all def's & lambda's.
         self.pass_n = 2
         self.runDeferred(self._deferredFunctions)
+            # Run all the queued runFunction functions.
+            # These functions queue calls to
+            # checkUnusedAssignments and
+            # (if Python 2) checkReturnWithArgumentInsideGenerator.
         self._deferredFunctions = None
             # Set _deferredFunctions to None so that deferFunction will fail
             # noisily if called after we've run through the deferred functions.
@@ -1251,7 +1259,11 @@ class Checker(object):
         global stats
         t1 = time.clock()
         self.pass_n = 3
+            # This will raise an exception in handleNode if any nodes are visited.
         self.runDeferred(self._deferredAssignments)
+            # Run all queued calls to checkUnusedAssignments and
+            # (If Python 2) checkReturnWithArgumentInsideGenerator
+            # This is the most expensive pass!
         self._deferredAssignments = None
             # Set _deferredAssignments to None so that deferAssignment will fail
             # noisily if called after we've run through the deferred assignments.
@@ -1265,6 +1277,8 @@ class Checker(object):
         """
         global stats
         t1 = time.clock()
+        self.pass_n = 4
+            # This will raise an exception in handleNode if any nodes are visited.
         for scope in self.deadScopes:
             if isinstance(scope.get('__all__'), ExportBinding):
                 all_names = set(scope['__all__'].names)

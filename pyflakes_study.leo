@@ -311,38 +311,20 @@
 </v>
 <v t="ekr.20160519172255.116"><vh>_makeDefaultReporter</vh></v>
 </v>
-<v t="ekr.20160520163049.1"><vh>Study</vh>
 <v t="ekr.20160519180137.1"><vh>epytext markup</vh></v>
-<v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
-<v t="ekr.20160519185320.1"><vh>Found:getAlternatives</vh>
-<v t="ekr.20160519172255.53"><vh>Checker.differentForks</vh></v>
-<v t="ekr.20160519181035.1"><vh>getAlternatives</vh></v>
 </v>
+<v t="ekr.20160520163049.1"><vh>Study</vh>
+<v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
 <v t="ekr.20160520195402.1"><vh>Found:Binding</vh>
+<v t="ekr.20160519172255.54"><vh>Checker.addBinding</vh></v>
 <v t="ekr.20160519172255.57"><vh>Checker.handleNodeStore &amp; helper</vh>
 <v t="ekr.20160519172255.60"><vh>Checker.isLiteralTupleUnpacking</vh></v>
 </v>
-<v t="ekr.20160519172255.16"><vh>class Binding</vh>
-<v t="ekr.20160519172255.18"><vh>__str__</vh></v>
-<v t="ekr.20160519172255.19"><vh>__repr__</vh></v>
-<v t="ekr.20160519172255.20"><vh>redefines</vh></v>
-</v>
-<v t="ekr.20160519172255.21"><vh>class Definition (Binding)</vh></v>
-<v t="ekr.20160519172255.26"><vh>class Assignment (Binding)</vh></v>
-<v t="ekr.20160519172255.22"><vh>class Importation (Definition)</vh>
-<v t="ekr.20160519172255.23"><vh>__init__</vh></v>
-<v t="ekr.20160519172255.24"><vh>redefines</vh></v>
-</v>
-<v t="ekr.20160519172255.25"><vh>class Argument (Binding)</vh></v>
-<v t="ekr.20160519172255.29"><vh>class ExportBinding (Binding)</vh>
-<v t="ekr.20160519172255.30"><vh>__init__</vh></v>
-</v>
-<v t="ekr.20160519172255.36"><vh>FunctionScope.unusedAssignments</vh></v>
-<v t="ekr.20160519172255.54"><vh>Checker.addBinding</vh></v>
 <v t="ekr.20160519172255.72"><vh>Checker.LAMBDA</vh>
 <v t="ekr.20160523173531.1"><vh>Checker.get_function_args</vh></v>
 <v t="ekr.20160523173355.1"><vh>&lt;&lt; define runFunction &gt;&gt; (Checker)</vh></v>
 </v>
+<v t="ekr.20160519172255.36"><vh>FunctionScope.unusedAssignments</vh></v>
 </v>
 <v t="ekr.20160521152418.1"><vh>Found:globals</vh>
 <v t="ekr.20160519172255.57"></v>
@@ -366,9 +348,37 @@
 <v t="ekr.20160519172255.68"></v>
 </v>
 </v>
-<v t="ekr.20160520163727.1"><vh>Changed</vh>
-<v t="ekr.20160519172255.13"><vh>_FieldsOrder._get_fields</vh></v>
+<v t="ekr.20160524093200.1"><vh>Recent code</vh>
+<v t="ekr.20160519172255.13"><vh>_FieldsOrder._get_fields (changed)</vh></v>
+<v t="ekr.20160523180522.1"><vh>re: passes</vh>
+<v t="ekr.20160523173355.1"></v>
+<v t="ekr.20160519172255.73"><vh>Checker.CLASSDEF</vh></v>
+<v t="ekr.20160519172255.71"><vh>Checker.FUNCTIONDEF</vh></v>
+<v t="ekr.20160519172255.63"><vh>Checker.handleNode (injects parent/depth fields)</vh></v>
+<v t="ekr.20160519172255.72"></v>
+<v t="ekr.20160522063947.1"><vh>Checker.MODULE (New: EKR)</vh>
+<v t="ekr.20160523181737.1"><vh>Checker.pass1</vh></v>
+<v t="ekr.20160523181742.1"><vh>Checker.pass2</vh></v>
+<v t="ekr.20160523181745.1"><vh>Checker.pass3</vh></v>
+<v t="ekr.20160519172255.47"><vh>Checker.checkDeadScopes (pass4)</vh></v>
 </v>
+<v t="ekr.20160524053437.1"><vh>Found:.handleChildren</vh>
+<v t="ekr.20160519172255.64"><vh>Checker.handleDoctests</vh></v>
+<v t="ekr.20160519172255.59"><vh>Checker.handleChildren</vh></v>
+<v t="ekr.20160519172255.78"><vh>Checker.EXCEPTHANDLER</vh></v>
+<v t="ekr.20160522082410.1"><vh>ft.NameConstant</vh></v>
+<v t="ekr.20160519172255.67"><vh>Checker.GENERATOREXP &amp; comprehensions</vh></v>
+<v t="ekr.20160519172255.77"><vh>Checker.TRY &amp; TRYEXCEPT</vh></v>
+<v t="ekr.20160523181737.1"></v>
+</v>
+</v>
+<v t="ekr.20160524083450.1"><vh>re: suppressing calls to ignore</vh>
+<v t="ekr.20160522081949.13"><vh>ft.BinOp</vh></v>
+<v t="ekr.20160522081949.14"><vh>ft.BoolOp</vh></v>
+<v t="ekr.20160522081949.17"><vh>ft.Compare</vh></v>
+<v t="ekr.20160522081949.50"><vh>ft.If</vh></v>
+</v>
+<v t="ekr.20160523090911.3"><vh>unit_test</vh></v>
 </v>
 <v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
 <v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
@@ -377,21 +387,30 @@
 <v t="ekr.20160519172255.14"><vh>_FieldsOrder.__missing__</vh></v>
 </v>
 <v t="ekr.20160519181348.1"><vh>top-level</vh>
-<v t="ekr.20160519181035.1"></v>
+<v t="ekr.20160519181035.1"><vh>getAlternatives</vh></v>
 <v t="ekr.20160519172255.39"><vh>getNodeName</vh></v>
 <v t="ekr.20160519180953.1"><vh>getNodeType (returns uppercase class name)</vh></v>
 <v t="ekr.20160519172255.15"><vh>iter_child_nodes</vh></v>
-<v t="ekr.20160523090911.3"><vh>unit_test</vh></v>
+<v t="ekr.20160523090911.3"></v>
 </v>
 <v t="ekr.20160519172710.1"><vh>Binding &amp; Definition classes</vh>
-<v t="ekr.20160519172255.16"></v>
-<v t="ekr.20160519172255.21"></v>
-<v t="ekr.20160519172255.22"></v>
-<v t="ekr.20160519172255.25"></v>
-<v t="ekr.20160519172255.26"></v>
+<v t="ekr.20160519172255.16"><vh>class Binding</vh>
+<v t="ekr.20160519172255.18"><vh>__str__</vh></v>
+<v t="ekr.20160519172255.19"><vh>__repr__</vh></v>
+<v t="ekr.20160519172255.20"><vh>redefines</vh></v>
+</v>
+<v t="ekr.20160519172255.21"><vh>class Definition (Binding)</vh></v>
+<v t="ekr.20160519172255.22"><vh>class Importation (Definition)</vh>
+<v t="ekr.20160519172255.23"><vh>__init__</vh></v>
+<v t="ekr.20160519172255.24"><vh>redefines</vh></v>
+</v>
+<v t="ekr.20160519172255.25"><vh>class Argument (Binding)</vh></v>
+<v t="ekr.20160519172255.26"><vh>class Assignment (Binding)</vh></v>
 <v t="ekr.20160519172255.27"><vh>class FunctionDefinition (Definition)</vh></v>
 <v t="ekr.20160519172255.28"><vh>class ClassDefinition (Definition)</vh></v>
-<v t="ekr.20160519172255.29"></v>
+<v t="ekr.20160519172255.29"><vh>class ExportBinding (Binding)</vh>
+<v t="ekr.20160519172255.30"><vh>__init__</vh></v>
+</v>
 </v>
 <v t="ekr.20160519172730.1"><vh>Scope classes</vh>
 <v t="ekr.20160519172255.31"><vh>class Scope(dict)</vh></v>
@@ -417,7 +436,7 @@
 <v t="ekr.20160519172255.50"><vh>Checker.getParent</vh></v>
 <v t="ekr.20160519172255.51"><vh>Checker.getCommonAncestor</vh></v>
 <v t="ekr.20160519172255.52"><vh>Checker.descendantOf</vh></v>
-<v t="ekr.20160519172255.53"></v>
+<v t="ekr.20160519172255.53"><vh>Checker.differentForks</vh></v>
 </v>
 <v t="ekr.20160519172255.54"></v>
 <v t="ekr.20160521155817.1"><vh>Checker.docstrings...</vh>
@@ -426,23 +445,23 @@
 </v>
 <v t="ekr.20160519172836.1"><vh>Checker.Node handlers</vh>
 <v t="ekr.20160519173152.1"><vh> Checker.traversers...</vh>
-<v t="ekr.20160519172255.64"><vh>Checker.handleDoctests</vh></v>
-<v t="ekr.20160519172255.63"><vh>Checker.handleNode (injects parent/depth fields)</vh></v>
+<v t="ekr.20160519172255.64"></v>
+<v t="ekr.20160519172255.63"></v>
 </v>
 <v t="ekr.20160524091908.1"><vh>&lt;&lt; non-aft handlers &gt;&gt;</vh>
 <v t="ekr.20160519172255.55"><vh>Checker.getNodeHandler</vh></v>
-<v t="ekr.20160519172255.59"><vh>Checker.handleChildren</vh></v>
+<v t="ekr.20160519172255.59"></v>
 </v>
 <v t="ekr.20160522081903.1"><vh>&lt;&lt; default node handlers &gt;&gt;</vh>
 <v t="ekr.20160522081949.10"><vh>ft.operators &amp; operands</vh>
 <v t="ekr.20160524091403.1"><vh>ft.alias</vh></v>
 <v t="ekr.20160522081949.11"><vh>ft.arguments &amp; arg</vh></v>
 <v t="ekr.20160522081949.12"><vh>ft.Attribute</vh></v>
-<v t="ekr.20160522081949.13"><vh>ft.BinOp</vh></v>
-<v t="ekr.20160522081949.14"><vh>ft.BoolOp</vh></v>
+<v t="ekr.20160522081949.13"></v>
+<v t="ekr.20160522081949.14"></v>
 <v t="ekr.20160524091135.1"><vh>ft.Bytes</vh></v>
 <v t="ekr.20160522081949.16"><vh>ft.Call</vh></v>
-<v t="ekr.20160522081949.17"><vh>ft.Compare</vh></v>
+<v t="ekr.20160522081949.17"></v>
 <v t="ekr.20160522081949.19"><vh>ft.comprehension</vh></v>
 <v t="ekr.20160522081949.20"><vh>ft.Dict</vh></v>
 <v t="ekr.20160523092835.1"><vh>ft.DictComp (new)</vh></v>
@@ -454,7 +473,7 @@
 <v t="ekr.20160522081949.27"><vh>ft.Index</vh></v>
 <v t="ekr.20160522081949.28"><vh>ft.keyword</vh></v>
 <v t="ekr.20160522081949.29"><vh>ft.List</vh></v>
-<v t="ekr.20160522082410.1"><vh>ft.NameConstant</vh></v>
+<v t="ekr.20160522082410.1"></v>
 <v t="ekr.20160524091057.1"><vh>ft.Num</vh></v>
 <v t="ekr.20160522081949.32"><vh>ft.Repr</vh></v>
 <v t="ekr.20160523093026.1"><vh>ft.Set (new)</vh></v>
@@ -472,7 +491,7 @@
 <v t="ekr.20160522081949.45"><vh>ft.Delete</vh></v>
 <v t="ekr.20160522081949.47"><vh>ft.Exec</vh></v>
 <v t="ekr.20160522081949.48"><vh>ft.For</vh></v>
-<v t="ekr.20160522081949.50"><vh>ft.If</vh></v>
+<v t="ekr.20160522081949.50"></v>
 <v t="ekr.20160524084621.1"><vh>ft.Pass</vh></v>
 <v t="ekr.20160522081949.54"><vh>ft.Print</vh></v>
 <v t="ekr.20160522081949.55"><vh>ft.Raise</vh></v>
@@ -483,23 +502,18 @@
 </v>
 </v>
 <v t="ekr.20160519172255.74"><vh>Checker.AUGASSIGN</vh></v>
-<v t="ekr.20160519172255.73"><vh>Checker.CLASSDEF</vh></v>
-<v t="ekr.20160519172255.78"><vh>Checker.EXCEPTHANDLER</vh></v>
-<v t="ekr.20160519172255.71"><vh>Checker.FUNCTIONDEF</vh></v>
-<v t="ekr.20160519172255.67"><vh>Checker.GENERATOREXP &amp; comprehensions</vh></v>
+<v t="ekr.20160519172255.73"></v>
+<v t="ekr.20160519172255.78"></v>
+<v t="ekr.20160519172255.71"></v>
+<v t="ekr.20160519172255.67"></v>
 <v t="ekr.20160519172255.66"></v>
 <v t="ekr.20160519172255.75"><vh>Checker.IMPORT</vh></v>
 <v t="ekr.20160519172255.76"><vh>Checker.IMPORTFROM</vh></v>
 <v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160522063947.1"><vh>Checker.MODULE (New: EKR)</vh>
-<v t="ekr.20160523181737.1"><vh>Checker.pass1</vh></v>
-<v t="ekr.20160523181742.1"><vh>Checker.pass2</vh></v>
-<v t="ekr.20160523181745.1"><vh>Checker.pass3</vh></v>
-<v t="ekr.20160519172255.47"><vh>Checker.checkDeadScopes (pass4)</vh></v>
-</v>
+<v t="ekr.20160522063947.1"></v>
 <v t="ekr.20160519172255.68"></v>
 <v t="ekr.20160519172255.69"><vh>Checker.RETURN</vh></v>
-<v t="ekr.20160519172255.77"><vh>Checker.TRY &amp; TRYEXCEPT</vh></v>
+<v t="ekr.20160519172255.77"></v>
 <v t="ekr.20160519172255.70"><vh>Checker.YIELD</vh></v>
 </v>
 </v>
@@ -540,36 +554,8 @@
 <v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
 </v>
 </v>
-<v t="ekr.20160520081827.1"></v>
 <v t="ekr.20160523172121.1"><vh>----------------</vh></v>
-<v t="ekr.20160523172328.1"></v>
-<v t="ekr.20160523180522.1"><vh>re: passes</vh>
-<v t="ekr.20160523173355.1"></v>
-<v t="ekr.20160519172255.73"></v>
-<v t="ekr.20160519172255.71"></v>
-<v t="ekr.20160519172255.63"></v>
-<v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160522063947.1"></v>
-<v t="ekr.20160524053437.1"><vh>Found:.handleChildren</vh>
-<v t="ekr.20160519172255.64"></v>
-<v t="ekr.20160519172255.59"></v>
-<v t="ekr.20160519172255.78"></v>
-<v t="ekr.20160522082410.1"></v>
-<v t="ekr.20160519172255.67"></v>
-<v t="ekr.20160519172255.77"></v>
-<v t="ekr.20160523181737.1"></v>
-</v>
-</v>
-<v t="ekr.20160519172255.40"></v>
-<v t="ekr.20160519172836.1"></v>
-<v t="ekr.20160524083450.1"><vh>re: suppressing calls to ignore</vh>
-<v t="ekr.20160522081949.13"></v>
-<v t="ekr.20160522081949.14"></v>
-<v t="ekr.20160522081949.17"></v>
-<v t="ekr.20160522081949.50"></v>
-</v>
-<v t="ekr.20160523090911.3"></v>
-<v t="ekr.20160524081129.1"><vh>Post</vh></v>
+<v t="ekr.20160524081129.1"><vh>Post: Big picture</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -2157,7 +2143,6 @@ aList = tuple(sorted(fields, key=key_first, reverse=True))
 print(aList)
 print(['iter'.find(z) for z in fields])
 </t>
-<t tx="ekr.20160519185320.1"># flattened, word, ignore-case, head, body</t>
 <t tx="ekr.20160520081237.1"># g.cls()
 if c.isChanged():
     c.save()
@@ -2261,7 +2246,6 @@ def match_c_word(s, i, name):
   
 '''</t>
 <t tx="ekr.20160520163049.1"></t>
-<t tx="ekr.20160520163727.1"></t>
 <t tx="ekr.20160520184945.1">'''AST (Abstract Syntax Tree) related classes.'''
 import ast
 import xml.sax.saxutils as saxutils
@@ -5227,5 +5211,6 @@ def Ellipsis(self, node):
 def alias(self, node):
     pass</t>
 <t tx="ekr.20160524091908.1">@others</t>
+<t tx="ekr.20160524093200.1"></t>
 </tnodes>
 </leo_file>

@@ -347,24 +347,6 @@
 <v t="ekr.20160519172255.36"></v>
 <v t="ekr.20160519172255.68"></v>
 </v>
-<v t="ekr.20160524120333.1"><vh>Found:scopeStack</vh>
-<v t="ekr.20160519172255.54"></v>
-<v t="ekr.20160522063947.1"><vh>Checker.MODULE (New: EKR)</vh>
-<v t="ekr.20160523181737.1"><vh>Checker.pass1</vh></v>
-<v t="ekr.20160523181742.1"><vh>Checker.pass2</vh></v>
-<v t="ekr.20160523181745.1"><vh>Checker.pass3</vh></v>
-<v t="ekr.20160519172255.47"><vh>Checker.checkDeadScopes (pass4)</vh></v>
-</v>
-<v t="ekr.20160519172255.66"></v>
-<v t="ekr.20160519172255.57"></v>
-<v t="ekr.20160519172255.56"></v>
-<v t="ekr.20160519172255.43"><vh>Checker.deferAssignment</vh></v>
-<v t="ekr.20160519172255.42"><vh>Checker.deferFunction</vh></v>
-<v t="ekr.20160519172255.44"><vh>Checker.runDeferred</vh></v>
-<v t="ekr.20160519172255.45"><vh>Checker.scope (property)</vh></v>
-<v t="ekr.20160519172255.46"><vh>Checker.popScope</vh></v>
-<v t="ekr.20160519172255.48"><vh>Checker.pushScope</vh></v>
-</v>
 </v>
 <v t="ekr.20160524093200.1"><vh>Recent code</vh>
 <v t="ekr.20160519172255.13"><vh>_FieldsOrder._get_fields (changed)</vh></v>
@@ -374,7 +356,12 @@
 <v t="ekr.20160519172255.71"><vh>Checker.FUNCTIONDEF</vh></v>
 <v t="ekr.20160519172255.63"><vh>Checker.handleNode (injects parent/depth fields)</vh></v>
 <v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160522063947.1"></v>
+<v t="ekr.20160522063947.1"><vh>Checker.MODULE (New: EKR)</vh>
+<v t="ekr.20160523181737.1"><vh>Checker.pass1</vh></v>
+<v t="ekr.20160523181742.1"><vh>Checker.pass2</vh></v>
+<v t="ekr.20160523181745.1"><vh>Checker.pass3</vh></v>
+<v t="ekr.20160519172255.47"><vh>Checker.checkDeadScopes (pass4)</vh></v>
+</v>
 <v t="ekr.20160524053437.1"><vh>Found:.handleChildren</vh>
 <v t="ekr.20160519172255.64"><vh>Checker.handleDoctests</vh></v>
 <v t="ekr.20160519172255.59"><vh>Checker.handleChildren</vh></v>
@@ -410,6 +397,7 @@
 <v t="ekr.20160519172255.16"><vh>class Binding</vh>
 <v t="ekr.20160519172255.18"><vh>__str__</vh></v>
 <v t="ekr.20160519172255.19"><vh>__repr__</vh></v>
+<v t="ekr.20160525071459.1"><vh>Binding.dump (EKR)</vh></v>
 <v t="ekr.20160519172255.20"><vh>redefines</vh></v>
 </v>
 <v t="ekr.20160519172255.21"><vh>class Definition (Binding)</vh></v>
@@ -426,7 +414,9 @@
 </v>
 </v>
 <v t="ekr.20160519172730.1"><vh>Scope classes</vh>
-<v t="ekr.20160519172255.31"><vh>class Scope(dict)</vh></v>
+<v t="ekr.20160519172255.31"><vh>class Scope(dict)</vh>
+<v t="ekr.20160525070614.1"><vh>Scope.dump</vh></v>
+</v>
 <v t="ekr.20160519172255.33"><vh>class ClassScope (Scope)</vh></v>
 <v t="ekr.20160519172255.34"></v>
 <v t="ekr.20160519172255.37"><vh>class GeneratorScope (Scope)</vh></v>
@@ -435,14 +425,14 @@
 <v t="ekr.20160519172255.40"><vh>class Checker</vh>
 <v t="ekr.20160519172255.41"><vh>Checker.__init__</vh></v>
 <v t="ekr.20160521155725.1"><vh>Checker.defer...</vh>
-<v t="ekr.20160519172255.43"></v>
-<v t="ekr.20160519172255.42"></v>
-<v t="ekr.20160519172255.44"></v>
+<v t="ekr.20160519172255.43"><vh>Checker.deferAssignment</vh></v>
+<v t="ekr.20160519172255.42"><vh>Checker.deferFunction</vh></v>
+<v t="ekr.20160519172255.44"><vh>Checker.runDeferred</vh></v>
 </v>
 <v t="ekr.20160519173318.1"><vh>Checker.scopes...</vh>
-<v t="ekr.20160519172255.45"></v>
-<v t="ekr.20160519172255.46"></v>
-<v t="ekr.20160519172255.48"></v>
+<v t="ekr.20160519172255.45"><vh>Checker.scope (property)</vh></v>
+<v t="ekr.20160519172255.46"><vh>Checker.popScope</vh></v>
+<v t="ekr.20160519172255.48"><vh>Checker.pushScope</vh></v>
 </v>
 <v t="ekr.20160519172255.49"><vh>Checker.report</vh></v>
 <v t="ekr.20160519173339.1"><vh>Checker.tree structure</vh>
@@ -554,8 +544,14 @@
 </v>
 <v t="ekr.20160523172144.1"><vh>----------------</vh></v>
 <v t="ekr.20160520081237.1"><vh>@button test</vh>
-<v t="ekr.20160520162722.1"><vh>&lt;&lt; define s &gt;&gt;</vh></v>
 <v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
+<v t="ekr.20160520162722.1"><vh>&lt;&lt; define s_list &gt;&gt;</vh>
+<v t="ekr.20160525070836.1"><vh>test test1</vh></v>
+<v t="ekr.20160525064717.1"><vh>test global_test1</vh></v>
+<v t="ekr.20160525070031.1"><vh>test global_test2</vh></v>
+<v t="ekr.20160525104223.1"><vh>test global_test3</vh></v>
+<v t="ekr.20160525064058.1"><vh>not a bug</vh></v>
+</v>
 <v t="ekr.20160523085953.1"><vh>class TestController</vh>
 <v t="ekr.20160520082209.1"><vh>check_all</vh></v>
 <v t="ekr.20160520162336.1"><vh>check_string</vh></v>
@@ -567,8 +563,22 @@
 <v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
 </v>
 </v>
+<v t="ekr.20160520162722.1"></v>
+<v t="ekr.20160524151636.1"><vh>** Contact pylint people</vh></v>
 <v t="ekr.20160523172121.1"><vh>----------------</vh></v>
 <v t="ekr.20160519172255.40"></v>
+<v t="ekr.20160519172710.1"></v>
+<v t="ekr.20160519172730.1"></v>
+<v t="ekr.20160525070614.1"></v>
+<v t="ekr.20160525071459.1"></v>
+<v t="ekr.20160519172255.68"></v>
+<v t="ekr.20160525100536.1"><vh>Found:pushScope</vh>
+<v t="ekr.20160519172255.73"></v>
+<v t="ekr.20160523173355.1"></v>
+<v t="ekr.20160519172255.67"></v>
+<v t="ekr.20160519172255.64"></v>
+<v t="ekr.20160519172255.48"></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -588,7 +598,7 @@ Also, it models the Bindings and Scopes.
 # aft:  checker: 1.97 total: 3.84 # 20% overall improvement.
 # None: checker: 2.44 total: 4.99
 
-aft = False
+aft = True
     # True: use AstFullTraverser class for traversals.
     # This is proving to be difficult, because ast.visit doesn't have a parent arg.
 # jit = False
@@ -600,6 +610,8 @@ n_pass_nodes = [None, 0, 0]
     # Only Passes 1 &amp; 2 traverse nodes.
     # The sum is the number of calls to handleNodes
 n_ignore = n_handleChildren = n_FunctionDef = n_null_nodes = 0
+n_load = n_store = n_scopes = 0
+test_scope = None
 
 # Globally defined names which are not attributes of the builtins module, or
 # are only present on some platforms.
@@ -858,11 +870,17 @@ def __str__(self):
 </t>
 <t tx="ekr.20160519172255.19">
 def __repr__(self):
-    return '&lt;%s object %r from line %r at 0x%x&gt;' % (
+    return '%s line %s: %s' % (
         self.__class__.__name__,
-        self.name,
         self.source.lineno,
-        id(self))
+        self.name,
+    )
+
+    # return '&lt;%s object %r from line %r at 0x%x&gt;' % (
+        # self.__class__.__name__,
+        # self.name,
+        # self.source.lineno,
+        # id(self))
 </t>
 <t tx="ekr.20160519172255.2">"""
 API for the command-line I{pyflakes} tool.
@@ -987,16 +1005,26 @@ def __init__(self, name, source, scope):
 <t tx="ekr.20160519172255.31">
 
 class Scope(dict):
+
     importStarred = False       # set to True when import * is found
+    
+    def __init__(self, name, parent):
+        self.name = name
+        self.parent = parent
 
     def __repr__(self):
         scope_cls = self.__class__.__name__
         return '&lt;%s at 0x%x %s&gt;' % (scope_cls, id(self), dict.__repr__(self))
+        
+    @others
 </t>
 <t tx="ekr.20160519172255.33">
 
 class ClassScope(Scope):
-    pass
+
+    def __init__(self, name, parent):
+        self.name = name
+        self.parent = parent
 </t>
 <t tx="ekr.20160519172255.34">
 
@@ -1016,8 +1044,9 @@ class FunctionScope(Scope):
     @others
 </t>
 <t tx="ekr.20160519172255.35">
-def __init__(self):
-    super(FunctionScope, self).__init__()
+def __init__(self, name, parent):
+
+    super(FunctionScope, self).__init__(name, parent)
     # Simplify: manage the special locals as globals
     self.globals = self.alwaysUsed.copy()
     self.returnValue = None     # First non-empty return
@@ -1040,12 +1069,20 @@ def unusedAssignments(self):
 <t tx="ekr.20160519172255.37">
 
 class GeneratorScope(Scope):
-    pass
+
+    def __init__(self, node, parent):
+        self.name = 'Generator: %s' % id(node)
+        self.parent = parent
 </t>
 <t tx="ekr.20160519172255.38">
 
 class ModuleScope(Scope):
-    pass
+
+    def __init__(self, name, parent):
+        self.name = 'Module: %s' % name
+        assert parent is None, parent
+        self.parent = parent
+            # Module's are the only scopes without a parent.
 </t>
 <t tx="ekr.20160519172255.39">
 def getNodeName(node):
@@ -1073,6 +1110,8 @@ def getNodeName(node):
     @return: The number of warnings emitted.
     @rtype: C{int}
     """
+    import leo.core.leoGlobals as g # EKR
+
     # print('EKR: api.check: %s' % filename)
     if reporter is None:
         reporter = modReporter._makeDefaultReporter()
@@ -1238,8 +1277,11 @@ def checkDeadScopes(self):
     stats['pass4'] = stats.get('pass4', 0.0) + t2-t1
 </t>
 <t tx="ekr.20160519172255.48">
-def pushScope(self, scopeClass=FunctionScope):
-    self.scopeStack.append(scopeClass())
+def pushScope(self, name, scopeClass=FunctionScope):
+    
+    global n_scopes ; n_scopes += 1
+    parent = self.scopeStack and self.scopeStack[-1] or None
+    self.scopeStack.append(scopeClass(name, parent))
 </t>
 <t tx="ekr.20160519172255.49">
 def report(self, messageClass, *args, **kwargs):
@@ -1331,6 +1373,7 @@ def addBinding(self, node, value):
     """
     # assert value.source in (node, node.parent):
     for scope in self.scopeStack[::-1]:
+            # EKR: same as list(reversed(scopeStack))
         if value.name in scope:
             break
     existing = scope.get(value.name)
@@ -1344,8 +1387,9 @@ def addBinding(self, node, value):
 
         elif scope is self.scope:
             if (isinstance(parent_stmt, ast.comprehension) and
-                    not isinstance(self.getParent(existing.source),
-                                   (ast.For, ast.comprehension))):
+                not isinstance(self.getParent(existing.source),
+                    (ast.For, ast.comprehension))
+            ):
                 self.report(messages.RedefinedInListComp,
                             node, value.name, existing.source)
             elif not existing.used and value.redefines(existing):
@@ -1374,8 +1418,14 @@ def getNodeHandler(self, node_class):
 </t>
 <t tx="ekr.20160519172255.56">
 def handleNodeLoad(self, node):
+    
+    global n_load, test_scope
+    trace = True and test_scope == 'test'
+    
     # EKR: ctx is Load or AugLoad.
+    
     name = getNodeName(node)
+    if trace: g.trace(' '+self.scope.dump())
     if not name:
         return
     # try local scope
@@ -1386,9 +1436,11 @@ def handleNodeLoad(self, node):
     else:
         # EKR: the name is in the scope,
         # scope[name] is a Binding, and we have just marked it used.
+        if trace: g.trace('*'+self.scope.dump())
         return
 
     # EKR: Create a list of previous defining scopes.
+    n_load += 1
     defining_scopes = (FunctionScope, ModuleScope, GeneratorScope) # EKR
     scopes = [scope for scope in self.scopeStack[:-1]
         if isinstance(scope, defining_scopes)]
@@ -1405,6 +1457,7 @@ def handleNodeLoad(self, node):
         except KeyError:
             pass
         else:
+            if trace: g.trace('*'+self.scope.dump())
             return
 
     # look in the built-ins
@@ -1423,12 +1476,17 @@ def handleNodeLoad(self, node):
 # EKR: ctx is Store or AugStore.
 
 def handleNodeStore(self, node):
+    
+    global n_store, test_scope
+    trace = True and test_scope == 'test'
     name = getNodeName(node)
+    if trace: g.trace(self.scope.dump())
     if not name:
         return
     # if the name hasn't already been defined in the current scope
     if isinstance(self.scope, FunctionScope) and name not in self.scope:
         # for each function or module scope above us
+        n_store += 1
         for scope in self.scopeStack[:-1]:
             if not isinstance(scope, (FunctionScope, ModuleScope)):
                 continue
@@ -1443,9 +1501,9 @@ def handleNodeStore(self, node):
                 break
 
     parent_stmt = self.getParent(node)
-    if isinstance(parent_stmt, (ast.For, ast.comprehension)) or (
-            parent_stmt != node.parent and
-            not self.isLiteralTupleUnpacking(parent_stmt)):
+    if (isinstance(parent_stmt, (ast.For, ast.comprehension)) or
+        (parent_stmt != node.parent and not self.isLiteralTupleUnpacking(parent_stmt))
+    ):
         binding = Binding(name, node)
     elif name == '__all__' and isinstance(self.scope, ModuleScope):
         binding = ExportBinding(name, node.parent, self.scope)
@@ -1537,7 +1595,9 @@ def getDocstring(self, node):
     doctest_lineno = node.lineno - node.s.count('\n') - 1
     return (node.s, doctest_lineno)
 </t>
-<t tx="ekr.20160519172255.63">null_trace_n = 0
+<t tx="ekr.20160519172255.63">
+
+# null_trace_n = 0
 
 def handleNode(self, node, parent):
     # EKR: this the general node visiter.
@@ -1590,7 +1650,7 @@ def handleDoctests(self, node):
     if not examples:
         return
     node_offset = self.offset or (0, 0)
-    self.pushScope()
+    self.pushScope(name=None)
     underscore_in_builtins = '_' in self.builtIns
     if not underscore_in_builtins:
         self.builtIns.add('_')
@@ -1650,7 +1710,7 @@ NONLOCAL = GLOBAL
 # GeneratorExp(expr elt, comprehension* generators)
 
 def GENERATOREXP(self, node):
-    self.pushScope(GeneratorScope)
+    self.pushScope(name=None, scopeClass=GeneratorScope)
     if aft:
         # EKR: call generators first.
         for z in node.generators:
@@ -1784,7 +1844,7 @@ def CLASSDEF(self, node):
     if not PY2:
         for keywordNode in node.keywords:
             self.handleNode(keywordNode, node)
-    self.pushScope(ClassScope)
+    self.pushScope(node.name, ClassScope)
     if self.withDoctest:
         self.deferFunction(lambda: self.handleDoctests(node))
     # EKR: Unlike def's &amp; lambda's, we *do* traverse the class's body.
@@ -1869,7 +1929,8 @@ if aft:
 
 TRYEXCEPT = TRY
 </t>
-<t tx="ekr.20160519172255.78"># Python 2: ExceptHandler(expr? type, expr? name, stmt* body)
+<t tx="ekr.20160519172255.78">
+# Python 2: ExceptHandler(expr? type, expr? name, stmt* body)
 # Python 3: ExceptHandler(expr? type, identifier? name, stmt* body)
 
 def EXCEPTHANDLER(self, node):
@@ -2040,11 +2101,11 @@ Provide the class Message and its subclasses.
 
     @others
 </t>
-<t tx="ekr.20160519172710.1"></t>
+<t tx="ekr.20160519172710.1">
+# Binding and Definitions classes...</t>
 <t tx="ekr.20160519172730.1">
-#
 # Scope classes...
-#</t>
+</t>
 <t tx="ekr.20160519172836.1">
 ignore_kinds = {}
 
@@ -2156,34 +2217,46 @@ aList = tuple(sorted(fields, key=key_first, reverse=True))
 print(aList)
 print(['iter'.find(z) for z in fields])
 </t>
-<t tx="ekr.20160520081237.1"># g.cls()
+<t tx="ekr.20160520081237.1">g.cls()
 if c.isChanged():
     c.save()
 &lt;&lt; test imports &gt;&gt;
 checker.unit_test()
 aft = checker.aft
 compare_traverse = False
-&lt;&lt; define s &gt;&gt;
-@others
 gc.collect() # Runs a full collection. Stabilizes timing statistics a bit.
 stats = {}
+test_list = [
+&lt;&lt; define s_list &gt;&gt;
+]
+@others
+test_scope='test'
+checker.test_scope = test_scope
 print('aft: %s' % checker.aft)
-TestController().run_test(scope='all', s=s)
+if test_scope == 'test':
+    for s in test_list:
+        print('\n'.join(['%3s %s' % (i1+1, s1.rstrip())
+            for i1, s1 in enumerate(s.splitlines())]))
+        TestController().run_test(scope=test_scope, s=s)
+        print('=' * 20)
+else:
+    TestController().run_test(scope=test_scope, s=None)
 </t>
 <t tx="ekr.20160520081827.1">def run_test(self, scope, s):
     
     stats = self.stats
-    g.trace('scope:', scope)
     g_option_fn = None
     if scope == 'test':
         files = []
     else:
+        g.trace('scope:', scope)
         files = leoTest.LinterTable().get_files_for_scope(scope, fn=g_option_fn)
         s = None
     t1 = time.clock()
     self.check_all(files, s)
     t2 = time.clock()
-    self.print_stats(len(files), t1, t2)
+    if scope != 'test':
+        self.print_stats(len(files), t1, t2)
 </t>
 <t tx="ekr.20160520082209.1">def check_all(self, files, s=None):
     '''Run pyflakes on all files.'''
@@ -2191,7 +2264,7 @@ TestController().run_test(scope='all', s=s)
     if s:
         fn = '&lt;test string&gt;'
         tree = self.compile_string(fn, s)
-        check_string(fn, s, tree)
+        self.check_string(fn, s, tree)
     else:
         for fn in files:
             s = self.read_string(fn)
@@ -2240,24 +2313,7 @@ imp.reload(reporter)
         print('pyflakes: %s error%s in %s' % (
             errors, g.plural(errors), fn))
 </t>
-<t tx="ekr.20160520162722.1">s = '''\
-
-import leo.core.leoGlobals as g
-
-class TestClass:
-    
-    def spam():
-        return m + 1
-        
-def match_c_word(s, i, name):
-    # n = len(name)
-    return (
-        name and
-        name == s[i: i + n] and
-        (i + n == len(s) or not g.is_c_id(s[i + n]))
-    )
-  
-'''</t>
+<t tx="ekr.20160520162722.1">@others</t>
 <t tx="ekr.20160520163049.1"></t>
 <t tx="ekr.20160520184945.1">'''AST (Abstract Syntax Tree) related classes.'''
 import ast
@@ -4178,7 +4234,7 @@ def CLASSDEF(self, node):
 <t tx="ekr.20160522063947.1">
 def MODULE(self, node):
     global stats
-    self.scopeStack = [ModuleScope()]
+    self.scopeStack = [ModuleScope(self.filename, None)]
     self.pass1(node)
         # Traverse all top-level symbols.
     self.pass2(node)
@@ -4727,6 +4783,9 @@ def Set(self, node):
     print('  handleChildren: %7s' % checker.n_handleChildren)
     print('  FunctionDef:    %7s' % checker.n_FunctionDef)
     print('  ignore:         %7s' % checker.n_ignore)
+    print('  Load:           %7s' % checker.n_load)
+    print('  Store:          %7s' % checker.n_store)
+    print('  Scopes:         %7s' % checker.n_scopes)
     print('times (sec.)...')
     keys = (
         'read', 'parse', 'visit', 'handle', 'check',
@@ -4743,7 +4802,8 @@ def runFunction():
     '''A function that will be run in pass 2.'''
 
     assert self.pass_n == 2, self.pass_n
-    self.pushScope()
+    self.pushScope(getattr(node, 'name', 'Lambda'))
+        # EKR: Lambda nodes have no names.
     for name in args:
         self.addBinding(node, Argument(name, node))
         
@@ -5141,7 +5201,8 @@ class TestWriter:
     @others
 </t>
 <t tx="ekr.20160523180522.1"></t>
-<t tx="ekr.20160523181737.1">def pass1(self, node):
+<t tx="ekr.20160523181737.1">
+def pass1(self, node):
     
     global stats
     t1 = time.clock()
@@ -5156,7 +5217,8 @@ class TestWriter:
     t2 = time.clock()
     stats['pass1'] = stats.get('pass1', 0.0) + t2-t1
 </t>
-<t tx="ekr.20160523181742.1">def pass2(self, node):
+<t tx="ekr.20160523181742.1">
+def pass2(self, node):
     
     global stats
     t1 = time.clock()
@@ -5173,7 +5235,8 @@ class TestWriter:
     t2 = time.clock()
     stats['pass2'] = stats.get('pass2', 0.0) + t2-t1
 </t>
-<t tx="ekr.20160523181745.1">def pass3(self, node):
+<t tx="ekr.20160523181745.1">
+def pass3(self, node):
     
     global stats
     t1 = time.clock()
@@ -5217,6 +5280,115 @@ def alias(self, node):
     pass</t>
 <t tx="ekr.20160524091908.1">@others</t>
 <t tx="ekr.20160524093200.1"></t>
-<t tx="ekr.20160524120333.1"># flattened, ignore-case, head, body</t>
+<t tx="ekr.20160524151636.1">@language rest
+@wrap
+- contact pyflakes people: ask for comments.
+</t>
+<t tx="ekr.20160525064058.1"># '''\
+
+# import leo.core.leoGlobals as g
+
+# class TestClass:
+    
+    # def spam():
+        # return m + 1
+        
+# def match_c_word(s, i, name):
+    # # n = len(name)
+    # return (
+        # name and
+        # name == s[i: i + n] and
+        # (i + n == len(s) or not g.is_c_id(s[i + n]))
+    # )
+  
+# ''',
+</t>
+<t tx="ekr.20160525064717.1"># Use global.
+'''\
+
+def global_test1():
+    print(a)
+
+class aClass:
+    def aMethod(self):
+        print(a)
+ 
+a = 2
+    
+''',
+</t>
+<t tx="ekr.20160525070031.1"># Use global.
+'''\
+
+a = 1
+
+def global_test2():
+    print(a)
+    
+class aClass:
+    def aMethod(self):
+        print(a)
+
+''',</t>
+<t tx="ekr.20160525070614.1">
+def dump(self, brief=False): # EKR
+    aList = [
+        '%s: %s parent: %s...' % (
+            self.__class__.__name__, self.name, self.parent and self.parent.name or 'None')
+    ]
+    if brief:
+        for key in sorted(self):
+            value = self.get(key)
+            aList.append('    '+repr(value))
+    else:
+        for key in sorted(self):
+            value = self.get(key)
+            if hasattr(value, 'dump'):
+                aList.append('  %s' % value.dump(scope=self))
+            else:
+                aList.append('%15s %r' % (key, value))
+    return '\n'.join(aList)
+</t>
+<t tx="ekr.20160525070836.1"># Use global.
+'''\
+
+def test1():
+    a = 1
+    print(a)
+
+''',
+</t>
+<t tx="ekr.20160525071459.1">
+def dump(self, scope=None):
+    if self.used:
+        #####  only dump scope if it doesn't match the given scope.
+        ##### Add names to scope.
+        scope2, binding = self.used
+        name = binding.__class__.__name__
+        if hasattr(binding, 'lineno'):
+            s = '%s line: %s' % (name, binding.lineno)
+        else:
+            s = name
+    else:
+        s = False
+    return '%s: %s used: %s' % (
+        self.__class__.__name__, self.name, s)
+</t>
+<t tx="ekr.20160525100536.1"># flattened, ignore-case, head, body</t>
+<t tx="ekr.20160525104223.1"># Use global.
+'''\
+
+a = 1
+
+def global_test3():
+    global a
+    print(a)
+    
+class aClass:
+    def aMethod(self):
+        global a
+        print(a)
+
+''',</t>
 </tnodes>
 </leo_file>

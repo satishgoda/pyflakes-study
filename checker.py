@@ -38,7 +38,7 @@ import messages # EKR
 # aft:  checker: 1.97 total: 3.84 # 20% overall improvement.
 # None: checker: 2.44 total: 4.99
 
-aft = False
+aft = True
     # True: use AstFullTraverser class for traversals.
     # This is proving to be difficult, because ast.visit doesn't have a parent arg.
 # jit = False
@@ -50,6 +50,8 @@ n_pass_nodes = [None, 0, 0]
     # Only Passes 1 & 2 traverse nodes.
     # The sum is the number of calls to handleNodes
 n_ignore = n_handleChildren = n_FunctionDef = n_null_nodes = 0
+n_load = n_store = n_scopes = 0
+test_scope = None
 
 # Globally defined names which are not attributes of the builtins module, or
 # are only present on some platforms.
@@ -181,6 +183,8 @@ def unit_test(raise_on_fail=True):
     else:
         print(s)
 
+# Binding and Definitions classes...
+
 
 class Binding(object):
     """
@@ -203,11 +207,32 @@ class Binding(object):
         return self.name
 
     def __repr__(self):
-        return '<%s object %r from line %r at 0x%x>' % (
+        return '%s line %s: %s' % (
             self.__class__.__name__,
-            self.name,
             self.source.lineno,
-            id(self))
+            self.name,
+        )
+
+        # return '<%s object %r from line %r at 0x%x>' % (
+            # self.__class__.__name__,
+            # self.name,
+            # self.source.lineno,
+            # id(self))
+
+    def dump(self, scope=None):
+        if self.used:
+            #####  only dump scope if it doesn't match the given scope.
+            ##### Add names to scope.
+            scope2, binding = self.used
+            name = binding.__class__.__name__
+            if hasattr(binding, 'lineno'):
+                s = '%s line: %s' % (name, binding.lineno)
+            else:
+                s = name
+        else:
+            s = False
+        return '%s: %s used: %s' % (
+            self.__class__.__name__, self.name, s)
 
     def redefines(self, other):
         return isinstance(other, Definition) and self.name == other.name
@@ -292,21 +317,46 @@ class ExportBinding(Binding):
                     self.names.append(node.s)
         super(ExportBinding, self).__init__(name, source)
 
-#
 # Scope classes...
-#
 
 
 class Scope(dict):
+
     importStarred = False       # set to True when import * is found
+    
+    def __init__(self, name, parent):
+        self.name = name
+        self.parent = parent
 
     def __repr__(self):
         scope_cls = self.__class__.__name__
         return '<%s at 0x%x %s>' % (scope_cls, id(self), dict.__repr__(self))
+        
+
+    def dump(self, brief=False): # EKR
+        aList = [
+            '%s: %s parent: %s...' % (
+                self.__class__.__name__, self.name, self.parent and self.parent.name or 'None')
+        ]
+        if brief:
+            for key in sorted(self):
+                value = self.get(key)
+                aList.append('    '+repr(value))
+        else:
+            for key in sorted(self):
+                value = self.get(key)
+                if hasattr(value, 'dump'):
+                    aList.append('  %s' % value.dump(scope=self))
+                else:
+                    aList.append('%15s %r' % (key, value))
+        return '\n'.join(aList)
 
 
 class ClassScope(Scope):
-    pass
+
+    def __init__(self, name, parent):
+        self.name = name
+        self.parent = parent
 
 
 class FunctionScope(Scope):
@@ -323,8 +373,9 @@ class FunctionScope(Scope):
         '__traceback_supplement__'])
 
 
-    def __init__(self):
-        super(FunctionScope, self).__init__()
+    def __init__(self, name, parent):
+
+        super(FunctionScope, self).__init__(name, parent)
         # Simplify: manage the special locals as globals
         self.globals = self.alwaysUsed.copy()
         self.returnValue = None     # First non-empty return
@@ -345,11 +396,19 @@ class FunctionScope(Scope):
 
 
 class GeneratorScope(Scope):
-    pass
+
+    def __init__(self, node, parent):
+        self.name = 'Generator: %s' % id(node)
+        self.parent = parent
 
 
 class ModuleScope(Scope):
-    pass
+
+    def __init__(self, name, parent):
+        self.name = 'Module: %s' % name
+        assert parent is None, parent
+        self.parent = parent
+            # Module's are the only scopes without a parent.
 
 
 class Checker(object):
@@ -432,8 +491,11 @@ class Checker(object):
     def popScope(self):
         self.deadScopes.append(self.scopeStack.pop())
 
-    def pushScope(self, scopeClass=FunctionScope):
-        self.scopeStack.append(scopeClass())
+    def pushScope(self, name, scopeClass=FunctionScope):
+        
+        global n_scopes ; n_scopes += 1
+        parent = self.scopeStack and self.scopeStack[-1] or None
+        self.scopeStack.append(scopeClass(name, parent))
 
     def report(self, messageClass, *args, **kwargs):
         self.messages.append(messageClass(self.filename, *args, **kwargs))
@@ -485,6 +547,7 @@ class Checker(object):
         """
         # assert value.source in (node, node.parent):
         for scope in self.scopeStack[::-1]:
+                # EKR: same as list(reversed(scopeStack))
             if value.name in scope:
                 break
         existing = scope.get(value.name)
@@ -498,8 +561,9 @@ class Checker(object):
 
             elif scope is self.scope:
                 if (isinstance(parent_stmt, ast.comprehension) and
-                        not isinstance(self.getParent(existing.source),
-                                       (ast.For, ast.comprehension))):
+                    not isinstance(self.getParent(existing.source),
+                        (ast.For, ast.comprehension))
+                ):
                     self.report(messages.RedefinedInListComp,
                                 node, value.name, existing.source)
                 elif not existing.used and value.redefines(existing):
@@ -969,7 +1033,7 @@ class Checker(object):
         if not examples:
             return
         node_offset = self.offset or (0, 0)
-        self.pushScope()
+        self.pushScope(name=None)
         underscore_in_builtins = '_' in self.builtIns
         if not underscore_in_builtins:
             self.builtIns.add('_')
@@ -989,7 +1053,9 @@ class Checker(object):
         if not underscore_in_builtins:
             self.builtIns.remove('_')
         self.popScope()
-    null_trace_n = 0
+
+
+    # null_trace_n = 0
 
     def handleNode(self, node, parent):
         # EKR: this the general node visiter.
@@ -1051,7 +1117,7 @@ class Checker(object):
         if not PY2:
             for keywordNode in node.keywords:
                 self.handleNode(keywordNode, node)
-        self.pushScope(ClassScope)
+        self.pushScope(node.name, ClassScope)
         if self.withDoctest:
             self.deferFunction(lambda: self.handleDoctests(node))
         # EKR: Unlike def's & lambda's, we *do* traverse the class's body.
@@ -1062,6 +1128,7 @@ class Checker(object):
         
     if aft:
         ClassDef = CLASSDEF
+
     # Python 2: ExceptHandler(expr? type, expr? name, stmt* body)
     # Python 3: ExceptHandler(expr? type, identifier? name, stmt* body)
 
@@ -1106,7 +1173,7 @@ class Checker(object):
     # GeneratorExp(expr elt, comprehension* generators)
 
     def GENERATOREXP(self, node):
-        self.pushScope(GeneratorScope)
+        self.pushScope(name=None, scopeClass=GeneratorScope)
         if aft:
             # EKR: call generators first.
             for z in node.generators:
@@ -1203,7 +1270,8 @@ class Checker(object):
             '''A function that will be run in pass 2.'''
 
             assert self.pass_n == 2, self.pass_n
-            self.pushScope()
+            self.pushScope(getattr(node, 'name', 'Lambda'))
+                # EKR: Lambda nodes have no names.
             for name in args:
                 self.addBinding(node, Argument(name, node))
                 
@@ -1292,7 +1360,7 @@ class Checker(object):
 
     def MODULE(self, node):
         global stats
-        self.scopeStack = [ModuleScope()]
+        self.scopeStack = [ModuleScope(self.filename, None)]
         self.pass1(node)
             # Traverse all top-level symbols.
         self.pass2(node)
@@ -1306,6 +1374,7 @@ class Checker(object):
 
     if aft:
         Module = MODULE
+
     def pass1(self, node):
         
         global stats
@@ -1320,6 +1389,7 @@ class Checker(object):
             self.handleChildren(node)
         t2 = time.clock()
         stats['pass1'] = stats.get('pass1', 0.0) + t2-t1
+
     def pass2(self, node):
         
         global stats
@@ -1336,6 +1406,7 @@ class Checker(object):
             # noisily if called after we've run through the deferred functions.
         t2 = time.clock()
         stats['pass2'] = stats.get('pass2', 0.0) + t2-t1
+
     def pass3(self, node):
         
         global stats
@@ -1450,8 +1521,14 @@ class Checker(object):
                 self.report(messages.UndefinedName, node, name)
 
     def handleNodeLoad(self, node):
+        
+        global n_load, test_scope
+        trace = True and test_scope == 'test'
+        
         # EKR: ctx is Load or AugLoad.
+        
         name = getNodeName(node)
+        if trace: g.trace(' '+self.scope.dump())
         if not name:
             return
         # try local scope
@@ -1462,9 +1539,11 @@ class Checker(object):
         else:
             # EKR: the name is in the scope,
             # scope[name] is a Binding, and we have just marked it used.
+            if trace: g.trace('*'+self.scope.dump())
             return
 
         # EKR: Create a list of previous defining scopes.
+        n_load += 1
         defining_scopes = (FunctionScope, ModuleScope, GeneratorScope) # EKR
         scopes = [scope for scope in self.scopeStack[:-1]
             if isinstance(scope, defining_scopes)]
@@ -1481,6 +1560,7 @@ class Checker(object):
             except KeyError:
                 pass
             else:
+                if trace: g.trace('*'+self.scope.dump())
                 return
 
         # look in the built-ins
@@ -1498,12 +1578,17 @@ class Checker(object):
     # EKR: ctx is Store or AugStore.
 
     def handleNodeStore(self, node):
+        
+        global n_store, test_scope
+        trace = True and test_scope == 'test'
         name = getNodeName(node)
+        if trace: g.trace(self.scope.dump())
         if not name:
             return
         # if the name hasn't already been defined in the current scope
         if isinstance(self.scope, FunctionScope) and name not in self.scope:
             # for each function or module scope above us
+            n_store += 1
             for scope in self.scopeStack[:-1]:
                 if not isinstance(scope, (FunctionScope, ModuleScope)):
                     continue
@@ -1518,9 +1603,9 @@ class Checker(object):
                     break
 
         parent_stmt = self.getParent(node)
-        if isinstance(parent_stmt, (ast.For, ast.comprehension)) or (
-                parent_stmt != node.parent and
-                not self.isLiteralTupleUnpacking(parent_stmt)):
+        if (isinstance(parent_stmt, (ast.For, ast.comprehension)) or
+            (parent_stmt != node.parent and not self.isLiteralTupleUnpacking(parent_stmt))
+        ):
             binding = Binding(name, node)
         elif name == '__all__' and isinstance(self.scope, ModuleScope):
             binding = ExportBinding(name, node.parent, self.scope)

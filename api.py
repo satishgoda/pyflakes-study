@@ -33,6 +33,8 @@ def check(codeString, filename, reporter=None, tree=None): # EKR: added tree.
     @return: The number of warnings emitted.
     @rtype: C{int}
     """
+    import leo.core.leoGlobals as g # EKR
+
     # print('EKR: api.check: %s' % filename)
     if reporter is None:
         reporter = modReporter._makeDefaultReporter()

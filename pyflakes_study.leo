@@ -499,7 +499,6 @@
 </v>
 </v>
 </v>
-<v t="ekr.20160526060219.1"></v>
 <v t="ekr.20160523172144.1"><vh>----------------</vh></v>
 <v t="ekr.20160520081237.1"><vh>@button test</vh>
 <v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
@@ -528,15 +527,10 @@
 <v t="ekr.20160519172255.40"></v>
 <v t="ekr.20160519172710.1"></v>
 <v t="ekr.20160519172730.1"></v>
-<v t="ekr.20160519172255.19"></v>
-<v t="ekr.20160525151651.1"></v>
 <v t="ekr.20160519172255.68"></v>
-<v t="ekr.20160521155725.1"></v>
-<v t="ekr.20160519172255.54"></v>
+<v t="ekr.20160519173318.1"></v>
+<v t="ekr.20160526060219.1"></v>
 <v t="ekr.20160522063947.1"></v>
-<v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160523181742.1"></v>
-<v t="ekr.20160523181745.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -1154,6 +1148,8 @@ def __init__(self, tree, filename='(none)', builtins=None,
     self.futuresAllowed = True
     self.root = tree
     self.pass_n = 1 # EKR.
+    if new_scope:
+        self.scope = None
     self.handleNode(tree, parent=None)
         # EKR: new MODULE handler does all the work.
 </t>
@@ -1188,13 +1184,21 @@ def runDeferred(self, deferred):
         handler()
 </t>
 <t tx="ekr.20160519172255.45">
-@property
-def scope(self):
-    return self.scopeStack[-1]
+if new_scope:
+    pass
+else:
+    # EKR: expensive.
+    # It's not necessary, because pushStack/popStack encapsulate it.
+    @property
+    def scope(self):
+        if new_scope: assert False
+        return self.scopeStack[-1]
 </t>
 <t tx="ekr.20160519172255.46">
 def popScope(self):
     self.deadScopes.append(self.scopeStack.pop())
+    if new_scope:
+        self.scope = self.scopeStack[-1] if self.scopeStack else None
 </t>
 <t tx="ekr.20160519172255.47">
 def checkDeadScopes(self):
@@ -1237,10 +1241,15 @@ def checkDeadScopes(self):
     stats['pass4'] = stats.get('pass4', 0.0) + t2-t1
 </t>
 <t tx="ekr.20160519172255.48">
-def pushScope(self, node, name, scopeClass): ### scopeClass = FunctionScope
+def pushScope(self, node, name, scopeClass):
     global n_scopes ; n_scopes += 1
     parent = self.scopeStack and self.scopeStack[-1] or None
-    self.scopeStack.append(scopeClass(node, name, parent))
+    if new_scope:
+        self.scope = scopeClass(node, name, parent)
+        self.scopeStack.append(self.scope)
+    else:
+        scope = scopeClass(node, name, parent)
+        self.scopeStack.append(scope)
 </t>
 <t tx="ekr.20160519172255.49">
 def report(self, messageClass, *args, **kwargs):
@@ -4204,7 +4213,11 @@ else:
 <t tx="ekr.20160522063947.1">
 def MODULE(self, node):
     global stats
-    self.scopeStack = [ModuleScope(node, self.filename, None)]
+    if new_scope:
+        self.scopeStack = []
+        self.pushScope(node, self.filename, ModuleScope)
+    else:
+        self.scopeStack = [ModuleScope(node, self.filename, None)]
     self.pass1(node)
         # Traverse all top-level symbols.
     self.pass2(node)
@@ -4212,7 +4225,6 @@ def MODULE(self, node):
     self.pass3(node)
         # Check deferred assignments.
     del self.scopeStack[1:]
-    self.popScope()
     self.checkDeadScopes()
         # Pass 4.
 
@@ -5381,7 +5393,8 @@ aft = True
 # jit = False
     # This is only slightly faster than the default handleChildren method.
     # True: create node handlers in getNodeHandler.
-new_check = True</t>
+new_check = True
+new_scope = True</t>
 <t tx="ekr.20160526063937.1">def scanFunction(self, node, args, scopeStack):
     
     # This was in runFunction...
@@ -5390,6 +5403,8 @@ new_check = True</t>
     is_def = isinstance(node, ast.FunctionDef)
     name = ('def: %s' % node.name) if is_def else ('Lambda: %s' % id(node))
     self.scopeStack = scopeStack
+    if new_scope:
+        self.scope = self.scopeStack[-1]
     self.pushScope(node, name, FunctionScope)
     for arg_name in args:
         self.addBinding(node, Argument(arg_name, node))
@@ -5402,7 +5417,7 @@ new_check = True</t>
     # Defer checking assignments until pass 3.
     self.check_assign_list.append(self.scopeStack[-1])
     self.popScope()</t>
-<t tx="ekr.20160526064907.1">test_scope='all'</t>
+<t tx="ekr.20160526064907.1">test_scope='test'</t>
 <t tx="ekr.20160526074410.1">def checkAssignments(self, scope):
     """
     Check to see if any assignments have not been used.
@@ -5412,7 +5427,7 @@ new_check = True</t>
         self.report(messages.UnusedVariable, binding.source, name)
     
     if PY32:
-        if scope.isGenerator and self.scope.returnValue: # was self.scope
+        if scope.isGenerator and scope.returnValue: # was self.scope
             self.report(messages.ReturnWithArgsInsideGenerator,
                         scope.returnValue)
 </t>

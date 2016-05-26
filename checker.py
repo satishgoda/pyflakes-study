@@ -45,6 +45,7 @@ aft = True
     # This is only slightly faster than the default handleChildren method.
     # True: create node handlers in getNodeHandler.
 new_check = True
+new_scope = True
 stats = {}
     # Timing stats.
 n_pass_nodes = [None, 0, 0]
@@ -443,6 +444,8 @@ class Checker(object):
         self.futuresAllowed = True
         self.root = tree
         self.pass_n = 1 # EKR.
+        if new_scope:
+            self.scope = None
         self.handleNode(tree, parent=None)
             # EKR: new MODULE handler does all the work.
     if new_check:
@@ -476,17 +479,30 @@ class Checker(object):
                 self.offset = offset
                 handler()
 
-    @property
-    def scope(self):
-        return self.scopeStack[-1]
+    if new_scope:
+        pass
+    else:
+        # EKR: expensive.
+        # It's not necessary, because pushStack/popStack encapsulate it.
+        @property
+        def scope(self):
+            if new_scope: assert False
+            return self.scopeStack[-1]
 
     def popScope(self):
         self.deadScopes.append(self.scopeStack.pop())
+        if new_scope:
+            self.scope = self.scopeStack[-1] if self.scopeStack else None
 
-    def pushScope(self, node, name, scopeClass): ### scopeClass = FunctionScope
+    def pushScope(self, node, name, scopeClass):
         global n_scopes ; n_scopes += 1
         parent = self.scopeStack and self.scopeStack[-1] or None
-        self.scopeStack.append(scopeClass(node, name, parent))
+        if new_scope:
+            self.scope = scopeClass(node, name, parent)
+            self.scopeStack.append(self.scope)
+        else:
+            scope = scopeClass(node, name, parent)
+            self.scopeStack.append(scope)
 
     def report(self, messageClass, *args, **kwargs):
         self.messages.append(messageClass(self.filename, *args, **kwargs))
@@ -1367,7 +1383,11 @@ class Checker(object):
 
     def MODULE(self, node):
         global stats
-        self.scopeStack = [ModuleScope(node, self.filename, None)]
+        if new_scope:
+            self.scopeStack = []
+            self.pushScope(node, self.filename, ModuleScope)
+        else:
+            self.scopeStack = [ModuleScope(node, self.filename, None)]
         self.pass1(node)
             # Traverse all top-level symbols.
         self.pass2(node)
@@ -1375,7 +1395,6 @@ class Checker(object):
         self.pass3(node)
             # Check deferred assignments.
         del self.scopeStack[1:]
-        self.popScope()
         self.checkDeadScopes()
             # Pass 4.
 
@@ -1422,6 +1441,8 @@ class Checker(object):
         is_def = isinstance(node, ast.FunctionDef)
         name = ('def: %s' % node.name) if is_def else ('Lambda: %s' % id(node))
         self.scopeStack = scopeStack
+        if new_scope:
+            self.scope = self.scopeStack[-1]
         self.pushScope(node, name, FunctionScope)
         for arg_name in args:
             self.addBinding(node, Argument(arg_name, node))
@@ -1462,7 +1483,7 @@ class Checker(object):
             self.report(messages.UnusedVariable, binding.source, name)
         
         if PY32:
-            if scope.isGenerator and self.scope.returnValue: # was self.scope
+            if scope.isGenerator and scope.returnValue: # was self.scope
                 self.report(messages.ReturnWithArgsInsideGenerator,
                             scope.returnValue)
 

@@ -48,6 +48,8 @@
 <v t="ekr.20160523070015.1"><vh>Old jit code</vh></v>
 <v t="ekr.20160523065801.1"><vh>OLD (jit) Checker.getNodeHandler</vh></v>
 <v t="ekr.20160522070940.1"><vh>Checker.nodeDepth (EKR)</vh></v>
+<v t="ekr.20160525071459.1"><vh>Binding.dump (EKR)</vh></v>
+<v t="ekr.20160525070614.1"><vh>Scope.dump (EKR)</vh></v>
 </v>
 <v t="ekr.20160520102401.1"><vh>Reference</vh>
 <v t="ekr.20160519172255.117"><vh>@@clean __init__.py</vh></v>
@@ -312,78 +314,13 @@
 <v t="ekr.20160519172255.116"><vh>_makeDefaultReporter</vh></v>
 </v>
 <v t="ekr.20160519180137.1"><vh>epytext markup</vh></v>
-</v>
-<v t="ekr.20160520163049.1"><vh>Study</vh>
 <v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
-<v t="ekr.20160520195402.1"><vh>Found:Binding</vh>
-<v t="ekr.20160519172255.54"><vh>Checker.addBinding</vh></v>
-<v t="ekr.20160519172255.57"><vh>Checker.handleNodeStore &amp; helper</vh>
-<v t="ekr.20160519172255.60"><vh>Checker.isLiteralTupleUnpacking</vh></v>
-</v>
-<v t="ekr.20160519172255.72"><vh>Checker.LAMBDA</vh>
-<v t="ekr.20160523173531.1"><vh>Checker.get_function_args</vh></v>
-<v t="ekr.20160523173355.1"><vh>&lt;&lt; define runFunction &gt;&gt; (Checker)</vh></v>
-</v>
-<v t="ekr.20160519172255.36"><vh>FunctionScope.unusedAssignments</vh></v>
-</v>
-<v t="ekr.20160521152418.1"><vh>Found:globals</vh>
-<v t="ekr.20160519172255.57"></v>
-<v t="ekr.20160519172255.36"></v>
-<v t="ekr.20160519172255.34"><vh>class FunctionScope (Scope)</vh>
-<v t="ekr.20160519172255.35"><vh>FunctionScope.__init__</vh></v>
-<v t="ekr.20160519172255.36"></v>
-</v>
-<v t="ekr.20160519172255.35"></v>
-<v t="ekr.20160519172255.66"><vh>Checker.GLOBAL &amp; NONLOCAL</vh></v>
-<v t="ekr.20160519172255.68"><vh>Checker.NAME &amp; helpers</vh>
-<v t="ekr.20160519172255.58"><vh>Checker.handleNodeDelete</vh></v>
-<v t="ekr.20160519172255.56"><vh>Checker.handleNodeLoad</vh></v>
-<v t="ekr.20160519172255.57"></v>
-</v>
-<v t="ekr.20160519172255.58"></v>
-</v>
-<v t="ekr.20160521152957.1"><vh>Found:usesLocals</vh>
-<v t="ekr.20160519172255.34"></v>
-<v t="ekr.20160519172255.36"></v>
-<v t="ekr.20160519172255.68"></v>
-</v>
-</v>
-<v t="ekr.20160524093200.1"><vh>Recent code</vh>
-<v t="ekr.20160519172255.13"><vh>_FieldsOrder._get_fields (changed)</vh></v>
-<v t="ekr.20160523180522.1"><vh>re: passes</vh>
-<v t="ekr.20160523173355.1"></v>
-<v t="ekr.20160519172255.73"><vh>Checker.CLASSDEF</vh></v>
-<v t="ekr.20160519172255.71"><vh>Checker.FUNCTIONDEF</vh></v>
-<v t="ekr.20160519172255.63"><vh>Checker.handleNode (injects parent/depth fields)</vh></v>
-<v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160522063947.1"><vh>Checker.MODULE (New: EKR)</vh>
-<v t="ekr.20160523181737.1"><vh>Checker.pass1</vh></v>
-<v t="ekr.20160523181742.1"><vh>Checker.pass2</vh></v>
-<v t="ekr.20160523181745.1"><vh>Checker.pass3</vh></v>
-<v t="ekr.20160519172255.47"><vh>Checker.checkDeadScopes (pass4)</vh></v>
-</v>
-<v t="ekr.20160524053437.1"><vh>Found:.handleChildren</vh>
-<v t="ekr.20160519172255.64"><vh>Checker.handleDoctests</vh></v>
-<v t="ekr.20160519172255.59"><vh>Checker.handleChildren</vh></v>
-<v t="ekr.20160519172255.78"><vh>Checker.EXCEPTHANDLER</vh></v>
-<v t="ekr.20160522082410.1"><vh>ft.NameConstant</vh></v>
-<v t="ekr.20160519172255.67"><vh>Checker.GENERATOREXP &amp; comprehensions</vh></v>
-<v t="ekr.20160519172255.77"><vh>Checker.TRY &amp; TRYEXCEPT</vh></v>
-<v t="ekr.20160523181737.1"></v>
-</v>
-</v>
-<v t="ekr.20160524083450.1"><vh>re: suppressing calls to ignore</vh>
-<v t="ekr.20160522081949.13"><vh>ft.BinOp</vh></v>
-<v t="ekr.20160522081949.14"><vh>ft.BoolOp</vh></v>
-<v t="ekr.20160522081949.17"><vh>ft.Compare</vh></v>
-<v t="ekr.20160522081949.50"><vh>ft.If</vh></v>
-</v>
-<v t="ekr.20160523090911.3"><vh>unit_test</vh></v>
 </v>
 <v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
 <v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
+<v t="ekr.20160526060219.1"><vh>&lt;&lt; checker switches &gt;&gt;</vh></v>
 <v t="ekr.20160519172255.12"><vh>class _FieldsOrder(dict)</vh>
-<v t="ekr.20160519172255.13"></v>
+<v t="ekr.20160519172255.13"><vh>_FieldsOrder._get_fields (changed)</vh></v>
 <v t="ekr.20160519172255.14"><vh>_FieldsOrder.__missing__</vh></v>
 </v>
 <v t="ekr.20160519181348.1"><vh>top-level</vh>
@@ -391,14 +328,13 @@
 <v t="ekr.20160519172255.39"><vh>getNodeName</vh></v>
 <v t="ekr.20160519180953.1"><vh>getNodeType (returns uppercase class name)</vh></v>
 <v t="ekr.20160519172255.15"><vh>iter_child_nodes</vh></v>
-<v t="ekr.20160523090911.3"></v>
+<v t="ekr.20160523090911.3"><vh>unit_test</vh></v>
 </v>
 <v t="ekr.20160519172710.1"><vh>Binding &amp; Definition classes</vh>
 <v t="ekr.20160519172255.16"><vh>class Binding</vh>
-<v t="ekr.20160519172255.18"><vh>__str__</vh></v>
-<v t="ekr.20160519172255.19"><vh>__repr__</vh></v>
-<v t="ekr.20160525071459.1"><vh>Binding.dump (EKR)</vh></v>
-<v t="ekr.20160519172255.20"><vh>redefines</vh></v>
+<v t="ekr.20160519172255.18"><vh>Binding.__str__</vh></v>
+<v t="ekr.20160519172255.19"><vh>Binding.__repr__</vh></v>
+<v t="ekr.20160519172255.20"><vh>Binding.redefines</vh></v>
 </v>
 <v t="ekr.20160519172255.21"><vh>class Definition (Binding)</vh></v>
 <v t="ekr.20160519172255.22"><vh>class Importation (Definition)</vh>
@@ -415,10 +351,13 @@
 </v>
 <v t="ekr.20160519172730.1"><vh>Scope classes</vh>
 <v t="ekr.20160519172255.31"><vh>class Scope(dict)</vh>
-<v t="ekr.20160525070614.1"><vh>Scope.dump</vh></v>
+<v t="ekr.20160525151651.1"><vh>Scope.__repr__</vh></v>
 </v>
 <v t="ekr.20160519172255.33"><vh>class ClassScope (Scope)</vh></v>
-<v t="ekr.20160519172255.34"></v>
+<v t="ekr.20160519172255.34"><vh>class FunctionScope (Scope)</vh>
+<v t="ekr.20160519172255.35"><vh>FunctionScope.__init__</vh></v>
+<v t="ekr.20160519172255.36"><vh>FunctionScope.unusedAssignments</vh></v>
+</v>
 <v t="ekr.20160519172255.37"><vh>class GeneratorScope (Scope)</vh></v>
 <v t="ekr.20160519172255.38"><vh>class ModuleScope (Scope)</vh></v>
 </v>
@@ -441,30 +380,30 @@
 <v t="ekr.20160519172255.52"><vh>Checker.descendantOf</vh></v>
 <v t="ekr.20160519172255.53"><vh>Checker.differentForks</vh></v>
 </v>
-<v t="ekr.20160519172255.54"></v>
+<v t="ekr.20160519172255.54"><vh>Checker.addBinding</vh></v>
 <v t="ekr.20160521155817.1"><vh>Checker.docstrings...</vh>
 <v t="ekr.20160519172255.61"><vh>Checker.isDocstring</vh></v>
 <v t="ekr.20160519172255.62"><vh>Checker.getDocstring</vh></v>
 </v>
 <v t="ekr.20160519172836.1"><vh>Checker.Node handlers</vh>
 <v t="ekr.20160519173152.1"><vh> Checker.traversers...</vh>
-<v t="ekr.20160519172255.64"></v>
-<v t="ekr.20160519172255.63"></v>
+<v t="ekr.20160519172255.64"><vh>Checker.handleDoctests</vh></v>
+<v t="ekr.20160519172255.63"><vh>Checker.handleNode (injects parent/depth fields)</vh></v>
 </v>
 <v t="ekr.20160524091908.1"><vh>&lt;&lt; non-aft handlers &gt;&gt;</vh>
 <v t="ekr.20160519172255.55"><vh>Checker.getNodeHandler</vh></v>
-<v t="ekr.20160519172255.59"></v>
+<v t="ekr.20160519172255.59"><vh>Checker.handleChildren</vh></v>
 </v>
 <v t="ekr.20160522081903.1"><vh>&lt;&lt; default node handlers &gt;&gt;</vh>
 <v t="ekr.20160522081949.10"><vh>ft.operators &amp; operands</vh>
 <v t="ekr.20160524091403.1"><vh>ft.alias</vh></v>
 <v t="ekr.20160522081949.11"><vh>ft.arguments &amp; arg</vh></v>
 <v t="ekr.20160522081949.12"><vh>ft.Attribute</vh></v>
-<v t="ekr.20160522081949.13"></v>
-<v t="ekr.20160522081949.14"></v>
+<v t="ekr.20160522081949.13"><vh>ft.BinOp</vh></v>
+<v t="ekr.20160522081949.14"><vh>ft.BoolOp</vh></v>
 <v t="ekr.20160524091135.1"><vh>ft.Bytes</vh></v>
 <v t="ekr.20160522081949.16"><vh>ft.Call</vh></v>
-<v t="ekr.20160522081949.17"></v>
+<v t="ekr.20160522081949.17"><vh>ft.Compare</vh></v>
 <v t="ekr.20160522081949.19"><vh>ft.comprehension</vh></v>
 <v t="ekr.20160522081949.20"><vh>ft.Dict</vh></v>
 <v t="ekr.20160523092835.1"><vh>ft.DictComp (new)</vh></v>
@@ -476,7 +415,7 @@
 <v t="ekr.20160522081949.27"><vh>ft.Index</vh></v>
 <v t="ekr.20160522081949.28"><vh>ft.keyword</vh></v>
 <v t="ekr.20160522081949.29"><vh>ft.List</vh></v>
-<v t="ekr.20160522082410.1"></v>
+<v t="ekr.20160522082410.1"><vh>ft.NameConstant</vh></v>
 <v t="ekr.20160524091057.1"><vh>ft.Num</vh></v>
 <v t="ekr.20160522081949.32"><vh>ft.Repr</vh></v>
 <v t="ekr.20160523093026.1"><vh>ft.Set (new)</vh></v>
@@ -494,7 +433,7 @@
 <v t="ekr.20160522081949.45"><vh>ft.Delete</vh></v>
 <v t="ekr.20160522081949.47"><vh>ft.Exec</vh></v>
 <v t="ekr.20160522081949.48"><vh>ft.For</vh></v>
-<v t="ekr.20160522081949.50"></v>
+<v t="ekr.20160522081949.50"><vh>ft.If</vh></v>
 <v t="ekr.20160524084621.1"><vh>ft.Pass</vh></v>
 <v t="ekr.20160522081949.54"><vh>ft.Print</vh></v>
 <v t="ekr.20160522081949.55"><vh>ft.Raise</vh></v>
@@ -505,18 +444,36 @@
 </v>
 </v>
 <v t="ekr.20160519172255.74"><vh>Checker.AUGASSIGN</vh></v>
-<v t="ekr.20160519172255.73"></v>
-<v t="ekr.20160519172255.78"></v>
-<v t="ekr.20160519172255.71"></v>
-<v t="ekr.20160519172255.67"></v>
-<v t="ekr.20160519172255.66"></v>
+<v t="ekr.20160519172255.73"><vh>Checker.CLASSDEF</vh></v>
+<v t="ekr.20160519172255.78"><vh>Checker.EXCEPTHANDLER</vh></v>
+<v t="ekr.20160519172255.71"><vh>Checker.FUNCTIONDEF</vh></v>
+<v t="ekr.20160519172255.67"><vh>Checker.GENERATOREXP &amp; comprehensions</vh></v>
+<v t="ekr.20160519172255.66"><vh>Checker.GLOBAL &amp; NONLOCAL</vh></v>
 <v t="ekr.20160519172255.75"><vh>Checker.IMPORT</vh></v>
 <v t="ekr.20160519172255.76"><vh>Checker.IMPORTFROM</vh></v>
-<v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160522063947.1"></v>
-<v t="ekr.20160519172255.68"></v>
+<v t="ekr.20160519172255.72"><vh>Checker.LAMBDA</vh>
+<v t="ekr.20160523173531.1"><vh>Checker.get_function_args</vh></v>
+<v t="ekr.20160523173355.1"><vh>&lt;&lt; define runFunction &gt;&gt; (LAMBDA)</vh></v>
+</v>
+<v t="ekr.20160522063947.1"><vh>Checker.MODULE (4 passes)</vh>
+<v t="ekr.20160523181737.1"><vh>Checker.pass1</vh></v>
+<v t="ekr.20160523181742.1"><vh>Checker.pass2</vh>
+<v t="ekr.20160526063937.1"><vh>Checker.scanFunction (NEW)</vh></v>
+</v>
+<v t="ekr.20160523181745.1"><vh>Checker.pass3</vh>
+<v t="ekr.20160526074410.1"><vh>Checker.checkAssignments (NEW)</vh></v>
+</v>
+<v t="ekr.20160519172255.47"><vh>Checker.checkDeadScopes (pass4)</vh></v>
+</v>
+<v t="ekr.20160519172255.68"><vh>Checker.NAME &amp; helpers</vh>
+<v t="ekr.20160519172255.58"><vh>Checker.handleNodeDelete</vh></v>
+<v t="ekr.20160519172255.56"><vh>Checker.handleNodeLoad</vh></v>
+<v t="ekr.20160519172255.57"><vh>Checker.handleNodeStore &amp; helper</vh>
+<v t="ekr.20160519172255.60"><vh>Checker.isLiteralTupleUnpacking</vh></v>
+</v>
+</v>
 <v t="ekr.20160519172255.69"><vh>Checker.RETURN</vh></v>
-<v t="ekr.20160519172255.77"></v>
+<v t="ekr.20160519172255.77"><vh>Checker.TRY &amp; TRYEXCEPT</vh></v>
 <v t="ekr.20160519172255.70"><vh>Checker.YIELD</vh></v>
 </v>
 </v>
@@ -542,6 +499,7 @@
 </v>
 </v>
 </v>
+<v t="ekr.20160526060219.1"></v>
 <v t="ekr.20160523172144.1"><vh>----------------</vh></v>
 <v t="ekr.20160520081237.1"><vh>@button test</vh>
 <v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
@@ -562,23 +520,23 @@
 <v t="ekr.20160520081827.1"><vh>run_test</vh></v>
 <v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
 </v>
+<v t="ekr.20160526064907.1"><vh>&lt;&lt; define test_scope &gt;&gt;</vh></v>
 </v>
+<v t="ekr.20160526064907.1"></v>
 <v t="ekr.20160520162722.1"></v>
-<v t="ekr.20160524151636.1"><vh>** Contact pylint people</vh></v>
 <v t="ekr.20160523172121.1"><vh>----------------</vh></v>
 <v t="ekr.20160519172255.40"></v>
 <v t="ekr.20160519172710.1"></v>
 <v t="ekr.20160519172730.1"></v>
-<v t="ekr.20160525070614.1"></v>
-<v t="ekr.20160525071459.1"></v>
+<v t="ekr.20160519172255.19"></v>
+<v t="ekr.20160525151651.1"></v>
 <v t="ekr.20160519172255.68"></v>
-<v t="ekr.20160525100536.1"><vh>Found:pushScope</vh>
-<v t="ekr.20160519172255.73"></v>
-<v t="ekr.20160523173355.1"></v>
-<v t="ekr.20160519172255.67"></v>
-<v t="ekr.20160519172255.64"></v>
-<v t="ekr.20160519172255.48"></v>
-</v>
+<v t="ekr.20160521155725.1"></v>
+<v t="ekr.20160519172255.54"></v>
+<v t="ekr.20160522063947.1"></v>
+<v t="ekr.20160519172255.72"></v>
+<v t="ekr.20160523181742.1"></v>
+<v t="ekr.20160523181745.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -592,18 +550,7 @@ Also, it models the Bindings and Scopes.
 @tabwidth -4
 
 &lt;&lt;imports&gt;&gt;
-
-# Stats:
-# jit:  not significantly better than original.
-# aft:  checker: 1.97 total: 3.84 # 20% overall improvement.
-# None: checker: 2.44 total: 4.99
-
-aft = True
-    # True: use AstFullTraverser class for traversals.
-    # This is proving to be difficult, because ast.visit doesn't have a parent arg.
-# jit = False
-    # This is only slightly faster than the default handleChildren method.
-    # True: create node handlers in getNodeHandler.
+&lt;&lt; checker switches &gt;&gt;
 stats = {}
     # Timing stats.
 n_pass_nodes = [None, 0, 0]
@@ -870,12 +817,11 @@ def __str__(self):
 </t>
 <t tx="ekr.20160519172255.19">
 def __repr__(self):
-    return '%s line %s: %s' % (
-        self.__class__.__name__,
+    return '&lt;Binding line %-2s %-6s %15s&gt;' % (
         self.source.lineno,
+        self.kind, 
         self.name,
     )
-
     # return '&lt;%s object %r from line %r at 0x%x&gt;' % (
         # self.__class__.__name__,
         # self.name,
@@ -936,7 +882,7 @@ class Argument(Binding):
     """
     Represents binding a name as an argument.
     """
-</t>
+    kind = 'arg' # EKR</t>
 <t tx="ekr.20160519172255.26">
 
 class Assignment(Binding):
@@ -947,16 +893,19 @@ class Assignment(Binding):
     the checker does not consider assignments in tuple/list unpacking to be
     Assignments, rather it treats them as simple Bindings.
     """
+    kind = 'assign' # EKR
 </t>
 <t tx="ekr.20160519172255.27">
 
 class FunctionDefinition(Definition):
-    pass
+    
+    kind = 'def' # EKR
 </t>
 <t tx="ekr.20160519172255.28">
 
 class ClassDefinition(Definition):
-    pass
+    
+    kind = 'class' # EKR
 </t>
 <t tx="ekr.20160519172255.29">
 
@@ -974,6 +923,8 @@ class ExportBinding(Binding):
     Names which are imported and not otherwise used but appear in the value of
     C{__all__} will not have an unused import warning reported for them.
     """
+    kind = 'export' # EKR
+    
     @others
 </t>
 <t tx="ekr.20160519172255.3">from __future__ import with_statement
@@ -996,6 +947,7 @@ def __init__(self, name, source, scope):
         self.names = list(scope['__all__'].names)
     else:
         self.names = []
+    self.kind = 'import'
     if isinstance(source.value, (ast.List, ast.Tuple)):
         for node in source.value.elts:
             if isinstance(node, ast.Str):
@@ -1006,25 +958,28 @@ def __init__(self, name, source, scope):
 
 class Scope(dict):
 
-    importStarred = False       # set to True when import * is found
-    
-    def __init__(self, name, parent):
-        self.name = name
-        self.parent = parent
+    importStarred = False
+        # set to True when import * is found
 
-    def __repr__(self):
-        scope_cls = self.__class__.__name__
-        return '&lt;%s at 0x%x %s&gt;' % (scope_cls, id(self), dict.__repr__(self))
+    # EKR: Adding more data to scopes takes negligible time.
+    def __init__(self, node, name, parent):
+        self.name = name
+        self.node = node
+        self.parent = parent
+        self.children = []
+        if self.parent:
+            self.parent.children.append(self)
         
     @others
-</t>
+
+    </t>
 <t tx="ekr.20160519172255.33">
 
 class ClassScope(Scope):
 
-    def __init__(self, name, parent):
-        self.name = name
-        self.parent = parent
+    def __init__(self, node, name, parent):
+        Scope.__init__(self, node, name, parent)
+
 </t>
 <t tx="ekr.20160519172255.34">
 
@@ -1044,9 +999,9 @@ class FunctionScope(Scope):
     @others
 </t>
 <t tx="ekr.20160519172255.35">
-def __init__(self, name, parent):
+def __init__(self, node, name, parent):
 
-    super(FunctionScope, self).__init__(name, parent)
+    Scope.__init__(self, node, name, parent)
     # Simplify: manage the special locals as globals
     self.globals = self.alwaysUsed.copy()
     self.returnValue = None     # First non-empty return
@@ -1070,19 +1025,18 @@ def unusedAssignments(self):
 
 class GeneratorScope(Scope):
 
-    def __init__(self, node, parent):
-        self.name = 'Generator: %s' % id(node)
-        self.parent = parent
+    def __init__(self, node, name, parent):
+        Scope.__init__(self, node, name, parent)
 </t>
 <t tx="ekr.20160519172255.38">
 
 class ModuleScope(Scope):
 
-    def __init__(self, name, parent):
-        self.name = 'Module: %s' % name
+    def __init__(self, node, name, parent):
         assert parent is None, parent
-        self.parent = parent
             # Module's are the only scopes without a parent.
+        name = 'Module: %s' % name
+        Scope.__init__(self, node, name, parent)
 </t>
 <t tx="ekr.20160519172255.39">
 def getNodeName(node):
@@ -1178,9 +1132,16 @@ class Checker(object):
 def __init__(self, tree, filename='(none)', builtins=None,
              withDoctest='PYFLAKES_DOCTEST' in os.environ):
     
-    self._nodeHandlers = {}
-    self._deferredFunctions = []
-    self._deferredAssignments = []
+    if aft:
+        pass
+    else:
+        self._nodeHandlers = {}
+    if new_check:
+        self.defs_list = []
+        self.check_assign_list = []
+    else:
+        self._deferredFunctions = []
+        self._deferredAssignments = []
     self.deadScopes = []
     self.messages = []
     self.nodeDepth = 0
@@ -1197,7 +1158,7 @@ def __init__(self, tree, filename='(none)', builtins=None,
         # EKR: new MODULE handler does all the work.
 </t>
 <t tx="ekr.20160519172255.42">
-def deferFunction(self, callable):
+def deferFunction(self, func, node=None, args=None):
     """
     Schedule a function handler to be called just before completion.
 
@@ -1206,22 +1167,21 @@ def deferFunction(self, callable):
     `callable` is called, the scope at the time this is called will be
     restored, however it will contain any new bindings added to it.
     """
-    self._deferredFunctions.append((callable, self.scopeStack[:], self.offset))
+    self._deferredFunctions.append((func, self.scopeStack[:], self.offset))
 </t>
 <t tx="ekr.20160519172255.43">
-def deferAssignment(self, callable):
+def deferAssignment(self, func):
     """
     Schedule an assignment handler to be called just after deferred
     function handlers.
     """
-    self._deferredAssignments.append((callable, self.scopeStack[:], self.offset))
+    self._deferredAssignments.append((func, self.scopeStack[:], self.offset))
 </t>
 <t tx="ekr.20160519172255.44">
 def runDeferred(self, deferred):
     """
     Run the callables in C{deferred} using their associated scope stack.
     """
-    # g.trace(len(deferred))
     for handler, scope, offset in deferred:
         self.scopeStack = scope
         self.offset = offset
@@ -1277,11 +1237,10 @@ def checkDeadScopes(self):
     stats['pass4'] = stats.get('pass4', 0.0) + t2-t1
 </t>
 <t tx="ekr.20160519172255.48">
-def pushScope(self, name, scopeClass=FunctionScope):
-    
+def pushScope(self, node, name, scopeClass): ### scopeClass = FunctionScope
     global n_scopes ; n_scopes += 1
     parent = self.scopeStack and self.scopeStack[-1] or None
-    self.scopeStack.append(scopeClass(name, parent))
+    self.scopeStack.append(scopeClass(node, name, parent))
 </t>
 <t tx="ekr.20160519172255.49">
 def report(self, messageClass, *args, **kwargs):
@@ -1371,6 +1330,7 @@ def addBinding(self, node, value):
     - `node` is the statement responsible for the change
     - `value` is the new value, a Binding instance
     """
+    trace = True and test_scope == 'test'
     # assert value.source in (node, node.parent):
     for scope in self.scopeStack[::-1]:
             # EKR: same as list(reversed(scopeStack))
@@ -1403,8 +1363,10 @@ def addBinding(self, node, value):
         # then assume the rebound name is used as a global or within a loop
         value.used = self.scope[value.name].used
 
-    # g.trace(self.scope, value) # EKR
     self.scope[value.name] = value
+    if trace: g.trace('    pass: %s %20r in %s' % (
+        self.pass_n, value, scope.name))
+        # getattr(self.scope, 'name', self.scope.__class__.__name__)))
 </t>
 <t tx="ekr.20160519172255.55">
 def getNodeHandler(self, node_class):
@@ -1421,11 +1383,8 @@ def handleNodeLoad(self, node):
     
     global n_load, test_scope
     trace = True and test_scope == 'test'
-    
     # EKR: ctx is Load or AugLoad.
-    
     name = getNodeName(node)
-    if trace: g.trace(' '+self.scope.dump())
     if not name:
         return
     # try local scope
@@ -1436,7 +1395,9 @@ def handleNodeLoad(self, node):
     else:
         # EKR: the name is in the scope,
         # scope[name] is a Binding, and we have just marked it used.
-        if trace: g.trace('*'+self.scope.dump())
+        if trace: g.trace('pass: %s %40s in %s' % (
+            # self.pass_n, name, repr(self.scope)))
+            self.pass_n, self.scope[name], repr(self.scope)))
         return
 
     # EKR: Create a list of previous defining scopes.
@@ -1457,7 +1418,8 @@ def handleNodeLoad(self, node):
         except KeyError:
             pass
         else:
-            if trace: g.trace('*'+self.scope.dump())
+            if trace: g.trace('pass: %s %40s in %s' % (
+            self.pass_n, scope[name], repr(scope)))
             return
 
     # look in the built-ins
@@ -1480,7 +1442,6 @@ def handleNodeStore(self, node):
     global n_store, test_scope
     trace = True and test_scope == 'test'
     name = getNodeName(node)
-    if trace: g.trace(self.scope.dump())
     if not name:
         return
     # if the name hasn't already been defined in the current scope
@@ -1650,7 +1611,8 @@ def handleDoctests(self, node):
     if not examples:
         return
     node_offset = self.offset or (0, 0)
-    self.pushScope(name=None)
+    name = none
+    self.pushScope(node, name, FunctionScope)
     underscore_in_builtins = '_' in self.builtIns
     if not underscore_in_builtins:
         self.builtIns.add('_')
@@ -1710,7 +1672,8 @@ NONLOCAL = GLOBAL
 # GeneratorExp(expr elt, comprehension* generators)
 
 def GENERATOREXP(self, node):
-    self.pushScope(name=None, scopeClass=GeneratorScope)
+    name = 'Generator: %s' % id(node)
+    self.pushScope(node, name, GeneratorScope)
     if aft:
         # EKR: call generators first.
         for z in node.generators:
@@ -1817,16 +1780,24 @@ ASYNCFUNCTIONDEF = FUNCTIONDEF
 <t tx="ekr.20160519172255.72">
 def LAMBDA(self, node):
     
-    annotations, args, defaults = self.get_function_args(node)
     # Pass 1: visit *only* annotations and defaults.
+    annotations, args, defaults = self.get_function_args(node)
     for child in annotations + defaults:
         if child:
             self.handleNode(child, node)
-    # EKR: The dog that isn't barking:
-    # pass 1 defers traversing the def's/lambda's body!
-    &lt;&lt; define runFunction &gt;&gt;
-    self.deferFunction(runFunction)
-    
+    # Queue pass 2: it must handle args
+    if new_check:
+        self.defs_list.append(
+            g.Bunch(node=node,
+                    args=args,
+                    scopeStack=self.scopeStack[:],
+            ))
+    else:
+        # EKR: The dog that isn't barking:
+        # pass 1 defers traversing the def's/lambda's body!
+        &lt;&lt; define runFunction &gt;&gt;
+        self.deferFunction(runFunction)
+
 if aft:
     Lambda = LAMBDA
 </t>
@@ -1844,7 +1815,7 @@ def CLASSDEF(self, node):
     if not PY2:
         for keywordNode in node.keywords:
             self.handleNode(keywordNode, node)
-    self.pushScope(node.name, ClassScope)
+    self.pushScope(node, node.name, ClassScope)
     if self.withDoctest:
         self.deferFunction(lambda: self.handleDoctests(node))
     # EKR: Unlike def's &amp; lambda's, we *do* traverse the class's body.
@@ -2230,7 +2201,7 @@ test_list = [
 &lt;&lt; define s_list &gt;&gt;
 ]
 @others
-test_scope='test'
+&lt;&lt; define test_scope &gt;&gt;
 checker.test_scope = test_scope
 print('aft: %s' % checker.aft)
 if test_scope == 'test':
@@ -2314,7 +2285,6 @@ imp.reload(reporter)
             errors, g.plural(errors), fn))
 </t>
 <t tx="ekr.20160520162722.1">@others</t>
-<t tx="ekr.20160520163049.1"></t>
 <t tx="ekr.20160520184945.1">'''AST (Abstract Syntax Tree) related classes.'''
 import ast
 import xml.sax.saxutils as saxutils
@@ -4008,7 +3978,6 @@ def do_BinOp(self, node):
     # self.op_name(node.op)
     self.visit(node.right)
 </t>
-<t tx="ekr.20160520195402.1"># flattened, word, ignore-case, head, body</t>
 <t tx="ekr.20160520210256.1">def read_string(self, fn):
     
     t1 = time.clock()
@@ -4226,15 +4195,16 @@ def CLASSDEF(self, node):
     for stmt in node.body:
         self.handleNode(stmt, node)
 </t>
-<t tx="ekr.20160521152418.1"># flattened, word, ignore-case, head, body</t>
-<t tx="ekr.20160521152957.1"># flattened, word, ignore-case, head, body</t>
 <t tx="ekr.20160521154847.1"></t>
-<t tx="ekr.20160521155725.1"></t>
+<t tx="ekr.20160521155725.1">if new_check:
+    pass
+else:
+    @others</t>
 <t tx="ekr.20160521155817.1"></t>
 <t tx="ekr.20160522063947.1">
 def MODULE(self, node):
     global stats
-    self.scopeStack = [ModuleScope(self.filename, None)]
+    self.scopeStack = [ModuleScope(node, self.filename, None)]
     self.pass1(node)
         # Traverse all top-level symbols.
     self.pass2(node)
@@ -4802,8 +4772,11 @@ def runFunction():
     '''A function that will be run in pass 2.'''
 
     assert self.pass_n == 2, self.pass_n
-    self.pushScope(getattr(node, 'name', 'Lambda'))
-        # EKR: Lambda nodes have no names.
+    if hasattr(node, 'name'):
+        def_name = 'def: %s' % node.name
+    else:
+        def_name = 'Lambda: %s' % id(node)
+    self.pushScope(node, def_name, FunctionScope)
     for name in args:
         self.addBinding(node, Argument(name, node))
         
@@ -5200,7 +5173,6 @@ class TestWriter:
 
     @others
 </t>
-<t tx="ekr.20160523180522.1"></t>
 <t tx="ekr.20160523181737.1">
 def pass1(self, node):
     
@@ -5224,14 +5196,15 @@ def pass2(self, node):
     t1 = time.clock()
     # Traverse the bodies of all def's &amp; lambda's.
     self.pass_n = 2
-    self.runDeferred(self._deferredFunctions)
-        # Run all the queued runFunction functions.
-        # These functions queue calls to
-        # checkUnusedAssignments and
-        # (if Python 2) checkReturnWithArgumentInsideGenerator.
-    self._deferredFunctions = None
-        # Set _deferredFunctions to None so that deferFunction will fail
-        # noisily if called after we've run through the deferred functions.
+    if new_check:
+        for bunch in self.defs_list:
+            self.scanFunction(bunch.node, bunch.args, bunch.scopeStack)
+    else:
+        self.runDeferred(self._deferredFunctions)
+            # Run all the queued runFunction functions or scanFunction methods.
+        self._deferredFunctions = None
+            # Set _deferredFunctions to None so that deferFunction will fail
+            # noisily if called after we've run through the deferred functions.
     t2 = time.clock()
     stats['pass2'] = stats.get('pass2', 0.0) + t2-t1
 </t>
@@ -5241,19 +5214,20 @@ def pass3(self, node):
     global stats
     t1 = time.clock()
     self.pass_n = 3
-        # This will raise an exception in handleNode if any nodes are visited.
-    self.runDeferred(self._deferredAssignments)
-        # Run all queued calls to checkUnusedAssignments and
-        # (If Python 2) checkReturnWithArgumentInsideGenerator
-        # This is the most expensive pass!
-    self._deferredAssignments = None
-        # Set _deferredAssignments to None so that deferAssignment will fail
-        # noisily if called after we've run through the deferred assignments.
+        # handleNode will raise an exception if it is called.
+    if new_check:
+        for scope in self.check_assign_list:
+            self.checkAssignments(scope)
+    else:
+        self.runDeferred(self._deferredAssignments)
+            # Run all queued calls to checkUnusedAssignments and
+            # (If Python 2) checkReturnWithArgumentInsideGenerator
+        self._deferredAssignments = None
+            # Set _deferredAssignments to None so that deferAssignment will fail
+            # noisily if called after we've run through the deferred assignments.
     t2 = time.clock()
     stats['pass3'] = stats.get('pass3', 0.0) + t2-t1
 </t>
-<t tx="ekr.20160524053437.1"># flattened, word, ignore-case, head, body</t>
-<t tx="ekr.20160524083450.1"></t>
 <t tx="ekr.20160524084528.1">
 def Break(self, node):
     pass</t>
@@ -5279,11 +5253,6 @@ def Ellipsis(self, node):
 def alias(self, node):
     pass</t>
 <t tx="ekr.20160524091908.1">@others</t>
-<t tx="ekr.20160524093200.1"></t>
-<t tx="ekr.20160524151636.1">@language rest
-@wrap
-- contact pyflakes people: ask for comments.
-</t>
 <t tx="ekr.20160525064058.1"># '''\
 
 # import leo.core.leoGlobals as g
@@ -5355,6 +5324,10 @@ def dump(self, brief=False): # EKR
 def test1():
     a = 1
     print(a)
+    b = lambda x: x
+    del b
+    
+print(x)
 
 ''',
 </t>
@@ -5366,7 +5339,7 @@ def dump(self, scope=None):
         scope2, binding = self.used
         name = binding.__class__.__name__
         if hasattr(binding, 'lineno'):
-            s = '%s line: %s' % (name, binding.lineno)
+            s = 'line: %2s %s' % (binding.lineno, name)
         else:
             s = name
     else:
@@ -5374,7 +5347,6 @@ def dump(self, scope=None):
     return '%s: %s used: %s' % (
         self.__class__.__name__, self.name, s)
 </t>
-<t tx="ekr.20160525100536.1"># flattened, ignore-case, head, body</t>
 <t tx="ekr.20160525104223.1"># Use global.
 '''\
 
@@ -5390,5 +5362,59 @@ class aClass:
         print(a)
 
 ''',</t>
+<t tx="ekr.20160525151651.1">
+def __repr__(self):
+    # scope_class = self.__class__.__name__
+    # return '&lt;%s at 0x%x %s&gt;' % (scope_class, id(self), dict.__repr__(self))
+    # return '%s %s' % (scope_class, self.name)
+    return self.name
+</t>
+<t tx="ekr.20160526060219.1">
+# Stats:
+# jit:  not significantly better than original.
+# aft:  checker: 1.97 total: 3.84 # 20% overall improvement.
+# None: checker: 2.44 total: 4.99
+
+aft = True
+    # True: use AstFullTraverser class for traversals.
+    # This is proving to be difficult, because ast.visit doesn't have a parent arg.
+# jit = False
+    # This is only slightly faster than the default handleChildren method.
+    # True: create node handlers in getNodeHandler.
+new_check = True</t>
+<t tx="ekr.20160526063937.1">def scanFunction(self, node, args, scopeStack):
+    
+    # This was in runFunction...
+    assert self.pass_n == 2, self.pass_n
+    assert isinstance(node, (ast.FunctionDef, ast.Lambda)), node
+    is_def = isinstance(node, ast.FunctionDef)
+    name = ('def: %s' % node.name) if is_def else ('Lambda: %s' % id(node))
+    self.scopeStack = scopeStack
+    self.pushScope(node, name, FunctionScope)
+    for arg_name in args:
+        self.addBinding(node, Argument(arg_name, node))
+    # *Now* traverse the body of the def/lambda.
+    if is_def:
+        for stmt in node.body:
+            self.handleNode(stmt, node)
+    else:
+        self.handleNode(node.body, node)
+    # Defer checking assignments until pass 3.
+    self.check_assign_list.append(self.scopeStack[-1])
+    self.popScope()</t>
+<t tx="ekr.20160526064907.1">test_scope='all'</t>
+<t tx="ekr.20160526074410.1">def checkAssignments(self, scope):
+    """
+    Check to see if any assignments have not been used.
+    """
+    assert self.pass_n == 3, self.pass_n
+    for name, binding in scope.unusedAssignments(): # was self.scope.
+        self.report(messages.UnusedVariable, binding.source, name)
+    
+    if PY32:
+        if scope.isGenerator and self.scope.returnValue: # was self.scope
+            self.report(messages.ReturnWithArgsInsideGenerator,
+                        scope.returnValue)
+</t>
 </tnodes>
 </leo_file>

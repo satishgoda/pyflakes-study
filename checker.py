@@ -44,6 +44,7 @@ aft = True
 # jit = False
     # This is only slightly faster than the default handleChildren method.
     # True: create node handlers in getNodeHandler.
+new_check = True
 stats = {}
     # Timing stats.
 n_pass_nodes = [None, 0, 0]
@@ -207,32 +208,16 @@ class Binding(object):
         return self.name
 
     def __repr__(self):
-        return '%s line %s: %s' % (
-            self.__class__.__name__,
+        return '<Binding line %-2s %-6s %15s>' % (
             self.source.lineno,
+            self.kind, 
             self.name,
         )
-
         # return '<%s object %r from line %r at 0x%x>' % (
             # self.__class__.__name__,
             # self.name,
             # self.source.lineno,
             # id(self))
-
-    def dump(self, scope=None):
-        if self.used:
-            #####  only dump scope if it doesn't match the given scope.
-            ##### Add names to scope.
-            scope2, binding = self.used
-            name = binding.__class__.__name__
-            if hasattr(binding, 'lineno'):
-                s = '%s line: %s' % (name, binding.lineno)
-            else:
-                s = name
-        else:
-            s = False
-        return '%s: %s used: %s' % (
-            self.__class__.__name__, self.name, s)
 
     def redefines(self, other):
         return isinstance(other, Definition) and self.name == other.name
@@ -271,6 +256,7 @@ class Argument(Binding):
     """
     Represents binding a name as an argument.
     """
+    kind = 'arg' # EKR
 
 
 class Assignment(Binding):
@@ -281,14 +267,17 @@ class Assignment(Binding):
     the checker does not consider assignments in tuple/list unpacking to be
     Assignments, rather it treats them as simple Bindings.
     """
+    kind = 'assign' # EKR
 
 
 class FunctionDefinition(Definition):
-    pass
+    
+    kind = 'def' # EKR
 
 
 class ClassDefinition(Definition):
-    pass
+    
+    kind = 'class' # EKR
 
 
 class ExportBinding(Binding):
@@ -305,12 +294,15 @@ class ExportBinding(Binding):
     Names which are imported and not otherwise used but appear in the value of
     C{__all__} will not have an unused import warning reported for them.
     """
+    kind = 'export' # EKR
+    
 
     def __init__(self, name, source, scope):
         if '__all__' in scope and isinstance(source, ast.AugAssign):
             self.names = list(scope['__all__'].names)
         else:
             self.names = []
+        self.kind = 'import'
         if isinstance(source.value, (ast.List, ast.Tuple)):
             for node in source.value.elts:
                 if isinstance(node, ast.Str):
@@ -322,41 +314,33 @@ class ExportBinding(Binding):
 
 class Scope(dict):
 
-    importStarred = False       # set to True when import * is found
-    
-    def __init__(self, name, parent):
-        self.name = name
-        self.parent = parent
+    importStarred = False
+        # set to True when import * is found
 
-    def __repr__(self):
-        scope_cls = self.__class__.__name__
-        return '<%s at 0x%x %s>' % (scope_cls, id(self), dict.__repr__(self))
+    # EKR: Adding more data to scopes takes negligible time.
+    def __init__(self, node, name, parent):
+        self.name = name
+        self.node = node
+        self.parent = parent
+        self.children = []
+        if self.parent:
+            self.parent.children.append(self)
         
 
-    def dump(self, brief=False): # EKR
-        aList = [
-            '%s: %s parent: %s...' % (
-                self.__class__.__name__, self.name, self.parent and self.parent.name or 'None')
-        ]
-        if brief:
-            for key in sorted(self):
-                value = self.get(key)
-                aList.append('    '+repr(value))
-        else:
-            for key in sorted(self):
-                value = self.get(key)
-                if hasattr(value, 'dump'):
-                    aList.append('  %s' % value.dump(scope=self))
-                else:
-                    aList.append('%15s %r' % (key, value))
-        return '\n'.join(aList)
+    def __repr__(self):
+        # scope_class = self.__class__.__name__
+        # return '<%s at 0x%x %s>' % (scope_class, id(self), dict.__repr__(self))
+        # return '%s %s' % (scope_class, self.name)
+        return self.name
+
+    
 
 
 class ClassScope(Scope):
 
-    def __init__(self, name, parent):
-        self.name = name
-        self.parent = parent
+    def __init__(self, node, name, parent):
+        Scope.__init__(self, node, name, parent)
+
 
 
 class FunctionScope(Scope):
@@ -373,9 +357,9 @@ class FunctionScope(Scope):
         '__traceback_supplement__'])
 
 
-    def __init__(self, name, parent):
+    def __init__(self, node, name, parent):
 
-        super(FunctionScope, self).__init__(name, parent)
+        Scope.__init__(self, node, name, parent)
         # Simplify: manage the special locals as globals
         self.globals = self.alwaysUsed.copy()
         self.returnValue = None     # First non-empty return
@@ -397,18 +381,17 @@ class FunctionScope(Scope):
 
 class GeneratorScope(Scope):
 
-    def __init__(self, node, parent):
-        self.name = 'Generator: %s' % id(node)
-        self.parent = parent
+    def __init__(self, node, name, parent):
+        Scope.__init__(self, node, name, parent)
 
 
 class ModuleScope(Scope):
 
-    def __init__(self, name, parent):
-        self.name = 'Module: %s' % name
+    def __init__(self, node, name, parent):
         assert parent is None, parent
-        self.parent = parent
             # Module's are the only scopes without a parent.
+        name = 'Module: %s' % name
+        Scope.__init__(self, node, name, parent)
 
 
 class Checker(object):
@@ -438,9 +421,16 @@ class Checker(object):
     def __init__(self, tree, filename='(none)', builtins=None,
                  withDoctest='PYFLAKES_DOCTEST' in os.environ):
         
-        self._nodeHandlers = {}
-        self._deferredFunctions = []
-        self._deferredAssignments = []
+        if aft:
+            pass
+        else:
+            self._nodeHandlers = {}
+        if new_check:
+            self.defs_list = []
+            self.check_assign_list = []
+        else:
+            self._deferredFunctions = []
+            self._deferredAssignments = []
         self.deadScopes = []
         self.messages = []
         self.nodeDepth = 0
@@ -455,34 +445,36 @@ class Checker(object):
         self.pass_n = 1 # EKR.
         self.handleNode(tree, parent=None)
             # EKR: new MODULE handler does all the work.
+    if new_check:
+        pass
+    else:
 
-    def deferAssignment(self, callable):
-        """
-        Schedule an assignment handler to be called just after deferred
-        function handlers.
-        """
-        self._deferredAssignments.append((callable, self.scopeStack[:], self.offset))
+        def deferAssignment(self, func):
+            """
+            Schedule an assignment handler to be called just after deferred
+            function handlers.
+            """
+            self._deferredAssignments.append((func, self.scopeStack[:], self.offset))
 
-    def deferFunction(self, callable):
-        """
-        Schedule a function handler to be called just before completion.
+        def deferFunction(self, func, node=None, args=None):
+            """
+            Schedule a function handler to be called just before completion.
 
-        This is used for handling function bodies, which must be deferred
-        because code later in the file might modify the global scope. When
-        `callable` is called, the scope at the time this is called will be
-        restored, however it will contain any new bindings added to it.
-        """
-        self._deferredFunctions.append((callable, self.scopeStack[:], self.offset))
+            This is used for handling function bodies, which must be deferred
+            because code later in the file might modify the global scope. When
+            `callable` is called, the scope at the time this is called will be
+            restored, however it will contain any new bindings added to it.
+            """
+            self._deferredFunctions.append((func, self.scopeStack[:], self.offset))
 
-    def runDeferred(self, deferred):
-        """
-        Run the callables in C{deferred} using their associated scope stack.
-        """
-        # g.trace(len(deferred))
-        for handler, scope, offset in deferred:
-            self.scopeStack = scope
-            self.offset = offset
-            handler()
+        def runDeferred(self, deferred):
+            """
+            Run the callables in C{deferred} using their associated scope stack.
+            """
+            for handler, scope, offset in deferred:
+                self.scopeStack = scope
+                self.offset = offset
+                handler()
 
     @property
     def scope(self):
@@ -491,11 +483,10 @@ class Checker(object):
     def popScope(self):
         self.deadScopes.append(self.scopeStack.pop())
 
-    def pushScope(self, name, scopeClass=FunctionScope):
-        
+    def pushScope(self, node, name, scopeClass): ### scopeClass = FunctionScope
         global n_scopes ; n_scopes += 1
         parent = self.scopeStack and self.scopeStack[-1] or None
-        self.scopeStack.append(scopeClass(name, parent))
+        self.scopeStack.append(scopeClass(node, name, parent))
 
     def report(self, messageClass, *args, **kwargs):
         self.messages.append(messageClass(self.filename, *args, **kwargs))
@@ -545,6 +536,7 @@ class Checker(object):
         - `node` is the statement responsible for the change
         - `value` is the new value, a Binding instance
         """
+        trace = True and test_scope == 'test'
         # assert value.source in (node, node.parent):
         for scope in self.scopeStack[::-1]:
                 # EKR: same as list(reversed(scopeStack))
@@ -577,8 +569,10 @@ class Checker(object):
             # then assume the rebound name is used as a global or within a loop
             value.used = self.scope[value.name].used
 
-        # g.trace(self.scope, value) # EKR
         self.scope[value.name] = value
+        if trace: g.trace('    pass: %s %20r in %s' % (
+            self.pass_n, value, scope.name))
+            # getattr(self.scope, 'name', self.scope.__class__.__name__)))
 
     def isDocstring(self, node):
         """
@@ -1033,7 +1027,8 @@ class Checker(object):
         if not examples:
             return
         node_offset = self.offset or (0, 0)
-        self.pushScope(name=None)
+        name = none
+        self.pushScope(node, name, FunctionScope)
         underscore_in_builtins = '_' in self.builtIns
         if not underscore_in_builtins:
             self.builtIns.add('_')
@@ -1117,7 +1112,7 @@ class Checker(object):
         if not PY2:
             for keywordNode in node.keywords:
                 self.handleNode(keywordNode, node)
-        self.pushScope(node.name, ClassScope)
+        self.pushScope(node, node.name, ClassScope)
         if self.withDoctest:
             self.deferFunction(lambda: self.handleDoctests(node))
         # EKR: Unlike def's & lambda's, we *do* traverse the class's body.
@@ -1173,7 +1168,8 @@ class Checker(object):
     # GeneratorExp(expr elt, comprehension* generators)
 
     def GENERATOREXP(self, node):
-        self.pushScope(name=None, scopeClass=GeneratorScope)
+        name = 'Generator: %s' % id(node)
+        self.pushScope(node, name, GeneratorScope)
         if aft:
             # EKR: call generators first.
             for z in node.generators:
@@ -1258,59 +1254,70 @@ class Checker(object):
 
     def LAMBDA(self, node):
         
-        annotations, args, defaults = self.get_function_args(node)
         # Pass 1: visit *only* annotations and defaults.
+        annotations, args, defaults = self.get_function_args(node)
         for child in annotations + defaults:
             if child:
                 self.handleNode(child, node)
-        # EKR: The dog that isn't barking:
-        # pass 1 defers traversing the def's/lambda's body!
+        # Queue pass 2: it must handle args
+        if new_check:
+            self.defs_list.append(
+                g.Bunch(node=node,
+                        args=args,
+                        scopeStack=self.scopeStack[:],
+                ))
+        else:
+            # EKR: The dog that isn't barking:
+            # pass 1 defers traversing the def's/lambda's body!
 
-        def runFunction():
-            '''A function that will be run in pass 2.'''
+            def runFunction():
+                '''A function that will be run in pass 2.'''
 
-            assert self.pass_n == 2, self.pass_n
-            self.pushScope(getattr(node, 'name', 'Lambda'))
-                # EKR: Lambda nodes have no names.
-            for name in args:
-                self.addBinding(node, Argument(name, node))
-                
-            # EKR: *Now* traverse the body of the Def/Lambda.
-            if isinstance(node.body, list):
-                # case for FunctionDefs
-                for stmt in node.body:
-                    self.handleNode(stmt, node)
-            else:
-                # case for Lambdas
-                self.handleNode(node.body, node)
-                
-            # EKR: defer checking assignments until pass 3.
+                assert self.pass_n == 2, self.pass_n
+                if hasattr(node, 'name'):
+                    def_name = 'def: %s' % node.name
+                else:
+                    def_name = 'Lambda: %s' % id(node)
+                self.pushScope(node, def_name, FunctionScope)
+                for name in args:
+                    self.addBinding(node, Argument(name, node))
+                    
+                # EKR: *Now* traverse the body of the Def/Lambda.
+                if isinstance(node.body, list):
+                    # case for FunctionDefs
+                    for stmt in node.body:
+                        self.handleNode(stmt, node)
+                else:
+                    # case for Lambdas
+                    self.handleNode(node.body, node)
+                    
+                # EKR: defer checking assignments until pass 3.
 
-            def checkUnusedAssignments():
-                """
-                Check to see if any assignments have not been used.
-                """
-                assert self.pass_n == 3, self.pass_n
-                for name, binding in self.scope.unusedAssignments():
-                    self.report(messages.UnusedVariable, binding.source, name)
-            
-            self.deferAssignment(checkUnusedAssignments)
-
-            if PY32:
-                def checkReturnWithArgumentInsideGenerator():
+                def checkUnusedAssignments():
                     """
-                    Check to see if there is any return statement with
-                    arguments but the function is a generator.
+                    Check to see if any assignments have not been used.
                     """
                     assert self.pass_n == 3, self.pass_n
-                    if self.scope.isGenerator and self.scope.returnValue:
-                        self.report(messages.ReturnWithArgsInsideGenerator,
-                                    self.scope.returnValue)
-                self.deferAssignment(checkReturnWithArgumentInsideGenerator)
+                    for name, binding in self.scope.unusedAssignments():
+                        self.report(messages.UnusedVariable, binding.source, name)
+                
+                self.deferAssignment(checkUnusedAssignments)
 
-            self.popScope()
-        self.deferFunction(runFunction)
-        
+                if PY32:
+                    def checkReturnWithArgumentInsideGenerator():
+                        """
+                        Check to see if there is any return statement with
+                        arguments but the function is a generator.
+                        """
+                        assert self.pass_n == 3, self.pass_n
+                        if self.scope.isGenerator and self.scope.returnValue:
+                            self.report(messages.ReturnWithArgsInsideGenerator,
+                                        self.scope.returnValue)
+                    self.deferAssignment(checkReturnWithArgumentInsideGenerator)
+
+                self.popScope()
+            self.deferFunction(runFunction)
+
     if aft:
         Lambda = LAMBDA
 
@@ -1360,7 +1367,7 @@ class Checker(object):
 
     def MODULE(self, node):
         global stats
-        self.scopeStack = [ModuleScope(self.filename, None)]
+        self.scopeStack = [ModuleScope(node, self.filename, None)]
         self.pass1(node)
             # Traverse all top-level symbols.
         self.pass2(node)
@@ -1396,32 +1403,68 @@ class Checker(object):
         t1 = time.clock()
         # Traverse the bodies of all def's & lambda's.
         self.pass_n = 2
-        self.runDeferred(self._deferredFunctions)
-            # Run all the queued runFunction functions.
-            # These functions queue calls to
-            # checkUnusedAssignments and
-            # (if Python 2) checkReturnWithArgumentInsideGenerator.
-        self._deferredFunctions = None
-            # Set _deferredFunctions to None so that deferFunction will fail
-            # noisily if called after we've run through the deferred functions.
+        if new_check:
+            for bunch in self.defs_list:
+                self.scanFunction(bunch.node, bunch.args, bunch.scopeStack)
+        else:
+            self.runDeferred(self._deferredFunctions)
+                # Run all the queued runFunction functions or scanFunction methods.
+            self._deferredFunctions = None
+                # Set _deferredFunctions to None so that deferFunction will fail
+                # noisily if called after we've run through the deferred functions.
         t2 = time.clock()
         stats['pass2'] = stats.get('pass2', 0.0) + t2-t1
+    def scanFunction(self, node, args, scopeStack):
+        
+        # This was in runFunction...
+        assert self.pass_n == 2, self.pass_n
+        assert isinstance(node, (ast.FunctionDef, ast.Lambda)), node
+        is_def = isinstance(node, ast.FunctionDef)
+        name = ('def: %s' % node.name) if is_def else ('Lambda: %s' % id(node))
+        self.scopeStack = scopeStack
+        self.pushScope(node, name, FunctionScope)
+        for arg_name in args:
+            self.addBinding(node, Argument(arg_name, node))
+        # *Now* traverse the body of the def/lambda.
+        if is_def:
+            for stmt in node.body:
+                self.handleNode(stmt, node)
+        else:
+            self.handleNode(node.body, node)
+        # Defer checking assignments until pass 3.
+        self.check_assign_list.append(self.scopeStack[-1])
+        self.popScope()
 
     def pass3(self, node):
         
         global stats
         t1 = time.clock()
         self.pass_n = 3
-            # This will raise an exception in handleNode if any nodes are visited.
-        self.runDeferred(self._deferredAssignments)
-            # Run all queued calls to checkUnusedAssignments and
-            # (If Python 2) checkReturnWithArgumentInsideGenerator
-            # This is the most expensive pass!
-        self._deferredAssignments = None
-            # Set _deferredAssignments to None so that deferAssignment will fail
-            # noisily if called after we've run through the deferred assignments.
+            # handleNode will raise an exception if it is called.
+        if new_check:
+            for scope in self.check_assign_list:
+                self.checkAssignments(scope)
+        else:
+            self.runDeferred(self._deferredAssignments)
+                # Run all queued calls to checkUnusedAssignments and
+                # (If Python 2) checkReturnWithArgumentInsideGenerator
+            self._deferredAssignments = None
+                # Set _deferredAssignments to None so that deferAssignment will fail
+                # noisily if called after we've run through the deferred assignments.
         t2 = time.clock()
         stats['pass3'] = stats.get('pass3', 0.0) + t2-t1
+    def checkAssignments(self, scope):
+        """
+        Check to see if any assignments have not been used.
+        """
+        assert self.pass_n == 3, self.pass_n
+        for name, binding in scope.unusedAssignments(): # was self.scope.
+            self.report(messages.UnusedVariable, binding.source, name)
+        
+        if PY32:
+            if scope.isGenerator and self.scope.returnValue: # was self.scope
+                self.report(messages.ReturnWithArgsInsideGenerator,
+                            scope.returnValue)
 
     def checkDeadScopes(self):
         """
@@ -1524,11 +1567,8 @@ class Checker(object):
         
         global n_load, test_scope
         trace = True and test_scope == 'test'
-        
         # EKR: ctx is Load or AugLoad.
-        
         name = getNodeName(node)
-        if trace: g.trace(' '+self.scope.dump())
         if not name:
             return
         # try local scope
@@ -1539,7 +1579,9 @@ class Checker(object):
         else:
             # EKR: the name is in the scope,
             # scope[name] is a Binding, and we have just marked it used.
-            if trace: g.trace('*'+self.scope.dump())
+            if trace: g.trace('pass: %s %40s in %s' % (
+                # self.pass_n, name, repr(self.scope)))
+                self.pass_n, self.scope[name], repr(self.scope)))
             return
 
         # EKR: Create a list of previous defining scopes.
@@ -1560,7 +1602,8 @@ class Checker(object):
             except KeyError:
                 pass
             else:
-                if trace: g.trace('*'+self.scope.dump())
+                if trace: g.trace('pass: %s %40s in %s' % (
+                self.pass_n, scope[name], repr(scope)))
                 return
 
         # look in the built-ins
@@ -1582,7 +1625,6 @@ class Checker(object):
         global n_store, test_scope
         trace = True and test_scope == 'test'
         name = getNodeName(node)
-        if trace: g.trace(self.scope.dump())
         if not name:
             return
         # if the name hasn't already been defined in the current scope

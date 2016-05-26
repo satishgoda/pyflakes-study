@@ -444,7 +444,7 @@ class Checker(object):
         self.futuresAllowed = True
         self.root = tree
         self.pass_n = 1 # EKR.
-        if new_scope:
+        if new_scope: # EKR.
             self.scope = None
         self.handleNode(tree, parent=None)
             # EKR: new MODULE handler does all the work.
@@ -1394,7 +1394,11 @@ class Checker(object):
             # Traverse all def/lambda bodies.
         self.pass3(node)
             # Check deferred assignments.
-        del self.scopeStack[1:]
+        if new_scope:
+            self.scopeStack = []
+            self.scope = None
+        else:
+            del self.scopeStack[1:]
         self.checkDeadScopes()
             # Pass 4.
 
@@ -1425,6 +1429,7 @@ class Checker(object):
         if new_check:
             for bunch in self.defs_list:
                 self.scanFunction(bunch.node, bunch.args, bunch.scopeStack)
+                    # The full scopeStack *is* needed, but we could recreate it...
         else:
             self.runDeferred(self._deferredFunctions)
                 # Run all the queued runFunction functions or scanFunction methods.
@@ -1441,8 +1446,8 @@ class Checker(object):
         is_def = isinstance(node, ast.FunctionDef)
         name = ('def: %s' % node.name) if is_def else ('Lambda: %s' % id(node))
         self.scopeStack = scopeStack
-        if new_scope:
-            self.scope = self.scopeStack[-1]
+        ### Not needed, because it is immediately changed.
+        ### if new_scope: self.scope = self.scopeStack[-1]
         self.pushScope(node, name, FunctionScope)
         for arg_name in args:
             self.addBinding(node, Argument(arg_name, node))

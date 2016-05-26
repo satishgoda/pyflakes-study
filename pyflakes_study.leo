@@ -457,7 +457,7 @@
 </v>
 <v t="ekr.20160522063947.1"><vh>Checker.MODULE (4 passes)</vh>
 <v t="ekr.20160523181737.1"><vh>Checker.pass1</vh></v>
-<v t="ekr.20160523181742.1"><vh>Checker.pass2</vh>
+<v t="ekr.20160523181742.1"><vh>Checker.pass2 (uses scopeStack)</vh>
 <v t="ekr.20160526063937.1"><vh>Checker.scanFunction (NEW)</vh></v>
 </v>
 <v t="ekr.20160523181745.1"><vh>Checker.pass3</vh>
@@ -524,13 +524,14 @@
 <v t="ekr.20160526064907.1"></v>
 <v t="ekr.20160520162722.1"></v>
 <v t="ekr.20160523172121.1"><vh>----------------</vh></v>
+<v t="ekr.20160526060219.1"></v>
 <v t="ekr.20160519172255.40"></v>
 <v t="ekr.20160519172710.1"></v>
 <v t="ekr.20160519172730.1"></v>
 <v t="ekr.20160519172255.68"></v>
 <v t="ekr.20160519173318.1"></v>
-<v t="ekr.20160526060219.1"></v>
 <v t="ekr.20160522063947.1"></v>
+<v t="ekr.20160526133602.1"><vh>** To do: generate all error messages</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -1148,7 +1149,7 @@ def __init__(self, tree, filename='(none)', builtins=None,
     self.futuresAllowed = True
     self.root = tree
     self.pass_n = 1 # EKR.
-    if new_scope:
+    if new_scope: # EKR.
         self.scope = None
     self.handleNode(tree, parent=None)
         # EKR: new MODULE handler does all the work.
@@ -4224,7 +4225,11 @@ def MODULE(self, node):
         # Traverse all def/lambda bodies.
     self.pass3(node)
         # Check deferred assignments.
-    del self.scopeStack[1:]
+    if new_scope:
+        self.scopeStack = []
+        self.scope = None
+    else:
+        del self.scopeStack[1:]
     self.checkDeadScopes()
         # Pass 4.
 
@@ -5211,6 +5216,7 @@ def pass2(self, node):
     if new_check:
         for bunch in self.defs_list:
             self.scanFunction(bunch.node, bunch.args, bunch.scopeStack)
+                # The full scopeStack *is* needed, but we could recreate it...
     else:
         self.runDeferred(self._deferredFunctions)
             # Run all the queued runFunction functions or scanFunction methods.
@@ -5403,8 +5409,8 @@ new_scope = True</t>
     is_def = isinstance(node, ast.FunctionDef)
     name = ('def: %s' % node.name) if is_def else ('Lambda: %s' % id(node))
     self.scopeStack = scopeStack
-    if new_scope:
-        self.scope = self.scopeStack[-1]
+    ### Not needed, because it is immediately changed.
+    ### if new_scope: self.scope = self.scopeStack[-1]
     self.pushScope(node, name, FunctionScope)
     for arg_name in args:
         self.addBinding(node, Argument(arg_name, node))
@@ -5417,7 +5423,7 @@ new_scope = True</t>
     # Defer checking assignments until pass 3.
     self.check_assign_list.append(self.scopeStack[-1])
     self.popScope()</t>
-<t tx="ekr.20160526064907.1">test_scope='test'</t>
+<t tx="ekr.20160526064907.1">test_scope='all'</t>
 <t tx="ekr.20160526074410.1">def checkAssignments(self, scope):
     """
     Check to see if any assignments have not been used.
@@ -5431,5 +5437,6 @@ new_scope = True</t>
             self.report(messages.ReturnWithArgsInsideGenerator,
                         scope.returnValue)
 </t>
+<t tx="ekr.20160526133602.1"></t>
 </tnodes>
 </leo_file>

@@ -44,8 +44,8 @@ aft = True
 # jit = False
     # This is only slightly faster than the default handleChildren method.
     # True: create node handlers in getNodeHandler.
-new_check = True
-new_scope = True
+new_check = False
+new_scope = False
 stats = {}
     # Timing stats.
 n_pass_nodes = [None, 0, 0]
@@ -199,6 +199,7 @@ class Binding(object):
     @ivar used: pair of (L{Scope}, line-number) indicating the scope and
                 line number that this binding was last used
     """
+    kind = 'binding'
     def __init__(self, name, source):
         self.name = name
         self.source = source # EKR: a node.
@@ -238,6 +239,7 @@ class Importation(Definition):
         possibly including multiple dotted components.
     @type fullName: C{str}
     """
+    kind = 'import'
 
     def __init__(self, name, source):
         self.fullName = name
@@ -552,7 +554,7 @@ class Checker(object):
         - `node` is the statement responsible for the change
         - `value` is the new value, a Binding instance
         """
-        trace = True and test_scope == 'test'
+        trace = False and test_scope == 'test'
         # assert value.source in (node, node.parent):
         for scope in self.scopeStack[::-1]:
                 # EKR: same as list(reversed(scopeStack))
@@ -568,6 +570,7 @@ class Checker(object):
                             node, value.name, existing.source)
 
             elif scope is self.scope:
+                # g.trace('====', scope, existing, existing.used, value)
                 if (isinstance(parent_stmt, ast.comprehension) and
                     not isinstance(self.getParent(existing.source),
                         (ast.For, ast.comprehension))
@@ -575,6 +578,7 @@ class Checker(object):
                     self.report(messages.RedefinedInListComp,
                                 node, value.name, existing.source)
                 elif not existing.used and value.redefines(existing):
+                    # Redefines Class or Function.
                     self.report(messages.RedefinedWhileUnused,
                                 node, value.name, existing.source)
 
@@ -622,6 +626,22 @@ class Checker(object):
                 self.ignore_kinds[name] = True
                 g.trace(name, g.callers())
 
+
+    def getNodeHandler(self, node_class):
+
+        try:
+            return self._nodeHandlers[node_class]
+        except KeyError:
+            nodeType = getNodeType(node_class)
+        self._nodeHandlers[node_class] = handler = getattr(self, nodeType)
+        return handler
+
+    def handleChildren(self, tree, omit=None):
+        # EKR: iter_child_nodes uses _FieldsOrder class.
+        global n_handleChildren ; n_handleChildren += 1
+        
+        for node in iter_child_nodes(tree, omit=omit):
+            self.handleNode(node, tree)
     if aft:
 
         if aft:
@@ -981,23 +1001,6 @@ class Checker(object):
                     
             AsyncWith = With
     else:
-
-        def getNodeHandler(self, node_class):
-
-            try:
-                return self._nodeHandlers[node_class]
-            except KeyError:
-                nodeType = getNodeType(node_class)
-            self._nodeHandlers[node_class] = handler = getattr(self, nodeType)
-            return handler
-
-        def handleChildren(self, tree, omit=None):
-            # EKR: iter_child_nodes uses _FieldsOrder class.
-            global n_handleChildren ; n_handleChildren += 1
-            
-            for node in iter_child_nodes(tree, omit=omit):
-                self.handleNode(node, tree)
-     
         CONTINUE = BREAK = PASS = ignore
         NUM = STR = BYTES = ELLIPSIS = ignore
 
@@ -1219,9 +1222,11 @@ class Checker(object):
 
                 # Remove UndefinedName messages already reported for this name.
                 self.messages = [
-                    m for m in self.messages if not
-                    isinstance(m, messages.UndefinedName) and not
-                    m.message_args[0] == node_name]
+                    m for m in self.messages if
+                        not isinstance(m, messages.UndefinedName) and
+                        not isinstance(m, messages.ReturnOutsideFunction) and
+                            # EKR: Real bug fix.
+                        m.message_args[0] != node_name]
 
                 # Bind name to global scope if it doesn't exist already.
                 global_scope.setdefault(node_name, node_value)
@@ -1388,6 +1393,7 @@ class Checker(object):
             self.pushScope(node, self.filename, ModuleScope)
         else:
             self.scopeStack = [ModuleScope(node, self.filename, None)]
+        moduleScope = self.scopeStack[-1] # EKR: I think I introduced this.
         self.pass1(node)
             # Traverse all top-level symbols.
         self.pass2(node)
@@ -1399,6 +1405,7 @@ class Checker(object):
             self.scope = None
         else:
             del self.scopeStack[1:]
+        self.deadScopes.append(moduleScope)
         self.checkDeadScopes()
             # Pass 4.
 
@@ -1592,7 +1599,7 @@ class Checker(object):
     def handleNodeLoad(self, node):
         
         global n_load, test_scope
-        trace = True and test_scope == 'test'
+        trace = False and test_scope == 'test'
         # EKR: ctx is Load or AugLoad.
         name = getNodeName(node)
         if not name:
@@ -1649,7 +1656,7 @@ class Checker(object):
     def handleNodeStore(self, node):
         
         global n_store, test_scope
-        trace = True and test_scope == 'test'
+        trace = False and test_scope == 'test'
         name = getNodeName(node)
         if not name:
             return
@@ -1664,6 +1671,8 @@ class Checker(object):
                 # been accessed already in the current scope, and hasn't
                 # been declared global
                 used = name in scope and scope[name].used
+                if trace: g.trace(name, 'used:', used, scope.name,
+                    'isGlobal', name  in self.scope.globals)
                 if used and used[0] is self.scope and name not in self.scope.globals:
                     # then it's probably a mistake
                     self.report(messages.UndefinedLocal,
@@ -1690,7 +1699,9 @@ class Checker(object):
 
     def RETURN(self, node):
         
-        if isinstance(self.scope, ClassScope):
+        # if isinstance(self.scope, ClassScope):
+        if isinstance(self.scope, (ClassScope, ModuleScope)):
+            # EKR: A real bug fix.
             self.report(messages.ReturnOutsideFunction, node)
             return
         if (
@@ -1743,165 +1754,3 @@ class Checker(object):
         Yield = Await = YieldFrom = YIELD
 
     AWAIT = YIELDFROM = YIELD
-
-
-class NullChecker:
-    '''A do-nothing checker for timing comparisons.'''
-    def __init__(self):
-        self._nodeHandlers = {}
-        
-
-    def getNodeHandler(self, node_class):
-        try:
-            return self._nodeHandlers[node_class]
-        except KeyError:
-            nodeType = getNodeType(node_class)
-        self._nodeHandlers[node_class] = handler = getattr(self, nodeType)
-        return handler
-
-    def handleChildren(self, tree, omit=None):
-        # EKR: iter_child_nodes uses _FieldsOrder class.
-        for node in iter_child_nodes(tree, omit=omit):
-            self.handleNode(node, tree)
-
-    def handleNode(self, node, parent):
-        # EKR: this the general node visiter.
-        if node:
-            node.parent = parent
-            # EKR: this is the only call to getNodeHandler.
-            handler = self.getNodeHandler(node.__class__)
-            handler(node)
-
-    # _getDoctestExamples = doctest.DocTestParser().get_examples
-
-    def ignore(self, node):
-        pass
-
-    # "stmt" type nodes
-    DELETE = PRINT = FOR = ASYNCFOR = WHILE = IF = WITH = WITHITEM = \
-        ASYNCWITH = ASYNCWITHITEM = RAISE = TRYFINALLY = ASSERT = EXEC = \
-        EXPR = ASSIGN = handleChildren
-
-    CONTINUE = BREAK = PASS = ignore
-
-    # "expr" type nodes
-    BOOLOP = BINOP = UNARYOP = IFEXP = DICT = SET = \
-        COMPARE = CALL = REPR = ATTRIBUTE = SUBSCRIPT = LIST = TUPLE = \
-        STARRED = NAMECONSTANT = handleChildren
-
-    NUM = STR = BYTES = ELLIPSIS = ignore
-
-    # "slice" type nodes
-    SLICE = EXTSLICE = INDEX = handleChildren
-
-    # expression contexts are node instances too, though being constants
-    LOAD = STORE = DEL = AUGLOAD = AUGSTORE = PARAM = ignore
-
-    # same for operators
-    AND = OR = ADD = SUB = MULT = DIV = MOD = POW = LSHIFT = RSHIFT = \
-        BITOR = BITXOR = BITAND = FLOORDIV = INVERT = NOT = UADD = USUB = \
-        EQ = NOTEQ = LT = LTE = GT = GTE = IS = ISNOT = IN = NOTIN = ignore
-
-    # additional node types
-    COMPREHENSION = KEYWORD = handleChildren
-
-    def GLOBAL(self, node):
-        pass
-
-    NONLOCAL = GLOBAL
-
-    def GENERATOREXP(self, node):
-        self.handleChildren(node)
-
-    LISTCOMP = handleChildren if PY2 else GENERATOREXP
-
-    DICTCOMP = SETCOMP = GENERATOREXP
-
-    def NAME(self, node):
-        pass
-
-    def RETURN(self, node):
-        self.handleNode(node.value, node)
-
-    def YIELD(self, node):
-        self.handleNode(node.value, node)
-
-    AWAIT = YIELDFROM = YIELD
-
-    def FUNCTIONDEF(self, node):
-        for deco in node.decorator_list:
-            self.handleNode(deco, node)
-        self.LAMBDA(node)
-
-    ASYNCFUNCTIONDEF = FUNCTIONDEF
-
-    def LAMBDA(self, node):
-        annotations = []
-        if PY2:
-            defaults = node.args.defaults
-        else:
-            for arg in node.args.args + node.args.kwonlyargs:
-                annotations.append(arg.annotation)
-            defaults = node.args.defaults + node.args.kw_defaults
-
-        # Only for Python3 FunctionDefs
-        is_py3_func = hasattr(node, 'returns')
-        for arg_name in ('vararg', 'kwarg'):
-            wildcard = getattr(node.args, arg_name)
-            if not wildcard:
-                continue
-            if is_py3_func:
-                if PY33:  # Python 2.5 to 3.3
-                    argannotation = arg_name + 'annotation'
-                    annotations.append(getattr(node.args, argannotation))
-                else:     # Python >= 3.4
-                    annotations.append(wildcard.annotation)
-        if is_py3_func:
-            annotations.append(node.returns)
-        for child in annotations + defaults:
-            if child:
-                self.handleNode(child, node)
-                
-        # EKR: Was deferred.
-        if isinstance(node.body, list):
-            # case for FunctionDefs
-            for stmt in node.body:
-                self.handleNode(stmt, node)
-        else:
-            # case for Lambdas
-            self.handleNode(node.body, node)
-
-    def CLASSDEF(self, node):
-        """
-        Check names used in a class definition, including its decorators, base
-        classes, and the body of its definition.  Additionally, add its name to
-        the current scope.
-        """
-        for deco in node.decorator_list:
-            self.handleNode(deco, node)
-        for baseNode in node.bases:
-            self.handleNode(baseNode, node)
-        if not PY2:
-            for keywordNode in node.keywords:
-                self.handleNode(keywordNode, node)
-        for stmt in node.body:
-            self.handleNode(stmt, node)
-
-    def AUGASSIGN(self, node):
-        self.handleNode(node.value, node)
-
-    def IMPORT(self, node):
-        pass
-
-    def IMPORTFROM(self, node):
-        pass
-
-    def TRY(self, node):
-        for child in node.body:
-            self.handleNode(child, node)
-        self.handleChildren(node, omit='body')
-
-    TRYEXCEPT = TRY
-
-    def EXCEPTHANDLER(self, node):
-        self.handleChildren(node)

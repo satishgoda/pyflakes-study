@@ -50,6 +50,27 @@
 <v t="ekr.20160522070940.1"><vh>Checker.nodeDepth (EKR)</vh></v>
 <v t="ekr.20160525071459.1"><vh>Binding.dump (EKR)</vh></v>
 <v t="ekr.20160525070614.1"><vh>Scope.dump (EKR)</vh></v>
+<v t="ekr.20160521023529.1"><vh>class NullChecker</vh>
+<v t="ekr.20160521024555.1"><vh>NullChecker.getNodeHandler</vh></v>
+<v t="ekr.20160521023730.2"><vh>NullChecker.handleChildren</vh></v>
+<v t="ekr.20160521023730.4"><vh>NullChecker.handleNode</vh></v>
+<v t="ekr.20160521024930.1"><vh>NullChcker.handlers</vh></v>
+<v t="ekr.20160521154847.1"><vh>NullChecker.unused handlers</vh>
+<v t="ekr.20160521024930.2"><vh>NullChecker.GLOBAL &amp; NONLOCAL</vh></v>
+<v t="ekr.20160521024930.3"><vh>NullChecker.GENERATOREXP &amp; comprehensions</vh></v>
+<v t="ekr.20160521024930.4"><vh>NullChecker.NAME</vh></v>
+<v t="ekr.20160521024930.5"><vh>NullChecker.RETURN</vh></v>
+<v t="ekr.20160521024930.6"><vh>NullChecker.YIELD</vh></v>
+<v t="ekr.20160521024930.7"><vh>NullChecker.FUNCTIONDEF</vh></v>
+<v t="ekr.20160521024930.8"><vh>NullChecker.LAMBDA</vh></v>
+<v t="ekr.20160521024930.9"><vh>NullChecker.CLASSDEF</vh></v>
+<v t="ekr.20160521024930.10"><vh>NullChecker.AUGASSIGN</vh></v>
+<v t="ekr.20160521024930.11"><vh>NullChecker.IMPORT</vh></v>
+<v t="ekr.20160521024930.12"><vh>NullChecker.IMPORTFROM</vh></v>
+<v t="ekr.20160521024930.13"><vh>NullChecker.TRY</vh></v>
+<v t="ekr.20160521024930.14"><vh>NullChecker.EXCEPTHANDLER</vh></v>
+</v>
+</v>
 </v>
 <v t="ekr.20160520102401.1"><vh>Reference</vh>
 <v t="ekr.20160519172255.117"><vh>@@clean __init__.py</vh></v>
@@ -316,9 +337,40 @@
 <v t="ekr.20160519180137.1"><vh>epytext markup</vh></v>
 <v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
 </v>
+<v t="ekr.20160523172144.1"><vh>----------------</vh></v>
+<v t="ekr.20160520081237.1"><vh>@button test</vh>
+<v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
+<v t="ekr.20160520162722.1"><vh>&lt;&lt; define s_list &gt;&gt;</vh>
+<v t="ekr.20160526165301.1"><vh>all messages</vh></v>
+</v>
+<v t="ekr.20160523085953.1"><vh>class TestController</vh>
+<v t="ekr.20160520082209.1"><vh>check_all</vh></v>
+<v t="ekr.20160520162336.1"><vh>check_string</vh></v>
+<v t="ekr.20160520210414.1"><vh>compile_string</vh></v>
+<v t="ekr.20160521023438.1"><vh>handle_tree (TestController)</vh></v>
+<v t="ekr.20160523172328.1"><vh>print_stats</vh></v>
+<v t="ekr.20160520210256.1"><vh>read_string</vh></v>
+<v t="ekr.20160520081827.1"><vh>run_test</vh></v>
+<v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
+</v>
+<v t="ekr.20160526064907.1"><vh>&lt;&lt; define test_scope &gt;&gt;</vh></v>
+</v>
+<v t="ekr.20160526064907.1"></v>
+<v t="ekr.20160520162722.1"></v>
+<v t="ekr.20160526165114.1"><vh>unused tets</vh>
+<v t="ekr.20160525070836.1"><vh>test test1</vh></v>
+<v t="ekr.20160525064717.1"><vh>test global_test1</vh></v>
+<v t="ekr.20160525070031.1"><vh>test global_test2</vh></v>
+<v t="ekr.20160525104223.1"><vh>test global_test3</vh></v>
+<v t="ekr.20160525064058.1"><vh>not a bug</vh></v>
+</v>
+<v t="ekr.20160526165301.1"></v>
+<v t="ekr.20160523172121.1"><vh>----------------</vh></v>
+<v t="ekr.20160526060219.1"><vh>&lt;&lt; checker switches &gt;&gt;</vh></v>
+<v t="ekr.20160519172255.79"></v>
 <v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
 <v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
-<v t="ekr.20160526060219.1"><vh>&lt;&lt; checker switches &gt;&gt;</vh></v>
+<v t="ekr.20160526060219.1"></v>
 <v t="ekr.20160519172255.12"><vh>class _FieldsOrder(dict)</vh>
 <v t="ekr.20160519172255.13"><vh>_FieldsOrder._get_fields (changed)</vh></v>
 <v t="ekr.20160519172255.14"><vh>_FieldsOrder.__missing__</vh></v>
@@ -448,7 +500,7 @@
 <v t="ekr.20160519172255.78"><vh>Checker.EXCEPTHANDLER</vh></v>
 <v t="ekr.20160519172255.71"><vh>Checker.FUNCTIONDEF</vh></v>
 <v t="ekr.20160519172255.67"><vh>Checker.GENERATOREXP &amp; comprehensions</vh></v>
-<v t="ekr.20160519172255.66"><vh>Checker.GLOBAL &amp; NONLOCAL</vh></v>
+<v t="ekr.20160519172255.66"><vh>Checker.GLOBAL &amp; NONLOCAL (Real bug fix)</vh></v>
 <v t="ekr.20160519172255.75"><vh>Checker.IMPORT</vh></v>
 <v t="ekr.20160519172255.76"><vh>Checker.IMPORTFROM</vh></v>
 <v t="ekr.20160519172255.72"><vh>Checker.LAMBDA</vh>
@@ -477,61 +529,9 @@
 <v t="ekr.20160519172255.70"><vh>Checker.YIELD</vh></v>
 </v>
 </v>
-<v t="ekr.20160521023529.1"><vh>class NullChecker</vh>
-<v t="ekr.20160521024555.1"><vh>NullChecker.getNodeHandler</vh></v>
-<v t="ekr.20160521023730.2"><vh>NullChecker.handleChildren</vh></v>
-<v t="ekr.20160521023730.4"><vh>NullChecker.handleNode</vh></v>
-<v t="ekr.20160521024930.1"><vh>NullChcker.handlers</vh></v>
-<v t="ekr.20160521154847.1"><vh>NullChecker.unused handlers</vh>
-<v t="ekr.20160521024930.2"><vh>NullChecker.GLOBAL &amp; NONLOCAL</vh></v>
-<v t="ekr.20160521024930.3"><vh>NullChecker.GENERATOREXP &amp; comprehensions</vh></v>
-<v t="ekr.20160521024930.4"><vh>NullChecker.NAME</vh></v>
-<v t="ekr.20160521024930.5"><vh>NullChecker.RETURN</vh></v>
-<v t="ekr.20160521024930.6"><vh>NullChecker.YIELD</vh></v>
-<v t="ekr.20160521024930.7"><vh>NullChecker.FUNCTIONDEF</vh></v>
-<v t="ekr.20160521024930.8"><vh>NullChecker.LAMBDA</vh></v>
-<v t="ekr.20160521024930.9"><vh>NullChecker.CLASSDEF</vh></v>
-<v t="ekr.20160521024930.10"><vh>NullChecker.AUGASSIGN</vh></v>
-<v t="ekr.20160521024930.11"><vh>NullChecker.IMPORT</vh></v>
-<v t="ekr.20160521024930.12"><vh>NullChecker.IMPORTFROM</vh></v>
-<v t="ekr.20160521024930.13"><vh>NullChecker.TRY</vh></v>
-<v t="ekr.20160521024930.14"><vh>NullChecker.EXCEPTHANDLER</vh></v>
 </v>
-</v>
-</v>
-<v t="ekr.20160523172144.1"><vh>----------------</vh></v>
-<v t="ekr.20160520081237.1"><vh>@button test</vh>
-<v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
-<v t="ekr.20160520162722.1"><vh>&lt;&lt; define s_list &gt;&gt;</vh>
-<v t="ekr.20160525070836.1"><vh>test test1</vh></v>
-<v t="ekr.20160525064717.1"><vh>test global_test1</vh></v>
-<v t="ekr.20160525070031.1"><vh>test global_test2</vh></v>
-<v t="ekr.20160525104223.1"><vh>test global_test3</vh></v>
-<v t="ekr.20160525064058.1"><vh>not a bug</vh></v>
-</v>
-<v t="ekr.20160523085953.1"><vh>class TestController</vh>
-<v t="ekr.20160520082209.1"><vh>check_all</vh></v>
-<v t="ekr.20160520162336.1"><vh>check_string</vh></v>
-<v t="ekr.20160520210414.1"><vh>compile_string</vh></v>
-<v t="ekr.20160521023438.1"><vh>handle_tree (TestController)</vh></v>
-<v t="ekr.20160523172328.1"><vh>print_stats</vh></v>
-<v t="ekr.20160520210256.1"><vh>read_string</vh></v>
-<v t="ekr.20160520081827.1"><vh>run_test</vh></v>
-<v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
-</v>
-<v t="ekr.20160526064907.1"><vh>&lt;&lt; define test_scope &gt;&gt;</vh></v>
-</v>
-<v t="ekr.20160526064907.1"></v>
-<v t="ekr.20160520162722.1"></v>
-<v t="ekr.20160523172121.1"><vh>----------------</vh></v>
-<v t="ekr.20160526060219.1"></v>
-<v t="ekr.20160519172255.40"></v>
-<v t="ekr.20160519172710.1"></v>
-<v t="ekr.20160519172730.1"></v>
-<v t="ekr.20160519172255.68"></v>
-<v t="ekr.20160519173318.1"></v>
 <v t="ekr.20160522063947.1"></v>
-<v t="ekr.20160526133602.1"><vh>** To do: generate all error messages</vh></v>
+<v t="ekr.20160519172255.66"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -799,6 +799,7 @@ class Binding(object):
     @ivar used: pair of (L{Scope}, line-number) indicating the scope and
                 line number that this binding was last used
     """
+    kind = 'binding'
     def __init__(self, name, source):
         self.name = name
         self.source = source # EKR: a node.
@@ -854,6 +855,7 @@ class Importation(Definition):
         possibly including multiple dotted components.
     @type fullName: C{str}
     """
+    kind = 'import'
     @others
 </t>
 <t tx="ekr.20160519172255.23">
@@ -1340,7 +1342,7 @@ def addBinding(self, node, value):
     - `node` is the statement responsible for the change
     - `value` is the new value, a Binding instance
     """
-    trace = True and test_scope == 'test'
+    trace = False and test_scope == 'test'
     # assert value.source in (node, node.parent):
     for scope in self.scopeStack[::-1]:
             # EKR: same as list(reversed(scopeStack))
@@ -1356,6 +1358,7 @@ def addBinding(self, node, value):
                         node, value.name, existing.source)
 
         elif scope is self.scope:
+            # g.trace('====', scope, existing, existing.used, value)
             if (isinstance(parent_stmt, ast.comprehension) and
                 not isinstance(self.getParent(existing.source),
                     (ast.For, ast.comprehension))
@@ -1363,6 +1366,7 @@ def addBinding(self, node, value):
                 self.report(messages.RedefinedInListComp,
                             node, value.name, existing.source)
             elif not existing.used and value.redefines(existing):
+                # Redefines Class or Function.
                 self.report(messages.RedefinedWhileUnused,
                             node, value.name, existing.source)
 
@@ -1392,7 +1396,7 @@ def getNodeHandler(self, node_class):
 def handleNodeLoad(self, node):
     
     global n_load, test_scope
-    trace = True and test_scope == 'test'
+    trace = False and test_scope == 'test'
     # EKR: ctx is Load or AugLoad.
     name = getNodeName(node)
     if not name:
@@ -1450,7 +1454,7 @@ def handleNodeLoad(self, node):
 def handleNodeStore(self, node):
     
     global n_store, test_scope
-    trace = True and test_scope == 'test'
+    trace = False and test_scope == 'test'
     name = getNodeName(node)
     if not name:
         return
@@ -1465,6 +1469,8 @@ def handleNodeStore(self, node):
             # been accessed already in the current scope, and hasn't
             # been declared global
             used = name in scope and scope[name].used
+            if trace: g.trace(name, 'used:', used, scope.name,
+                'isGlobal', name  in self.scope.globals)
             if used and used[0] is self.scope and name not in self.scope.globals:
                 # then it's probably a mistake
                 self.report(messages.UndefinedLocal,
@@ -1661,9 +1667,11 @@ def GLOBAL(self, node):
 
             # Remove UndefinedName messages already reported for this name.
             self.messages = [
-                m for m in self.messages if not
-                isinstance(m, messages.UndefinedName) and not
-                m.message_args[0] == node_name]
+                m for m in self.messages if
+                    not isinstance(m, messages.UndefinedName) and
+                    not isinstance(m, messages.ReturnOutsideFunction) and
+                        # EKR: Real bug fix.
+                    m.message_args[0] != node_name]
 
             # Bind name to global scope if it doesn't exist already.
             global_scope.setdefault(node_name, node_value)
@@ -1731,7 +1739,9 @@ if aft:
 <t tx="ekr.20160519172255.69">
 def RETURN(self, node):
     
-    if isinstance(self.scope, ClassScope):
+    # if isinstance(self.scope, ClassScope):
+    if isinstance(self.scope, (ClassScope, ModuleScope)):
+        # EKR: A real bug fix.
         self.report(messages.ReturnOutsideFunction, node)
         return
     if (
@@ -2103,11 +2113,10 @@ def ignore(self, node):
             self.ignore_kinds[name] = True
             g.trace(name, g.callers())
 
+&lt;&lt; non-aft handlers &gt;&gt;
 if aft:
     &lt;&lt; default node handlers &gt;&gt;
 else:
-    &lt;&lt; non-aft handlers &gt;&gt;
- 
     CONTINUE = BREAK = PASS = ignore
     NUM = STR = BYTES = ELLIPSIS = ignore
 
@@ -2243,7 +2252,7 @@ else:
     '''Run pyflakes on all files.'''
     # from pyflakes import api, reporter
     if s:
-        fn = '&lt;test string&gt;'
+        fn = '&lt;test&gt;'
         tree = self.compile_string(fn, s)
         self.check_string(fn, s, tree)
     else:
@@ -4219,6 +4228,7 @@ def MODULE(self, node):
         self.pushScope(node, self.filename, ModuleScope)
     else:
         self.scopeStack = [ModuleScope(node, self.filename, None)]
+    moduleScope = self.scopeStack[-1] # EKR: I think I introduced this.
     self.pass1(node)
         # Traverse all top-level symbols.
     self.pass2(node)
@@ -4230,6 +4240,7 @@ def MODULE(self, node):
         self.scope = None
     else:
         del self.scopeStack[1:]
+    self.deadScopes.append(moduleScope)
     self.checkDeadScopes()
         # Pass 4.
 
@@ -5399,8 +5410,8 @@ aft = True
 # jit = False
     # This is only slightly faster than the default handleChildren method.
     # True: create node handlers in getNodeHandler.
-new_check = True
-new_scope = True</t>
+new_check = False
+new_scope = False</t>
 <t tx="ekr.20160526063937.1">def scanFunction(self, node, args, scopeStack):
     
     # This was in runFunction...
@@ -5423,7 +5434,7 @@ new_scope = True</t>
     # Defer checking assignments until pass 3.
     self.check_assign_list.append(self.scopeStack[-1])
     self.popScope()</t>
-<t tx="ekr.20160526064907.1">test_scope='all'</t>
+<t tx="ekr.20160526064907.1">test_scope='test'</t>
 <t tx="ekr.20160526074410.1">def checkAssignments(self, scope):
     """
     Check to see if any assignments have not been used.
@@ -5437,6 +5448,52 @@ new_scope = True</t>
             self.report(messages.ReturnWithArgsInsideGenerator,
                         scope.returnValue)
 </t>
-<t tx="ekr.20160526133602.1"></t>
+<t tx="ekr.20160526165114.1"></t>
+<t tx="ekr.20160526165301.1">'''\
+# This import ruins all other tests for undefined..
+from alpha import *         # ImportStarUsed                        
+''',
+
+# The following all pass...
+'''\
+import sys                  # UnusedImport  
+import os                   # Used below...
+xxx = 2                     # Unused, but only local unused vars are reported.
+from __future__ import F    # LateFutureImport
+for os in range(3):
+    print(os)               # ImportShadowedByLoopVar
+print(x)                    # UndefinedName
+return 42                   # ReturnOutsideFunction
+
+def f(arg, arg):    # DuplicateArgument
+    unused = 1      # UnusedVariable
+    print(f1)       # UndefinedName
+
+def gen():
+    yield 1
+    return 2        # (Python 2 Only) ReturnWithArgsInsideGenerator
+
+class aClass:
+    return 25       # ReturnOutsideFunction
+    
+def redefined_test():
+    n = 1   
+    print({n: n for n in range(5)}) # RedefinedInListComp
+    
+a = 1
+
+def local_test():
+    print(a)        # UndefinedLocal
+    a = 2
+    print(a)        # Suppress UnusedVariable
+    
+def duplicate():
+    local_test()
+   
+def duplicate():    # RedefinedWhileUnused
+    pass
+
+''',
+</t>
 </tnodes>
 </leo_file>

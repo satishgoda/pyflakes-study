@@ -338,6 +338,7 @@
 <v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
 </v>
 <v t="ekr.20160523172144.1"><vh>----------------</vh></v>
+<v t="ekr.20160527034002.1"><vh>@button unit-tests</vh></v>
 <v t="ekr.20160520081237.1"><vh>@button test</vh>
 <v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
 <v t="ekr.20160520162722.1"><vh>&lt;&lt; define s_list &gt;&gt;</vh>
@@ -533,6 +534,7 @@
 </v>
 <v t="ekr.20160522063947.1"></v>
 <v t="ekr.20160519172255.66"></v>
+<v t="ekr.20160519172255.68"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -5503,5 +5505,21 @@ def duplicate():    # RedefinedWhileUnused
 
 ''',
 </t>
+<t tx="ekr.20160527034002.1">g.cls()
+import unittest
+from pyflakes.test import test_api, test_doctests, test_imports, test_other
+from pyflakes.test import test_return_with_arguments_inside_generator
+from pyflakes.test import test_undefined_names
+tests = (
+    test_api, test_doctests,
+    test_imports, test_other,
+    test_return_with_arguments_inside_generator,
+    test_undefined_names,
+)
+loader = unittest.TestLoader()
+suite = unittest.TestSuite()
+for module in tests:
+    suite.addTest(loader.loadTestsFromModule(module))
+unittest.TextTestRunner(verbosity=1).run(suite)</t>
 </tnodes>
 </leo_file>

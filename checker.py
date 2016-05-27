@@ -174,7 +174,6 @@ def unit_test(raise_on_fail=True):
     if aft:
         for z in aList:
             class_ = getattr(ast, z, None)
-            class_name = class_.__name__
             if hasattr(ft, z):
                 nodes += 1
             elif aft and issubclass(class_, operator_classes):

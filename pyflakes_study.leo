@@ -364,6 +364,7 @@
 <v t="ekr.20160525104223.1"><vh>test global_test3</vh></v>
 <v t="ekr.20160525064058.1"><vh>not a bug</vh></v>
 </v>
+<v t="ekr.20160523172328.1"></v>
 <v t="ekr.20160526165301.1"></v>
 <v t="ekr.20160523172121.1"><vh>----------------</vh></v>
 <v t="ekr.20160526060219.1"><vh>&lt;&lt; checker switches &gt;&gt;</vh></v>
@@ -2207,7 +2208,7 @@ aList = tuple(sorted(fields, key=key_first, reverse=True))
 print(aList)
 print(['iter'.find(z) for z in fields])
 </t>
-<t tx="ekr.20160520081237.1">g.cls()
+<t tx="ekr.20160520081237.1"># g.cls()
 if c.isChanged():
     c.save()
 &lt;&lt; test imports &gt;&gt;
@@ -4770,24 +4771,28 @@ def Set(self, node):
         stats['total2'] = t2 - t1 - handle_t - visit_t
     # print...
     print('%s file%s' % (n, g.plural(n)))
-    print('nodes visited...')
-    for i in (1,2):
-        print('  pass%s: %7s' % (i, checker.n_pass_nodes[i]))
-    n_handleNode = sum(checker.n_pass_nodes[i] for i in (1,2))
-    print('  total: %7s' % n_handleNode)
-    print('method calls...')
-    print('  handleNode:     %7s' % n_handleNode)
-    # print('    null nodes:   %7s' % checker.n_null_nodes)
-    print('  handleChildren: %7s' % checker.n_handleChildren)
-    print('  FunctionDef:    %7s' % checker.n_FunctionDef)
-    print('  ignore:         %7s' % checker.n_ignore)
-    print('  Load:           %7s' % checker.n_load)
-    print('  Store:          %7s' % checker.n_store)
-    print('  Scopes:         %7s' % checker.n_scopes)
+    if 1:
+        print('nodes visited...')
+        for i in (1,2):
+            print('  pass%s: %7s' % (i, checker.n_pass_nodes[i]))
+        n_handleNode = sum(checker.n_pass_nodes[i] for i in (1,2))
+        print('  total: %7s' % n_handleNode)
+    if 0:
+        print('method calls...')
+        print('  handleNode:     %7s' % n_handleNode)
+        # print('    null nodes:   %7s' % checker.n_null_nodes)
+        print('  handleChildren: %7s' % checker.n_handleChildren)
+        print('  FunctionDef:    %7s' % checker.n_FunctionDef)
+        print('  ignore:         %7s' % checker.n_ignore)
+        print('  Load:           %7s' % checker.n_load)
+        print('  Store:          %7s' % checker.n_store)
+        print('  Scopes:         %7s' % checker.n_scopes)
     print('times (sec.)...')
     keys = (
-        'read', 'parse', 'visit', 'handle', 'check',
-        '  pass1', '  pass2', '  pass3', '  pass4',
+        # 'read', 'parse', 'visit', 'handle',
+        'check',
+        '  pass1', '  pass2',
+        # '  pass3', '  pass4',
         'total', 'total2')
     for key in keys:
         if key.strip() in stats:
@@ -5410,8 +5415,11 @@ aft = True
 # jit = False
     # This is only slightly faster than the default handleChildren method.
     # True: create node handlers in getNodeHandler.
-new_check = True
-new_scope = True</t>
+if aft:
+    new_check = True
+    new_scope = True
+else:
+    new_check = new_scope = False</t>
 <t tx="ekr.20160526063937.1">def scanFunction(self, node, args, scopeStack):
     
     # This was in runFunction...
@@ -5434,7 +5442,7 @@ new_scope = True</t>
     # Defer checking assignments until pass 3.
     self.check_assign_list.append(self.scopeStack[-1])
     self.popScope()</t>
-<t tx="ekr.20160526064907.1">test_scope='test'</t>
+<t tx="ekr.20160526064907.1">test_scope='all'</t>
 <t tx="ekr.20160526074410.1">def checkAssignments(self, scope):
     """
     Check to see if any assignments have not been used.

@@ -5410,8 +5410,8 @@ aft = True
 # jit = False
     # This is only slightly faster than the default handleChildren method.
     # True: create node handlers in getNodeHandler.
-new_check = False
-new_scope = False</t>
+new_check = True
+new_scope = True</t>
 <t tx="ekr.20160526063937.1">def scanFunction(self, node, args, scopeStack):
     
     # This was in runFunction...

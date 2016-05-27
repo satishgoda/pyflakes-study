@@ -44,8 +44,8 @@ aft = True
 # jit = False
     # This is only slightly faster than the default handleChildren method.
     # True: create node handlers in getNodeHandler.
-new_check = False
-new_scope = False
+new_check = True
+new_scope = True
 stats = {}
     # Timing stats.
 n_pass_nodes = [None, 0, 0]

@@ -30,8 +30,8 @@ except ImportError:     # Python 2.5
         ast.ClassDef.decorator_list = ()
         ast.FunctionDef.decorator_list = property(lambda s: s.decorators)
 
-import messages # EKR
-# from pyflakes import messages
+from pyflakes import messages
+# g.trace(messages)
 
 # Stats:
 # jit:  not significantly better than original.
@@ -452,6 +452,7 @@ class Checker(object):
             self.scope = None
         self.handleNode(tree, parent=None)
             # EKR: new MODULE handler does all the work.
+
     if new_check:
         pass
     else:
@@ -800,10 +801,17 @@ class Checker(object):
             # List(expr* elts, expr_context ctx)
 
             def List(self, node):
+               
                 for z in node.elts:
                     self.handleNode(z, node)
                 # self.handleNode(node.ctx, node)
 
+            if aft:
+                def list(self, node):
+                    g.trace(g.callers())
+                    assert self.pass_n == 2, self.pass_n
+                    for z in node:
+                        self.handleNode(z, node)
 
             def NameConstant(self, node): # Python 3 only.
 
@@ -1074,19 +1082,13 @@ class Checker(object):
             self.builtIns.remove('_')
         self.popScope()
 
-
     # null_trace_n = 0
 
     def handleNode(self, node, parent):
         # EKR: this the general node visiter.
+        # assert isinstance(node, (ast.AST, ast.AsyncWith)), repr(node)
         global n_pass_nodes, n_null_nodes
         assert node, g.callers()
-        # if node is None:
-            # n_null_nodes += 1
-            # self.null_trace_n += 1
-            # if self.null_trace_n < 10:
-                # g.trace(g.callers())
-            # return
         # The following will fail unless 0 < self.pass_n < 3
         n_pass_nodes[self.pass_n] += 1
         if self.offset and getattr(node, 'lineno', None) is not None:
@@ -1483,11 +1485,20 @@ class Checker(object):
                 # noisily if called after we've run through the deferred functions.
         t2 = time.clock()
         stats['pass2'] = stats.get('pass2', 0.0) + t2-t1
+
     def scanFunction(self, node, args, scopeStack):
         
         # This was in runFunction...
         assert self.pass_n == 2, self.pass_n
-        assert isinstance(node, (ast.FunctionDef, ast.Lambda)), node
+        if isinstance(node, list):
+            # Only happens in Python 3.
+            for z in node:
+                self.scanFunction(z, args, scopeStack)
+            return
+        if g.isPython3:
+            assert isinstance(node, (ast.FunctionDef, ast.Lambda, ast.AsyncFunctionDef)), node
+        else:
+            assert isinstance(node, (ast.FunctionDef, ast.Lambda)), node
         is_def = isinstance(node, ast.FunctionDef)
         name = ('def: %s' % node.name) if is_def else ('Lambda: %s' % id(node))
         self.scopeStack = scopeStack
@@ -1497,9 +1508,9 @@ class Checker(object):
         for arg_name in args:
             self.addBinding(node, Argument(arg_name, node))
         # *Now* traverse the body of the def/lambda.
-        if is_def:
-            for stmt in node.body:
-                self.handleNode(stmt, node)
+        if isinstance(node.body, list): # Bug fix.
+            for z in node.body:
+                self.handleNode(z, node)
         else:
             self.handleNode(node.body, node)
         # Defer checking assignments until pass 3.
@@ -1524,6 +1535,7 @@ class Checker(object):
                 # noisily if called after we've run through the deferred assignments.
         t2 = time.clock()
         stats['pass3'] = stats.get('pass3', 0.0) + t2-t1
+
     def checkAssignments(self, scope):
         """
         Check to see if any assignments have not been used.

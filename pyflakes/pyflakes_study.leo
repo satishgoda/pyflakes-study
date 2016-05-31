@@ -344,11 +344,6 @@
 <v t="ekr.20160519180137.1"><vh>epytext markup</vh></v>
 <v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
 </v>
-<v t="ekr.20160531151507.1"><vh>Recent bugs</vh>
-<v t="ekr.20160527075837.107"><vh>ft.TryFinally</vh></v>
-<v t="ekr.20160519172255.77"><vh>Checker.TRY &amp; TRYEXCEPT</vh></v>
-<v t="ekr.20160519172255.67"><vh>Checker.GENERATOREXP &amp; comprehensions</vh></v>
-</v>
 <v t="ekr.20160527075816.1"><vh>@clean resolve.py</vh>
 <v t="ekr.20160527075837.2"><vh>&lt;&lt; resolver imports &gt;&gt;</vh></v>
 <v t="ekr.20160527075837.7"><vh>top-level</vh>
@@ -450,7 +445,7 @@
 <v t="ekr.20160527075837.104"><vh>ft.Print</vh></v>
 <v t="ekr.20160527075837.105"><vh>ft.Raise</vh></v>
 <v t="ekr.20160527075837.106"><vh>ft.Starred (Python 3)</vh></v>
-<v t="ekr.20160527075837.107"></v>
+<v t="ekr.20160527075837.107"><vh>ft.TryFinally</vh></v>
 <v t="ekr.20160527075837.108"><vh>ft.While</vh></v>
 <v t="ekr.20160527075837.109"><vh>ft.With</vh></v>
 </v>
@@ -587,7 +582,7 @@
 <v t="ekr.20160522081949.26"><vh>ft.ifExp (ternary operator)</vh></v>
 <v t="ekr.20160522081949.27"><vh>ft.Index</vh></v>
 <v t="ekr.20160522081949.28"><vh>ft.keyword</vh></v>
-<v t="ekr.20160522081949.29"><vh>ft.List</vh></v>
+<v t="ekr.20160522081949.29"><vh>ft.List &amp; list (bug fix)</vh></v>
 <v t="ekr.20160522082410.1"><vh>ft.NameConstant</vh></v>
 <v t="ekr.20160524091057.1"><vh>ft.Num</vh></v>
 <v t="ekr.20160522081949.32"><vh>ft.Repr</vh></v>
@@ -620,7 +615,7 @@
 <v t="ekr.20160519172255.73"><vh>Checker.CLASSDEF</vh></v>
 <v t="ekr.20160519172255.78"><vh>Checker.EXCEPTHANDLER</vh></v>
 <v t="ekr.20160519172255.71"><vh>Checker.FUNCTIONDEF</vh></v>
-<v t="ekr.20160519172255.67"></v>
+<v t="ekr.20160519172255.67"><vh>Checker.GENERATOREXP &amp; comprehensions</vh></v>
 <v t="ekr.20160519172255.66"><vh>Checker.GLOBAL &amp; NONLOCAL (Real bug fix)</vh></v>
 <v t="ekr.20160519172255.75"><vh>Checker.IMPORT</vh></v>
 <v t="ekr.20160519172255.76"><vh>Checker.IMPORTFROM</vh></v>
@@ -646,7 +641,7 @@
 </v>
 </v>
 <v t="ekr.20160519172255.69"><vh>Checker.RETURN</vh></v>
-<v t="ekr.20160519172255.77"></v>
+<v t="ekr.20160519172255.77"><vh>Checker.TRY &amp; TRYEXCEPT</vh></v>
 <v t="ekr.20160519172255.70"><vh>Checker.YIELD</vh></v>
 </v>
 </v>
@@ -674,12 +669,20 @@
 <v t="ekr.20160520162722.1"></v>
 <v t="ekr.20160523172328.1"></v>
 <v t="ekr.20160523172121.1"><vh>----------------</vh></v>
-<v t="ekr.20160519172836.1"></v>
+<v t="ekr.20160531170004.1"><vh>Recent</vh>
+<v t="ekr.20160519172255.11"></v>
 <v t="ekr.20160519172255.54"></v>
-<v t="ekr.20160522081949.19"></v>
-<v t="ekr.20160522081949.36"></v>
-<v t="ekr.20160522081949.22"></v>
+<v t="ekr.20160519172255.71"></v>
 <v t="ekr.20160519172255.67"></v>
+<v t="ekr.20160519172255.63"></v>
+<v t="ekr.20160519172255.72"></v>
+<v t="ekr.20160522063947.1"></v>
+<v t="ekr.20160519172836.1"></v>
+<v t="ekr.20160526063937.1"></v>
+<v t="ekr.20160519172255.77"></v>
+<v t="ekr.20160522081949.29"></v>
+<v t="ekr.20160527075837.107"></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -788,8 +791,8 @@ except ImportError:     # Python 2.5
         ast.ClassDef.decorator_list = ()
         ast.FunctionDef.decorator_list = property(lambda s: s.decorators)
 
-import messages # EKR
-# from pyflakes import messages
+from pyflakes import messages
+# g.trace(messages)
 </t>
 <t tx="ekr.20160519172255.111">class Reporter(object):
     """
@@ -1723,19 +1726,13 @@ def getDocstring(self, node):
     return (node.s, doctest_lineno)
 </t>
 <t tx="ekr.20160519172255.63">
-
 # null_trace_n = 0
 
 def handleNode(self, node, parent):
     # EKR: this the general node visiter.
+    # assert isinstance(node, (ast.AST, ast.AsyncWith)), repr(node)
     global n_pass_nodes, n_null_nodes
     assert node, g.callers()
-    # if node is None:
-        # n_null_nodes += 1
-        # self.null_trace_n += 1
-        # if self.null_trace_n &lt; 10:
-            # g.trace(g.callers())
-        # return
     # The following will fail unless 0 &lt; self.pass_n &lt; 3
     n_pass_nodes[self.pass_n] += 1
     if self.offset and getattr(node, 'lineno', None) is not None:
@@ -4409,7 +4406,8 @@ def CLASSDEF(self, node):
         self.handleNode(stmt, node)
 </t>
 <t tx="ekr.20160521154847.1"></t>
-<t tx="ekr.20160521155725.1">if new_check:
+<t tx="ekr.20160521155725.1">
+if new_check:
     pass
 else:
     @others</t>
@@ -4600,10 +4598,17 @@ def keyword(self, node):
 # List(expr* elts, expr_context ctx)
 
 def List(self, node):
+   
     for z in node.elts:
         self.handleNode(z, node)
     # self.handleNode(node.ctx, node)
 
+if aft:
+    def list(self, node):
+        g.trace(g.callers())
+        assert self.pass_n == 2, self.pass_n
+        for z in node:
+            self.handleNode(z, node)
 </t>
 <t tx="ekr.20160522081949.32">
 # Python 2.x only
@@ -5614,11 +5619,20 @@ if aft:
     new_scope = True
 else:
     new_check = new_scope = False</t>
-<t tx="ekr.20160526063937.1">def scanFunction(self, node, args, scopeStack):
+<t tx="ekr.20160526063937.1">
+def scanFunction(self, node, args, scopeStack):
     
     # This was in runFunction...
     assert self.pass_n == 2, self.pass_n
-    assert isinstance(node, (ast.FunctionDef, ast.Lambda)), node
+    if isinstance(node, list):
+        # Only happens in Python 3.
+        for z in node:
+            self.scanFunction(z, args, scopeStack)
+        return
+    if g.isPython3:
+        assert isinstance(node, (ast.FunctionDef, ast.Lambda, ast.AsyncFunctionDef)), node
+    else:
+        assert isinstance(node, (ast.FunctionDef, ast.Lambda)), node
     is_def = isinstance(node, ast.FunctionDef)
     name = ('def: %s' % node.name) if is_def else ('Lambda: %s' % id(node))
     self.scopeStack = scopeStack
@@ -5628,9 +5642,9 @@ else:
     for arg_name in args:
         self.addBinding(node, Argument(arg_name, node))
     # *Now* traverse the body of the def/lambda.
-    if is_def:
-        for stmt in node.body:
-            self.handleNode(stmt, node)
+    if isinstance(node.body, list): # Bug fix.
+        for z in node.body:
+            self.handleNode(z, node)
     else:
         self.handleNode(node.body, node)
     # Defer checking assignments until pass 3.
@@ -5638,7 +5652,8 @@ else:
     self.popScope()</t>
 <t tx="ekr.20160526064907.1">test_scope='all'
 test_kind = 'normal', # 'resolve'</t>
-<t tx="ekr.20160526074410.1">def checkAssignments(self, scope):
+<t tx="ekr.20160526074410.1">
+def checkAssignments(self, scope):
     """
     Check to see if any assignments have not been used.
     """
@@ -7197,17 +7212,14 @@ def Delete(self, node):
         self.handleNode(z, node)
 </t>
 <t tx="ekr.20160531100422.1">g.cls()
-# Most tests run properly when run from Python 2.
+# All enabled tests run properly when run from Python 2.
 import imp
 import os
 import unittest
-# import checker
-# imp.reload(checker)
 path = g.os_path_finalize_join(os.curdir, '..')
 file_, pathname, description = imp.find_module('pyflakes', [path])
 pyflakes = imp.load_module('pyflakes', file_, pathname, description)
-print(pyflakes)
-# Python 2 unit tests...
+print('pyflakes: %s' % pyflakes)
 from pyflakes.test import test_api, test_doctests, test_imports, test_other
 from pyflakes.test import test_return_with_arguments_inside_generator
 from pyflakes.test import test_undefined_names
@@ -7225,6 +7237,6 @@ for module in tests:
     # g.trace(module)
     suite.addTest(loader.loadTestsFromModule(module))
 unittest.TextTestRunner(verbosity=1).run(suite)</t>
-<t tx="ekr.20160531151507.1"></t>
+<t tx="ekr.20160531170004.1"></t>
 </tnodes>
 </leo_file>

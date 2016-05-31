@@ -7163,25 +7163,25 @@ import unittest
 path = g.os_path_finalize_join(os.curdir, '..')
 file_, pathname, description = imp.find_module('pyflakes', [path])
 pyflakes = imp.load_module('pyflakes', file_, pathname, description)
-# print(pyflakes.test)
-if 1:
-    # Python 2 unit tests...
-    from pyflakes.test import test_api, test_doctests, test_imports, test_other
-    from pyflakes.test import test_return_with_arguments_inside_generator
-    from pyflakes.test import test_undefined_names
-    tests = (
-        # test_api,
-        # test_doctests,
-        test_imports,
-        test_other,
-        test_return_with_arguments_inside_generator,
-        test_undefined_names,
-    )
-    loader = unittest.TestLoader()
-    suite = unittest.TestSuite()
-    for module in tests:
-        suite.addTest(loader.loadTestsFromModule(module))
-    unittest.TextTestRunner(verbosity=1).run(suite)</t>
+print(pyflakes)
+# Python 2 unit tests...
+from pyflakes.test import test_api, test_doctests, test_imports, test_other
+from pyflakes.test import test_return_with_arguments_inside_generator
+from pyflakes.test import test_undefined_names
+tests = (
+    # test_api,
+    # test_doctests,
+    test_imports,
+    test_other,
+    test_return_with_arguments_inside_generator,
+    test_undefined_names,
+)
+loader = unittest.TestLoader()
+suite = unittest.TestSuite()
+for module in tests:
+    g.trace(module)
+    suite.addTest(loader.loadTestsFromModule(module))
+unittest.TextTestRunner(verbosity=1).run(suite)</t>
 <t tx="ekr.20160531110456.1">g.cls()
 
 import imp

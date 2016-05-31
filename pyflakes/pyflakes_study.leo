@@ -5596,7 +5596,7 @@ else:
     self.check_assign_list.append(self.scopeStack[-1])
     self.popScope()</t>
 <t tx="ekr.20160526064907.1">test_scope='all'
-test_kind = 'resolve'</t>
+test_kind = 'normal', # 'resolve'</t>
 <t tx="ekr.20160526074410.1">def checkAssignments(self, scope):
     """
     Check to see if any assignments have not been used.
@@ -5658,6 +5658,13 @@ def duplicate():    # RedefinedWhileUnused
 ''',
 </t>
 <t tx="ekr.20160527034002.1">g.cls()
+
+if 'pyflakes' in sys.modules:
+    del sys.modules['pyflakes']
+if sys.path[0] != path:
+    sys.path.insert(0, path)
+import pyflakes
+    
 import unittest
 from pyflakes.test import test_api, test_doctests, test_imports, test_other
 from pyflakes.test import test_return_with_arguments_inside_generator

@@ -5,6 +5,8 @@ import unittest
 
 from pyflakes import checker
 
+print('===== harndess.py: checker: %s' % checker)
+
 __all__ = ['TestCase', 'skip', 'skipIf']
 
 if sys.version_info < (2, 7):

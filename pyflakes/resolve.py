@@ -833,11 +833,10 @@ class Resolve(object):
         # TryFinally(stmt* body, stmt* finalbody)
 
         def TryFinally(self, node):
-            for z in node.body:
-                self.handleNode(z, node)
-            if hasattr(node, 'finalbody'):
-                for z in node.finalbody:
+            for field in ('body', 'finalbody'):
+                for z in getattr(node, field, []):
                     self.handleNode(z, node)
+
 
         # While(expr test, stmt* body, stmt* orelse)
 

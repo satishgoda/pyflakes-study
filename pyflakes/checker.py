@@ -1734,14 +1734,8 @@ class Checker(object):
         self.exceptHandlers.pop()
         # Process the other nodes: "except:", "else:", "finally:"
         if aft:
-            if hasattr(node, 'handlers'):
-                for z in node.handlers:
-                    self.handleNode(z, node)
-            if hasattr(node, 'orelse'):
-                for z in node.orelse:
-                    self.handleNode(z, node)
-            if hasattr(node, 'finalbody'):
-                for z in node.finalbody:
+            for field in ('handlers', 'orelse', 'finalbody'):
+                for z in getattr(node, field, []):
                     self.handleNode(z, node)
         else:
             self.handleChildren(node, omit='body')

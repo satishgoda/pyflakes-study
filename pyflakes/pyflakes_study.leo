@@ -5659,6 +5659,9 @@ def duplicate():    # RedefinedWhileUnused
 </t>
 <t tx="ekr.20160527034002.1">g.cls()
 
+import os
+import sys
+path = g.os_path_finalize_join(os.curdir, '..')
 if 'pyflakes' in sys.modules:
     del sys.modules['pyflakes']
 if sys.path[0] != path:

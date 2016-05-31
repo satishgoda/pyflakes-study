@@ -5,7 +5,7 @@ import unittest
 
 from pyflakes import checker
 
-print('===== harndess.py: checker: %s' % checker)
+print('===== harness.py: checker: %s' % checker)
 
 __all__ = ['TestCase', 'skip', 'skipIf']
 

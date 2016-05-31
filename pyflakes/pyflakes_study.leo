@@ -7156,7 +7156,7 @@ def Delete(self, node):
         self.handleNode(z, node)
 </t>
 <t tx="ekr.20160531100422.1">g.cls()
-# These tests run properly when run from Python 2.
+# Most tests run properly when run from Python 2.
 import imp
 import os
 import unittest

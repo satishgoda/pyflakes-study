@@ -344,6 +344,151 @@
 <v t="ekr.20160519180137.1"><vh>epytext markup</vh></v>
 <v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
 </v>
+<v t="ekr.20160531151507.1"><vh>Recent bugs</vh>
+<v t="ekr.20160527075837.107"><vh>ft.TryFinally</vh></v>
+<v t="ekr.20160519172255.77"><vh>Checker.TRY &amp; TRYEXCEPT</vh></v>
+<v t="ekr.20160519172255.67"><vh>Checker.GENERATOREXP &amp; comprehensions</vh></v>
+</v>
+<v t="ekr.20160527075816.1"><vh>@clean resolve.py</vh>
+<v t="ekr.20160527075837.2"><vh>&lt;&lt; resolver imports &gt;&gt;</vh></v>
+<v t="ekr.20160527075837.7"><vh>top-level</vh>
+<v t="ekr.20160527075837.8"><vh>getAlternatives</vh></v>
+<v t="ekr.20160527075837.9"><vh>getNodeName</vh></v>
+<v t="ekr.20160527075837.10"><vh>getNodeType (returns uppercase class name)</vh></v>
+<v t="ekr.20160527075837.11"><vh>iter_child_nodes</vh></v>
+<v t="ekr.20160527075837.12"><vh>unit_test</vh></v>
+</v>
+<v t="ekr.20160527075837.13"><vh>resolve.Binding &amp; Definition (not used) </vh>
+<v t="ekr.20160527075837.14"><vh>class Binding</vh>
+<v t="ekr.20160527075837.15"><vh>Binding.__str__</vh></v>
+<v t="ekr.20160527075837.16"><vh>Binding.__repr__</vh></v>
+<v t="ekr.20160527075837.17"><vh>Binding.redefines</vh></v>
+</v>
+<v t="ekr.20160527075837.18"><vh>class Definition (Binding)</vh></v>
+<v t="ekr.20160527075837.19"><vh>class Importation (Definition)</vh>
+<v t="ekr.20160527075837.20"><vh>__init__</vh></v>
+<v t="ekr.20160527075837.21"><vh>redefines</vh></v>
+</v>
+<v t="ekr.20160527075837.22"><vh>class Argument (Binding)</vh></v>
+<v t="ekr.20160527075837.23"><vh>class Assignment (Binding)</vh></v>
+<v t="ekr.20160527075837.24"><vh>class FunctionDefinition (Definition)</vh></v>
+<v t="ekr.20160527075837.25"><vh>class ClassDefinition (Definition)</vh></v>
+<v t="ekr.20160527075837.26"><vh>class ExportBinding (Binding)</vh>
+<v t="ekr.20160527075837.27"><vh>__init__</vh></v>
+</v>
+</v>
+<v t="ekr.20160527075837.28"><vh>resolve.Scope classes</vh>
+<v t="ekr.20160527075837.29"><vh>class Scope(dict)</vh>
+<v t="ekr.20160527075837.30"><vh>Scope.__repr__</vh></v>
+</v>
+<v t="ekr.20160527075837.31"><vh>class ClassScope (Scope)</vh></v>
+<v t="ekr.20160527075837.32"><vh>class FunctionScope (Scope)</vh>
+<v t="ekr.20160527075837.33"><vh>FunctionScope.__init__</vh></v>
+<v t="ekr.20160527075837.34"><vh>FunctionScope.unusedAssignments</vh></v>
+</v>
+<v t="ekr.20160527075837.35"><vh>class GeneratorScope (Scope)</vh></v>
+<v t="ekr.20160527075837.36"><vh>class ModuleScope (Scope)</vh></v>
+</v>
+<v t="ekr.20160527075837.37"><vh>class Resolve</vh>
+<v t="ekr.20160527075837.38"><vh>Resolve.__init__</vh></v>
+<v t="ekr.20160527075837.45"><vh>Resolve.popScope</vh></v>
+<v t="ekr.20160527075837.46"><vh>Resolve.pushScope</vh></v>
+<v t="ekr.20160527075837.47"><vh>Resolve.report</vh></v>
+<v t="ekr.20160527075837.48"><vh>Resolve.tree structure</vh></v>
+<v t="ekr.20160527075837.52"><vh>Resolve.differentForks &amp; helpers</vh>
+<v t="ekr.20160527075837.51"><vh>Resolve.descendantOf</vh></v>
+<v t="ekr.20160527075837.50"><vh>Resolve.getCommonAncestor</vh></v>
+</v>
+<v t="ekr.20160527075837.49"><vh>Resolve.getParent</vh></v>
+<v t="ekr.20160527075837.53"><vh>Resolve.addBinding (Remove??)</vh></v>
+<v t="ekr.20160527075837.54"><vh>Resolve.docstrings...</vh>
+<v t="ekr.20160527075837.55"><vh>Resolve.isDocstring</vh></v>
+<v t="ekr.20160527075837.56"><vh>Resolve.getDocstring</vh></v>
+</v>
+<v t="ekr.20160527075837.57"><vh>Resolve.Node handlers</vh>
+<v t="ekr.20160527075837.60"><vh>Resolve.handleNode (injects parent/depth fields)</vh></v>
+<v t="ekr.20160527075837.64"><vh>Resolve: default node handlers</vh>
+<v t="ekr.20160527075837.65"><vh>ft.operators &amp; operands</vh>
+<v t="ekr.20160527075837.66"><vh>ft.alias</vh></v>
+<v t="ekr.20160527075837.67"><vh>ft.arguments &amp; arg</vh></v>
+<v t="ekr.20160527075837.68"><vh>ft.Attribute</vh></v>
+<v t="ekr.20160527075837.69"><vh>ft.BinOp</vh></v>
+<v t="ekr.20160527075837.70"><vh>ft.BoolOp</vh></v>
+<v t="ekr.20160527075837.71"><vh>ft.Bytes</vh></v>
+<v t="ekr.20160527075837.72"><vh>ft.Call</vh></v>
+<v t="ekr.20160527075837.73"><vh>ft.Compare</vh></v>
+<v t="ekr.20160527075837.74"><vh>ft.comprehension</vh></v>
+<v t="ekr.20160527075837.75"><vh>ft.Dict</vh></v>
+<v t="ekr.20160527075837.77"><vh>ft.Ellipsis</vh></v>
+<v t="ekr.20160527075837.78"><vh>ft.Expr</vh></v>
+<v t="ekr.20160527075837.79"><vh>ft.Expression</vh></v>
+<v t="ekr.20160527075837.80"><vh>ft.ExtSlice</vh></v>
+<v t="ekr.20160527075837.81"><vh>ft.ifExp (ternary operator)</vh></v>
+<v t="ekr.20160527075837.82"><vh>ft.Index</vh></v>
+<v t="ekr.20160527075837.83"><vh>ft.keyword</vh></v>
+<v t="ekr.20160527075837.84"><vh>ft.List</vh></v>
+<v t="ekr.20160527075837.85"><vh>ft.NameConstant</vh></v>
+<v t="ekr.20160527075837.86"><vh>ft.Num</vh></v>
+<v t="ekr.20160527075837.87"><vh>ft.Repr</vh></v>
+<v t="ekr.20160527075837.88"><vh>ft.Set (new)</vh></v>
+<v t="ekr.20160527075837.89"><vh>ft.Slice</vh></v>
+<v t="ekr.20160527075837.90"><vh>ft.Str</vh></v>
+<v t="ekr.20160527075837.91"><vh>ft.Subscript</vh></v>
+<v t="ekr.20160527075837.92"><vh>ft.Tuple</vh></v>
+<v t="ekr.20160527075837.93"><vh>ft.UnaryOp</vh></v>
+</v>
+<v t="ekr.20160527075837.94"><vh>ft.statements</vh>
+<v t="ekr.20160527075837.95"><vh>ft.Assert</vh></v>
+<v t="ekr.20160527075837.96"><vh>ft.Assign</vh></v>
+<v t="ekr.20160527075837.97"><vh>ft.Break</vh></v>
+<v t="ekr.20160527075837.98"><vh>ft.Continue</vh></v>
+<v t="ekr.20160527075837.99"><vh>ft.Delete</vh></v>
+<v t="ekr.20160527075837.100"><vh>ft.Exec</vh></v>
+<v t="ekr.20160527075837.101"><vh>ft.For</vh></v>
+<v t="ekr.20160527075837.102"><vh>ft.If</vh></v>
+<v t="ekr.20160527075837.103"><vh>ft.Pass</vh></v>
+<v t="ekr.20160527075837.104"><vh>ft.Print</vh></v>
+<v t="ekr.20160527075837.105"><vh>ft.Raise</vh></v>
+<v t="ekr.20160527075837.106"><vh>ft.Starred (Python 3)</vh></v>
+<v t="ekr.20160527075837.107"></v>
+<v t="ekr.20160527075837.108"><vh>ft.While</vh></v>
+<v t="ekr.20160527075837.109"><vh>ft.With</vh></v>
+</v>
+</v>
+<v t="ekr.20160527075837.110"><vh>Resolve.AugAssign</vh></v>
+<v t="ekr.20160527075837.111"><vh>Resolve.ClassDef</vh></v>
+<v t="ekr.20160527075837.112"><vh>Resolve.ExceptHandler</vh></v>
+<v t="ekr.20160527075837.113"><vh>Resolve.FunctionDef</vh></v>
+<v t="ekr.20160527075837.114"><vh>Resolve.GeneratorExp &amp; comprehensions</vh></v>
+<v t="ekr.20160527075837.115"><vh>Resolve.Global &amp; Nonlocal</vh></v>
+<v t="ekr.20160527075837.116"><vh>Resolve.Import</vh></v>
+<v t="ekr.20160527075837.117"><vh>Resolve.ImportFrom</vh></v>
+<v t="ekr.20160527075837.118"><vh>Resolve.Lambda</vh>
+<v t="ekr.20160527075837.119"><vh>Resolve.get_function_args</vh></v>
+</v>
+<v t="ekr.20160527075837.121"><vh>Resolve.Module</vh>
+<v t="ekr.20160527075837.122"><vh>Resolve.pass1</vh></v>
+<v t="ekr.20160527075837.123"><vh>Resolve.pass2 (uses scopeStack)</vh>
+<v t="ekr.20160527075837.124"><vh>Resolve.scanFunction (NEW)</vh></v>
+</v>
+<v t="ekr.20160527075837.125"><vh>Resolve.pass3</vh>
+<v t="ekr.20160527075837.126"><vh>Resolve.checkAssignments (NEW)</vh></v>
+</v>
+<v t="ekr.20160527075837.127"><vh>Resolve.checkDeadScopes (pass4)</vh></v>
+</v>
+<v t="ekr.20160527075837.128"><vh>Resolve.Name &amp; helpers</vh>
+<v t="ekr.20160527075837.129"><vh>Resolve.handleNodeDelete</vh></v>
+<v t="ekr.20160527075837.130"><vh>Resolve.handleNodeLoad</vh></v>
+<v t="ekr.20160527075837.131"><vh>Resolve.handleNodeStore &amp; helper</vh>
+<v t="ekr.20160527075837.132"><vh>Resolve.isLiteralTupleUnpacking</vh></v>
+</v>
+</v>
+<v t="ekr.20160527075837.133"><vh>Resolve.Return</vh></v>
+<v t="ekr.20160527075837.134"><vh>Resolve.Try &amp; TryExcept</vh></v>
+<v t="ekr.20160527075837.135"><vh>Resolve.Yield &amp; YieldFrom and Await</vh></v>
+</v>
+</v>
+</v>
 <v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
 <v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
 <v t="ekr.20160526060219.1"><vh>&lt;&lt; checker switches &gt;&gt;</vh></v>
@@ -475,7 +620,7 @@
 <v t="ekr.20160519172255.73"><vh>Checker.CLASSDEF</vh></v>
 <v t="ekr.20160519172255.78"><vh>Checker.EXCEPTHANDLER</vh></v>
 <v t="ekr.20160519172255.71"><vh>Checker.FUNCTIONDEF</vh></v>
-<v t="ekr.20160519172255.67"><vh>Checker.GENERATOREXP &amp; comprehensions</vh></v>
+<v t="ekr.20160519172255.67"></v>
 <v t="ekr.20160519172255.66"><vh>Checker.GLOBAL &amp; NONLOCAL (Real bug fix)</vh></v>
 <v t="ekr.20160519172255.75"><vh>Checker.IMPORT</vh></v>
 <v t="ekr.20160519172255.76"><vh>Checker.IMPORTFROM</vh></v>
@@ -501,7 +646,7 @@
 </v>
 </v>
 <v t="ekr.20160519172255.69"><vh>Checker.RETURN</vh></v>
-<v t="ekr.20160519172255.77"><vh>Checker.TRY &amp; TRYEXCEPT (new bug fix)</vh></v>
+<v t="ekr.20160519172255.77"></v>
 <v t="ekr.20160519172255.70"><vh>Checker.YIELD</vh></v>
 </v>
 </v>
@@ -529,151 +674,12 @@
 <v t="ekr.20160520162722.1"></v>
 <v t="ekr.20160523172328.1"></v>
 <v t="ekr.20160523172121.1"><vh>----------------</vh></v>
-<v t="ekr.20160527075816.1"><vh>@clean resolve.py</vh>
-<v t="ekr.20160527075837.2"><vh>&lt;&lt; resolver imports &gt;&gt;</vh></v>
-<v t="ekr.20160527075837.7"><vh>top-level</vh>
-<v t="ekr.20160527075837.8"><vh>getAlternatives</vh></v>
-<v t="ekr.20160527075837.9"><vh>getNodeName</vh></v>
-<v t="ekr.20160527075837.10"><vh>getNodeType (returns uppercase class name)</vh></v>
-<v t="ekr.20160527075837.11"><vh>iter_child_nodes</vh></v>
-<v t="ekr.20160527075837.12"><vh>unit_test</vh></v>
-</v>
-<v t="ekr.20160527075837.13"><vh>resolve.Binding &amp; Definition (not used) </vh>
-<v t="ekr.20160527075837.14"><vh>class Binding</vh>
-<v t="ekr.20160527075837.15"><vh>Binding.__str__</vh></v>
-<v t="ekr.20160527075837.16"><vh>Binding.__repr__</vh></v>
-<v t="ekr.20160527075837.17"><vh>Binding.redefines</vh></v>
-</v>
-<v t="ekr.20160527075837.18"><vh>class Definition (Binding)</vh></v>
-<v t="ekr.20160527075837.19"><vh>class Importation (Definition)</vh>
-<v t="ekr.20160527075837.20"><vh>__init__</vh></v>
-<v t="ekr.20160527075837.21"><vh>redefines</vh></v>
-</v>
-<v t="ekr.20160527075837.22"><vh>class Argument (Binding)</vh></v>
-<v t="ekr.20160527075837.23"><vh>class Assignment (Binding)</vh></v>
-<v t="ekr.20160527075837.24"><vh>class FunctionDefinition (Definition)</vh></v>
-<v t="ekr.20160527075837.25"><vh>class ClassDefinition (Definition)</vh></v>
-<v t="ekr.20160527075837.26"><vh>class ExportBinding (Binding)</vh>
-<v t="ekr.20160527075837.27"><vh>__init__</vh></v>
-</v>
-</v>
-<v t="ekr.20160527075837.28"><vh>resolve.Scope classes</vh>
-<v t="ekr.20160527075837.29"><vh>class Scope(dict)</vh>
-<v t="ekr.20160527075837.30"><vh>Scope.__repr__</vh></v>
-</v>
-<v t="ekr.20160527075837.31"><vh>class ClassScope (Scope)</vh></v>
-<v t="ekr.20160527075837.32"><vh>class FunctionScope (Scope)</vh>
-<v t="ekr.20160527075837.33"><vh>FunctionScope.__init__</vh></v>
-<v t="ekr.20160527075837.34"><vh>FunctionScope.unusedAssignments</vh></v>
-</v>
-<v t="ekr.20160527075837.35"><vh>class GeneratorScope (Scope)</vh></v>
-<v t="ekr.20160527075837.36"><vh>class ModuleScope (Scope)</vh></v>
-</v>
-<v t="ekr.20160527075837.37"><vh>class Resolve</vh>
-<v t="ekr.20160527075837.38"><vh>Resolve.__init__</vh></v>
-<v t="ekr.20160527075837.45"><vh>Resolve.popScope</vh></v>
-<v t="ekr.20160527075837.46"><vh>Resolve.pushScope</vh></v>
-<v t="ekr.20160527075837.47"><vh>Resolve.report</vh></v>
-<v t="ekr.20160527075837.48"><vh>Resolve.tree structure</vh></v>
-<v t="ekr.20160527075837.52"><vh>Resolve.differentForks &amp; helpers</vh>
-<v t="ekr.20160527075837.51"><vh>Resolve.descendantOf</vh></v>
-<v t="ekr.20160527075837.50"><vh>Resolve.getCommonAncestor</vh></v>
-</v>
-<v t="ekr.20160527075837.49"><vh>Resolve.getParent</vh></v>
-<v t="ekr.20160527075837.53"><vh>Resolve.addBinding (Remove??)</vh></v>
-<v t="ekr.20160527075837.54"><vh>Resolve.docstrings...</vh>
-<v t="ekr.20160527075837.55"><vh>Resolve.isDocstring</vh></v>
-<v t="ekr.20160527075837.56"><vh>Resolve.getDocstring</vh></v>
-</v>
-<v t="ekr.20160527075837.57"><vh>Resolve.Node handlers</vh>
-<v t="ekr.20160527075837.60"><vh>Resolve.handleNode (injects parent/depth fields)</vh></v>
-<v t="ekr.20160527075837.64"><vh>Resolve: default node handlers</vh>
-<v t="ekr.20160527075837.65"><vh>ft.operators &amp; operands</vh>
-<v t="ekr.20160527075837.66"><vh>ft.alias</vh></v>
-<v t="ekr.20160527075837.67"><vh>ft.arguments &amp; arg</vh></v>
-<v t="ekr.20160527075837.68"><vh>ft.Attribute</vh></v>
-<v t="ekr.20160527075837.69"><vh>ft.BinOp</vh></v>
-<v t="ekr.20160527075837.70"><vh>ft.BoolOp</vh></v>
-<v t="ekr.20160527075837.71"><vh>ft.Bytes</vh></v>
-<v t="ekr.20160527075837.72"><vh>ft.Call</vh></v>
-<v t="ekr.20160527075837.73"><vh>ft.Compare</vh></v>
-<v t="ekr.20160527075837.74"><vh>ft.comprehension</vh></v>
-<v t="ekr.20160527075837.75"><vh>ft.Dict</vh></v>
-<v t="ekr.20160527075837.77"><vh>ft.Ellipsis</vh></v>
-<v t="ekr.20160527075837.78"><vh>ft.Expr</vh></v>
-<v t="ekr.20160527075837.79"><vh>ft.Expression</vh></v>
-<v t="ekr.20160527075837.80"><vh>ft.ExtSlice</vh></v>
-<v t="ekr.20160527075837.81"><vh>ft.ifExp (ternary operator)</vh></v>
-<v t="ekr.20160527075837.82"><vh>ft.Index</vh></v>
-<v t="ekr.20160527075837.83"><vh>ft.keyword</vh></v>
-<v t="ekr.20160527075837.84"><vh>ft.List</vh></v>
-<v t="ekr.20160527075837.85"><vh>ft.NameConstant</vh></v>
-<v t="ekr.20160527075837.86"><vh>ft.Num</vh></v>
-<v t="ekr.20160527075837.87"><vh>ft.Repr</vh></v>
-<v t="ekr.20160527075837.88"><vh>ft.Set (new)</vh></v>
-<v t="ekr.20160527075837.89"><vh>ft.Slice</vh></v>
-<v t="ekr.20160527075837.90"><vh>ft.Str</vh></v>
-<v t="ekr.20160527075837.91"><vh>ft.Subscript</vh></v>
-<v t="ekr.20160527075837.92"><vh>ft.Tuple</vh></v>
-<v t="ekr.20160527075837.93"><vh>ft.UnaryOp</vh></v>
-</v>
-<v t="ekr.20160527075837.94"><vh>ft.statements</vh>
-<v t="ekr.20160527075837.95"><vh>ft.Assert</vh></v>
-<v t="ekr.20160527075837.96"><vh>ft.Assign</vh></v>
-<v t="ekr.20160527075837.97"><vh>ft.Break</vh></v>
-<v t="ekr.20160527075837.98"><vh>ft.Continue</vh></v>
-<v t="ekr.20160527075837.99"><vh>ft.Delete</vh></v>
-<v t="ekr.20160527075837.100"><vh>ft.Exec</vh></v>
-<v t="ekr.20160527075837.101"><vh>ft.For</vh></v>
-<v t="ekr.20160527075837.102"><vh>ft.If</vh></v>
-<v t="ekr.20160527075837.103"><vh>ft.Pass</vh></v>
-<v t="ekr.20160527075837.104"><vh>ft.Print</vh></v>
-<v t="ekr.20160527075837.105"><vh>ft.Raise</vh></v>
-<v t="ekr.20160527075837.106"><vh>ft.Starred (Python 3)</vh></v>
-<v t="ekr.20160527075837.107"><vh>ft.TryFinally (new bug fix)</vh></v>
-<v t="ekr.20160527075837.108"><vh>ft.While</vh></v>
-<v t="ekr.20160527075837.109"><vh>ft.With</vh></v>
-</v>
-</v>
-<v t="ekr.20160527075837.110"><vh>Resolve.AugAssign</vh></v>
-<v t="ekr.20160527075837.111"><vh>Resolve.ClassDef</vh></v>
-<v t="ekr.20160527075837.112"><vh>Resolve.ExceptHandler</vh></v>
-<v t="ekr.20160527075837.113"><vh>Resolve.FunctionDef</vh></v>
-<v t="ekr.20160527075837.114"><vh>Resolve.GeneratorExp &amp; comprehensions</vh></v>
-<v t="ekr.20160527075837.115"><vh>Resolve.Global &amp; Nonlocal</vh></v>
-<v t="ekr.20160527075837.116"><vh>Resolve.Import</vh></v>
-<v t="ekr.20160527075837.117"><vh>Resolve.ImportFrom</vh></v>
-<v t="ekr.20160527075837.118"><vh>Resolve.Lambda</vh>
-<v t="ekr.20160527075837.119"><vh>Resolve.get_function_args</vh></v>
-</v>
-<v t="ekr.20160527075837.121"><vh>Resolve.Module</vh>
-<v t="ekr.20160527075837.122"><vh>Resolve.pass1</vh></v>
-<v t="ekr.20160527075837.123"><vh>Resolve.pass2 (uses scopeStack)</vh>
-<v t="ekr.20160527075837.124"><vh>Resolve.scanFunction (NEW)</vh></v>
-</v>
-<v t="ekr.20160527075837.125"><vh>Resolve.pass3</vh>
-<v t="ekr.20160527075837.126"><vh>Resolve.checkAssignments (NEW)</vh></v>
-</v>
-<v t="ekr.20160527075837.127"><vh>Resolve.checkDeadScopes (pass4)</vh></v>
-</v>
-<v t="ekr.20160527075837.128"><vh>Resolve.Name &amp; helpers</vh>
-<v t="ekr.20160527075837.129"><vh>Resolve.handleNodeDelete</vh></v>
-<v t="ekr.20160527075837.130"><vh>Resolve.handleNodeLoad</vh></v>
-<v t="ekr.20160527075837.131"><vh>Resolve.handleNodeStore &amp; helper</vh>
-<v t="ekr.20160527075837.132"><vh>Resolve.isLiteralTupleUnpacking</vh></v>
-</v>
-</v>
-<v t="ekr.20160527075837.133"><vh>Resolve.Return</vh></v>
-<v t="ekr.20160527075837.134"><vh>Resolve.Try &amp; TryExcept</vh></v>
-<v t="ekr.20160527075837.135"><vh>Resolve.Yield &amp; YieldFrom and Await</vh></v>
-</v>
-</v>
-</v>
-<v t="ekr.20160527075837.37"></v>
-<v t="ekr.20160527075837.128"></v>
-<v t="ekr.20160531110456.1"><vh>import test</vh></v>
-<v t="ekr.20160527075837.107"></v>
-<v t="ekr.20160519172255.77"></v>
+<v t="ekr.20160519172836.1"></v>
+<v t="ekr.20160519172255.54"></v>
+<v t="ekr.20160522081949.19"></v>
+<v t="ekr.20160522081949.36"></v>
+<v t="ekr.20160522081949.22"></v>
+<v t="ekr.20160519172255.67"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -1505,6 +1511,8 @@ def addBinding(self, node, value):
                 not isinstance(self.getParent(existing.source),
                     (ast.For, ast.comprehension))
             ):
+                # g.trace(value.name, parent_stmt, self.getParent(existing.source))
+                # g.trace(g.callers(10))
                 self.report(messages.RedefinedInListComp,
                             node, value.name, existing.source)
             elif not existing.used and value.redefines(existing):
@@ -1830,8 +1838,10 @@ NONLOCAL = GLOBAL
 </t>
 <t tx="ekr.20160519172255.67">
 # GeneratorExp(expr elt, comprehension* generators)
+# SetComp(expr elt, comprehension* generators)
 
 def GENERATOREXP(self, node):
+    # EKR: always push a new scope.
     name = 'Generator: %s' % id(node)
     self.pushScope(node, name, GeneratorScope)
     if aft:
@@ -1844,7 +1854,37 @@ def GENERATOREXP(self, node):
     self.popScope()
     
 if aft:
-    ListComp = SetComp = GeneratorExp = GENERATOREXP
+    SetComp = GeneratorExp = GENERATOREXP
+    
+# DictComp(expr key, expr value, comprehension* generators)
+    
+def DictComp(self, node):
+    name = 'Generator: %s' % id(node)
+    self.pushScope(node, name, GeneratorScope)
+    if aft:
+        # EKR: call generators first.
+        for z in node.generators:
+            self.handleNode(z, node)
+        self.handleNode(node.key, node)
+        self.handleNode(node.value, node)
+    else:
+        self.handleChildren(node)
+    self.popScope()
+    
+def ListComp(self, node):
+    # EKR: Push a new scope only in Python 3.
+    name = 'Generator: %s' % id(node)
+    if g.isPython3:
+        self.pushScope(node, name, GeneratorScope)
+    if aft:
+        # EKR: call generators first.
+        for z in node.generators:
+            self.handleNode(z, node)
+        self.handleNode(node.elt, node)
+    else:
+        self.handleChildren(node)
+    if g.isPython3:
+        self.popScope()
 
 LISTCOMP = handleChildren if PY2 else GENERATOREXP
     
@@ -4594,10 +4634,11 @@ def Subscript(self, node):
 # Tuple(expr* elts, expr_context ctx)
 
 def Tuple(self, node):
+    # g.trace(node.elts)
     for z in node.elts:
         self.handleNode(z, node)
     # self.handleNode(node.ctx, node)
-</t>
+        # EKR: ignore ctx fields (LOAD, STORE, etc.</t>
 <t tx="ekr.20160522081949.37">
 # UnaryOp(unaryop op, expr operand)
 
@@ -7160,6 +7201,8 @@ def Delete(self, node):
 import imp
 import os
 import unittest
+# import checker
+# imp.reload(checker)
 path = g.os_path_finalize_join(os.curdir, '..')
 file_, pathname, description = imp.find_module('pyflakes', [path])
 pyflakes = imp.load_module('pyflakes', file_, pathname, description)
@@ -7179,23 +7222,9 @@ tests = (
 loader = unittest.TestLoader()
 suite = unittest.TestSuite()
 for module in tests:
-    g.trace(module)
+    # g.trace(module)
     suite.addTest(loader.loadTestsFromModule(module))
 unittest.TextTestRunner(verbosity=1).run(suite)</t>
-<t tx="ekr.20160531110456.1">g.cls()
-
-import imp
-import os
-
-print('is_frozen: %s' % imp.is_frozen('pyflakes'))
-
-path = g.os_path_finalize_join(os.curdir, '..') # , 'pyflakes')
-assert g.os_path_exists(path), path
-
-print('path: %s' % path)
-
-file_, pathname, description = imp.find_module('pyflakes', [path])
-pyflakes = imp.load_module('pyflakes', file_, pathname, description)
-print(pyflakes)</t>
+<t tx="ekr.20160531151507.1"></t>
 </tnodes>
 </leo_file>

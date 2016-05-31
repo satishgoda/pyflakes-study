@@ -577,6 +577,8 @@ class Checker(object):
                     not isinstance(self.getParent(existing.source),
                         (ast.For, ast.comprehension))
                 ):
+                    # g.trace(value.name, parent_stmt, self.getParent(existing.source))
+                    # g.trace(g.callers(10))
                     self.report(messages.RedefinedInListComp,
                                 node, value.name, existing.source)
                 elif not existing.used and value.redefines(existing):
@@ -852,9 +854,11 @@ class Checker(object):
             # Tuple(expr* elts, expr_context ctx)
 
             def Tuple(self, node):
+                # g.trace(node.elts)
                 for z in node.elts:
                     self.handleNode(z, node)
                 # self.handleNode(node.ctx, node)
+                    # EKR: ignore ctx fields (LOAD, STORE, etc.
 
             # UnaryOp(unaryop op, expr operand)
 
@@ -1187,8 +1191,10 @@ class Checker(object):
     ASYNCFUNCTIONDEF = FUNCTIONDEF
 
     # GeneratorExp(expr elt, comprehension* generators)
+    # SetComp(expr elt, comprehension* generators)
 
     def GENERATOREXP(self, node):
+        # EKR: always push a new scope.
         name = 'Generator: %s' % id(node)
         self.pushScope(node, name, GeneratorScope)
         if aft:
@@ -1201,7 +1207,37 @@ class Checker(object):
         self.popScope()
         
     if aft:
-        ListComp = SetComp = GeneratorExp = GENERATOREXP
+        SetComp = GeneratorExp = GENERATOREXP
+        
+    # DictComp(expr key, expr value, comprehension* generators)
+        
+    def DictComp(self, node):
+        name = 'Generator: %s' % id(node)
+        self.pushScope(node, name, GeneratorScope)
+        if aft:
+            # EKR: call generators first.
+            for z in node.generators:
+                self.handleNode(z, node)
+            self.handleNode(node.key, node)
+            self.handleNode(node.value, node)
+        else:
+            self.handleChildren(node)
+        self.popScope()
+        
+    def ListComp(self, node):
+        # EKR: Push a new scope only in Python 3.
+        name = 'Generator: %s' % id(node)
+        if g.isPython3:
+            self.pushScope(node, name, GeneratorScope)
+        if aft:
+            # EKR: call generators first.
+            for z in node.generators:
+                self.handleNode(z, node)
+            self.handleNode(node.elt, node)
+        else:
+            self.handleChildren(node)
+        if g.isPython3:
+            self.popScope()
 
     LISTCOMP = handleChildren if PY2 else GENERATOREXP
         

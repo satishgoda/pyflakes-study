@@ -835,8 +835,9 @@ class Resolve(object):
         def TryFinally(self, node):
             for z in node.body:
                 self.handleNode(z, node)
-            for z in node.finalbody:
-                self.handleNode(z, node)
+            if hasattr(node, 'finalbody'):
+                for z in node.finalbody:
+                    self.handleNode(z, node)
 
         # While(expr test, stmt* body, stmt* orelse)
 

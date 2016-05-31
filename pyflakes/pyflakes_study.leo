@@ -501,13 +501,13 @@
 </v>
 </v>
 <v t="ekr.20160519172255.69"><vh>Checker.RETURN</vh></v>
-<v t="ekr.20160519172255.77"><vh>Checker.TRY &amp; TRYEXCEPT</vh></v>
+<v t="ekr.20160519172255.77"><vh>Checker.TRY &amp; TRYEXCEPT (new bug fix)</vh></v>
 <v t="ekr.20160519172255.70"><vh>Checker.YIELD</vh></v>
 </v>
 </v>
 </v>
 <v t="ekr.20160523172144.1"><vh>----------------</vh></v>
-<v t="ekr.20160527034002.1"><vh>@button unit-tests</vh></v>
+<v t="ekr.20160531100422.1"><vh>@button unit-tests</vh></v>
 <v t="ekr.20160520081237.1"><vh>@button test</vh>
 <v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
 <v t="ekr.20160526064907.1"><vh>&lt;&lt; test switches &gt;&gt;</vh></v>
@@ -630,7 +630,7 @@
 <v t="ekr.20160527075837.104"><vh>ft.Print</vh></v>
 <v t="ekr.20160527075837.105"><vh>ft.Raise</vh></v>
 <v t="ekr.20160527075837.106"><vh>ft.Starred (Python 3)</vh></v>
-<v t="ekr.20160527075837.107"><vh>ft.TryFinally</vh></v>
+<v t="ekr.20160527075837.107"><vh>ft.TryFinally (new bug fix)</vh></v>
 <v t="ekr.20160527075837.108"><vh>ft.While</vh></v>
 <v t="ekr.20160527075837.109"><vh>ft.With</vh></v>
 </v>
@@ -671,6 +671,9 @@
 </v>
 <v t="ekr.20160527075837.37"></v>
 <v t="ekr.20160527075837.128"></v>
+<v t="ekr.20160531110456.1"><vh>import test</vh></v>
+<v t="ekr.20160527075837.107"></v>
+<v t="ekr.20160519172255.77"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -2045,12 +2048,15 @@ def TRY(self, node):
     self.exceptHandlers.pop()
     # Process the other nodes: "except:", "else:", "finally:"
     if aft:
-        for z in node.handlers:
-            self.handleNode(z, node)
-        for z in node.orelse:
-            self.handleNode(z, node)
-        for z in node.finalbody:
-            self.handleNode(z, node)
+        if hasattr(node, 'handlers'):
+            for z in node.handlers:
+                self.handleNode(z, node)
+        if hasattr(node, 'orelse'):
+            for z in node.orelse:
+                self.handleNode(z, node)
+        if hasattr(node, 'finalbody'):
+            for z in node.finalbody:
+                self.handleNode(z, node)
     else:
         self.handleChildren(node, omit='body')
     
@@ -5657,32 +5663,6 @@ def duplicate():    # RedefinedWhileUnused
 
 ''',
 </t>
-<t tx="ekr.20160527034002.1">g.cls()
-
-import os
-import sys
-path = g.os_path_finalize_join(os.curdir, '..')
-if 'pyflakes' in sys.modules:
-    del sys.modules['pyflakes']
-if sys.path[0] != path:
-    sys.path.insert(0, path)
-import pyflakes
-    
-import unittest
-from pyflakes.test import test_api, test_doctests, test_imports, test_other
-from pyflakes.test import test_return_with_arguments_inside_generator
-from pyflakes.test import test_undefined_names
-tests = (
-    test_api, test_doctests,
-    test_imports, test_other,
-    test_return_with_arguments_inside_generator,
-    test_undefined_names,
-)
-loader = unittest.TestLoader()
-suite = unittest.TestSuite()
-for module in tests:
-    suite.addTest(loader.loadTestsFromModule(module))
-unittest.TextTestRunner(verbosity=1).run(suite)</t>
 <t tx="ekr.20160527075816.1">'''Resolve Python symbols.'''
 
 @language python
@@ -5795,8 +5775,9 @@ def Starred(self, node):
 def TryFinally(self, node):
     for z in node.body:
         self.handleNode(z, node)
-    for z in node.finalbody:
-        self.handleNode(z, node)
+    if hasattr(node, 'finalbody'):
+        for z in node.finalbody:
+            self.handleNode(z, node)
 </t>
 <t tx="ekr.20160527075837.108">
 # While(expr test, stmt* body, stmt* orelse)
@@ -7181,5 +7162,47 @@ def Delete(self, node):
     for z in node.targets:
         self.handleNode(z, node)
 </t>
+<t tx="ekr.20160531100422.1">g.cls()
+# These tests run properly when run from Python 2.
+import imp
+import os
+import unittest
+path = g.os_path_finalize_join(os.curdir, '..')
+file_, pathname, description = imp.find_module('pyflakes', [path])
+pyflakes = imp.load_module('pyflakes', file_, pathname, description)
+# print(pyflakes.test)
+if 1:
+    # Python 2 unit tests...
+    from pyflakes.test import test_api, test_doctests, test_imports, test_other
+    from pyflakes.test import test_return_with_arguments_inside_generator
+    from pyflakes.test import test_undefined_names
+    tests = (
+        # test_api,
+        # test_doctests,
+        test_imports,
+        test_other,
+        test_return_with_arguments_inside_generator,
+        test_undefined_names,
+    )
+    loader = unittest.TestLoader()
+    suite = unittest.TestSuite()
+    for module in tests:
+        suite.addTest(loader.loadTestsFromModule(module))
+    unittest.TextTestRunner(verbosity=1).run(suite)</t>
+<t tx="ekr.20160531110456.1">g.cls()
+
+import imp
+import os
+
+print('is_frozen: %s' % imp.is_frozen('pyflakes'))
+
+path = g.os_path_finalize_join(os.curdir, '..') # , 'pyflakes')
+assert g.os_path_exists(path), path
+
+print('path: %s' % path)
+
+file_, pathname, description = imp.find_module('pyflakes', [path])
+pyflakes = imp.load_module('pyflakes', file_, pathname, description)
+print(pyflakes)</t>
 </tnodes>
 </leo_file>

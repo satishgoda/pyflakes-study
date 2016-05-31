@@ -4603,12 +4603,12 @@ def List(self, node):
         self.handleNode(z, node)
     # self.handleNode(node.ctx, node)
 
-if aft:
-    def list(self, node):
-        g.trace(g.callers())
-        assert self.pass_n == 2, self.pass_n
-        for z in node:
-            self.handleNode(z, node)
+# if aft:
+    # def list(self, node):
+        # g.trace(g.callers())
+        # assert self.pass_n == 2, self.pass_n
+        # for z in node:
+            # self.handleNode(z, node)
 </t>
 <t tx="ekr.20160522081949.32">
 # Python 2.x only

@@ -111,17 +111,14 @@ else:
             return [n.body + n.orelse] + [[hdl] for hdl in n.handlers]
 
 def getNodeName(node):
-    # Returns node.id, or node.name, or None
-    ### if node.__class__.__name__ == 'Name': g.trace(node, node.id)
-    if hasattr(node, 'id'):     # One of the many nodes with an id
-        return node.id
-    if hasattr(node, 'name'):   # a ExceptHandler node
-        return node.name
+    # Return the node's name, or None.
+    return getattr(node, 'id', None) or getattr(node, 'name', None)
+   
 
 if PY2:
     def getNodeType(node_class):
         # workaround str.upper() which is locale-dependent
-        ### return str(unicode(node_class.__name__).upper())
+        # return str(unicode(node_class.__name__).upper())
         return node_class.__name__.upper()
             # EKR: hehe: pyflakes complains about unicode.
 else:
@@ -755,16 +752,6 @@ class Checker(object):
                 for i in range(len(node.keys)):
                     self.handleNode(node.keys[i], node)
                     self.handleNode(node.values[i], node)
-
-            # DictComp(expr key, expr value, comprehension* generators)
-
-            def DictComp(self, node):
-                
-                # EKR: visit generators first, then value.
-                for z in node.generators:
-                    self.handleNode(z, node)
-                self.handleNode(node.value, node)
-                self.handleNode(node.key, node)
 
             def Ellipsis(self, node):
                 pass
@@ -1490,11 +1477,6 @@ class Checker(object):
         
         # This was in runFunction...
         assert self.pass_n == 2, self.pass_n
-        if isinstance(node, list):
-            # Only happens in Python 3.
-            for z in node:
-                self.scanFunction(z, args, scopeStack)
-            return
         if g.isPython3:
             assert isinstance(node, (ast.FunctionDef, ast.Lambda, ast.AsyncFunctionDef)), node
         else:
@@ -1502,8 +1484,8 @@ class Checker(object):
         is_def = isinstance(node, ast.FunctionDef)
         name = ('def: %s' % node.name) if is_def else ('Lambda: %s' % id(node))
         self.scopeStack = scopeStack
-        ### Not needed, because it is immediately changed.
-        ### if new_scope: self.scope = self.scopeStack[-1]
+        # Not needed, because it is immediately changed.
+        # if new_scope: self.scope = self.scopeStack[-1]
         self.pushScope(node, name, FunctionScope)
         for arg_name in args:
             self.addBinding(node, Argument(arg_name, node))

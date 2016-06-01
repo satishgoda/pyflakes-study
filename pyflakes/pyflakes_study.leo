@@ -574,7 +574,6 @@
 <v t="ekr.20160522081949.17"><vh>ft.Compare</vh></v>
 <v t="ekr.20160522081949.19"><vh>ft.comprehension</vh></v>
 <v t="ekr.20160522081949.20"><vh>ft.Dict</vh></v>
-<v t="ekr.20160523092835.1"><vh>ft.DictComp (new)</vh></v>
 <v t="ekr.20160524091305.1"><vh>ft.Ellipsis</vh></v>
 <v t="ekr.20160522081949.22"><vh>ft.Expr</vh></v>
 <v t="ekr.20160522081949.23"><vh>ft.Expression</vh></v>
@@ -582,7 +581,7 @@
 <v t="ekr.20160522081949.26"><vh>ft.ifExp (ternary operator)</vh></v>
 <v t="ekr.20160522081949.27"><vh>ft.Index</vh></v>
 <v t="ekr.20160522081949.28"><vh>ft.keyword</vh></v>
-<v t="ekr.20160522081949.29"><vh>ft.List &amp; list (bug fix)</vh></v>
+<v t="ekr.20160522081949.29"><vh>ft.List &amp; list</vh></v>
 <v t="ekr.20160522082410.1"><vh>ft.NameConstant</vh></v>
 <v t="ekr.20160524091057.1"><vh>ft.Num</vh></v>
 <v t="ekr.20160522081949.32"><vh>ft.Repr</vh></v>
@@ -626,7 +625,7 @@
 <v t="ekr.20160522063947.1"><vh>Checker.MODULE (4 passes)</vh>
 <v t="ekr.20160523181737.1"><vh>Checker.pass1</vh></v>
 <v t="ekr.20160523181742.1"><vh>Checker.pass2 (uses scopeStack)</vh>
-<v t="ekr.20160526063937.1"><vh>Checker.scanFunction (NEW)</vh></v>
+<v t="ekr.20160526063937.1"><vh>Checker.scanFunction</vh></v>
 </v>
 <v t="ekr.20160523181745.1"><vh>Checker.pass3</vh>
 <v t="ekr.20160526074410.1"><vh>Checker.checkAssignments (NEW)</vh></v>
@@ -666,23 +665,21 @@
 </v>
 </v>
 <v t="ekr.20160526064907.1"></v>
-<v t="ekr.20160520162722.1"></v>
-<v t="ekr.20160523172328.1"></v>
 <v t="ekr.20160523172121.1"><vh>----------------</vh></v>
 <v t="ekr.20160531170004.1"><vh>Recent</vh>
 <v t="ekr.20160519172255.11"></v>
 <v t="ekr.20160519172255.54"></v>
 <v t="ekr.20160519172255.71"></v>
 <v t="ekr.20160519172255.67"></v>
-<v t="ekr.20160519172255.63"></v>
 <v t="ekr.20160519172255.72"></v>
 <v t="ekr.20160522063947.1"></v>
 <v t="ekr.20160519172836.1"></v>
-<v t="ekr.20160526063937.1"></v>
 <v t="ekr.20160519172255.77"></v>
-<v t="ekr.20160522081949.29"></v>
 <v t="ekr.20160527075837.107"></v>
 </v>
+<v t="ekr.20160519172255.63"></v>
+<v t="ekr.20160526063937.1"></v>
+<v t="ekr.20160522081949.29"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -1188,13 +1185,9 @@ class ModuleScope(Scope):
 </t>
 <t tx="ekr.20160519172255.39">
 def getNodeName(node):
-    # Returns node.id, or node.name, or None
-    ### if node.__class__.__name__ == 'Name': g.trace(node, node.id)
-    if hasattr(node, 'id'):     # One of the many nodes with an id
-        return node.id
-    if hasattr(node, 'name'):   # a ExceptHandler node
-        return node.name
-</t>
+    # Return the node's name, or None.
+    return getattr(node, 'id', None) or getattr(node, 'name', None)
+   </t>
 <t tx="ekr.20160519172255.4">def check(codeString, filename, reporter=None, tree=None): # EKR: added tree.
     """
     Check the Python source given by C{codeString} for flakes.
@@ -2346,7 +2339,7 @@ L{...}: </t>
 if PY2:
     def getNodeType(node_class):
         # workaround str.upper() which is locale-dependent
-        ### return str(unicode(node_class.__name__).upper())
+        # return str(unicode(node_class.__name__).upper())
         return node_class.__name__.upper()
             # EKR: hehe: pyflakes complains about unicode.
 else:
@@ -4936,17 +4929,6 @@ def unit_test(raise_on_fail=True):
     else:
         print(s)
 </t>
-<t tx="ekr.20160523092835.1">
-# DictComp(expr key, expr value, comprehension* generators)
-
-def DictComp(self, node):
-    
-    # EKR: visit generators first, then value.
-    for z in node.generators:
-        self.handleNode(z, node)
-    self.handleNode(node.value, node)
-    self.handleNode(node.key, node)
-</t>
 <t tx="ekr.20160523093026.1">
 # Set(expr* elts)
 
@@ -5624,11 +5606,6 @@ def scanFunction(self, node, args, scopeStack):
     
     # This was in runFunction...
     assert self.pass_n == 2, self.pass_n
-    if isinstance(node, list):
-        # Only happens in Python 3.
-        for z in node:
-            self.scanFunction(z, args, scopeStack)
-        return
     if g.isPython3:
         assert isinstance(node, (ast.FunctionDef, ast.Lambda, ast.AsyncFunctionDef)), node
     else:
@@ -5636,8 +5613,8 @@ def scanFunction(self, node, args, scopeStack):
     is_def = isinstance(node, ast.FunctionDef)
     name = ('def: %s' % node.name) if is_def else ('Lambda: %s' % id(node))
     self.scopeStack = scopeStack
-    ### Not needed, because it is immediately changed.
-    ### if new_scope: self.scope = self.scopeStack[-1]
+    # Not needed, because it is immediately changed.
+    # if new_scope: self.scope = self.scopeStack[-1]
     self.pushScope(node, name, FunctionScope)
     for arg_name in args:
         self.addBinding(node, Argument(arg_name, node))

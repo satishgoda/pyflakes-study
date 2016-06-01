@@ -343,7 +343,6 @@
 </v>
 <v t="ekr.20160519180137.1"><vh>epytext markup</vh></v>
 <v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
-</v>
 <v t="ekr.20160527075816.1"><vh>@clean resolve.py</vh>
 <v t="ekr.20160527075837.2"><vh>&lt;&lt; resolver imports &gt;&gt;</vh></v>
 <v t="ekr.20160527075837.7"><vh>top-level</vh>
@@ -481,6 +480,7 @@
 <v t="ekr.20160527075837.133"><vh>Resolve.Return</vh></v>
 <v t="ekr.20160527075837.134"><vh>Resolve.Try &amp; TryExcept</vh></v>
 <v t="ekr.20160527075837.135"><vh>Resolve.Yield &amp; YieldFrom and Await</vh></v>
+</v>
 </v>
 </v>
 </v>
@@ -665,6 +665,7 @@
 </v>
 </v>
 <v t="ekr.20160526064907.1"></v>
+<v t="ekr.20160526060219.1"></v>
 <v t="ekr.20160523172121.1"><vh>----------------</vh></v>
 <v t="ekr.20160531170004.1"><vh>Recent</vh>
 <v t="ekr.20160519172255.11"></v>
@@ -672,14 +673,42 @@
 <v t="ekr.20160519172255.71"></v>
 <v t="ekr.20160519172255.67"></v>
 <v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160522063947.1"></v>
 <v t="ekr.20160519172836.1"></v>
 <v t="ekr.20160519172255.77"></v>
 <v t="ekr.20160527075837.107"></v>
-</v>
 <v t="ekr.20160519172255.63"></v>
 <v t="ekr.20160526063937.1"></v>
 <v t="ekr.20160522081949.29"></v>
+</v>
+<v t="ekr.20160519172255.42"></v>
+<v t="ekr.20160519172255.64"></v>
+<v t="ekr.20160519172255.44"></v>
+<v t="ekr.20160522063947.1"></v>
+<v t="ekr.20160526063937.1"></v>
+<v t="ekr.20160523173355.1"></v>
+<v t="ekr.20160531210435.1"><vh>posting: re unit tests.</vh></v>
+<v t="ekr.20160601064427.1"><vh>Found:new_check</vh>
+<v t="ekr.20160526060219.1"></v>
+<v t="ekr.20160519172255.41"></v>
+<v t="ekr.20160523181745.1"></v>
+<v t="ekr.20160519172255.72"></v>
+<v t="ekr.20160521155725.1"></v>
+<v t="ekr.20160523181742.1"></v>
+</v>
+<v t="ekr.20160601064438.1"><vh>Found:new_scope</vh>
+<v t="ekr.20160526060219.1"></v>
+<v t="ekr.20160519172255.41"></v>
+<v t="ekr.20160519172255.45"></v>
+<v t="ekr.20160522063947.1"></v>
+<v t="ekr.20160519172255.46"></v>
+<v t="ekr.20160519172255.48"></v>
+<v t="ekr.20160526063937.1"></v>
+</v>
+<v t="ekr.20160531204140.1"><vh>Found:runDeferred</vh>
+<v t="ekr.20160519172255.44"></v>
+<v t="ekr.20160523181742.1"></v>
+<v t="ekr.20160523181745.1"></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -1280,9 +1309,9 @@ def __init__(self, tree, filename='(none)', builtins=None,
     if new_check:
         self.defs_list = []
         self.check_assign_list = []
-    else:
-        self._deferredFunctions = []
-        self._deferredAssignments = []
+    # These are always defined because they could be used in unit tests.
+    self._deferredFunctions = []
+    self._deferredAssignments = []
     self.deadScopes = []
     self.messages = []
     self.nodeDepth = 0
@@ -1328,6 +1357,8 @@ def runDeferred(self, deferred):
     for handler, scope, offset in deferred:
         self.scopeStack = scope
         self.offset = offset
+        if new_scope:
+            self.scope = self.scopeStack[-1] if self.scopeStack else None
         handler()
 </t>
 <t tx="ekr.20160519172255.45">
@@ -1757,6 +1788,7 @@ _getDoctestExamples = doctest.DocTestParser().get_examples
 </t>
 <t tx="ekr.20160519172255.64">
 def handleDoctests(self, node):
+
     try:
         (docstring, node_lineno) = self.getDocstring(node.body[0])
         examples = docstring and self._getDoctestExamples(docstring)
@@ -1767,7 +1799,7 @@ def handleDoctests(self, node):
     if not examples:
         return
     node_offset = self.offset or (0, 0)
-    name = none
+    name = None
     self.pushScope(node, name, FunctionScope)
     underscore_in_builtins = '_' in self.builtIns
     if not underscore_in_builtins:
@@ -1963,7 +1995,6 @@ def FUNCTIONDEF(self, node):
     if self.withDoctest:
         # g.trace('deferFunction', node.name)
         self.deferFunction(lambda: self.handleDoctests(node))
-        
 if aft:
     FunctionDef = AsyncFunctionDef = FUNCTIONDEF
 
@@ -2442,7 +2473,7 @@ else:
                 print('can not read:', fn)
 
 </t>
-<t tx="ekr.20160520102401.1"></t>
+<t tx="ekr.20160520102401.1">@nosearch</t>
 <t tx="ekr.20160520160409.1">import ast
 import gc
 import imp
@@ -4400,7 +4431,7 @@ def CLASSDEF(self, node):
 </t>
 <t tx="ekr.20160521154847.1"></t>
 <t tx="ekr.20160521155725.1">
-if new_check:
+if False: ### new_check:
     pass
 else:
     @others</t>
@@ -4596,6 +4627,7 @@ def List(self, node):
         self.handleNode(z, node)
     # self.handleNode(node.ctx, node)
 
+# It would not be good to have to test for lists.
 # if aft:
     # def list(self, node):
         # g.trace(g.callers())
@@ -4800,7 +4832,7 @@ def NameConstant(self, node): # Python 3 only.
     # s = repr(node.value)
     # return 'bool' if s in ('True', 'False') else s
 </t>
-<t tx="ekr.20160523065519.1"></t>
+<t tx="ekr.20160523065519.1">@nosearch</t>
 <t tx="ekr.20160523065801.1">trace_dict = {}
 
 def CHANGEDgetNodeHandler(self, node_class):
@@ -5414,7 +5446,7 @@ def pass2(self, node):
         for bunch in self.defs_list:
             self.scanFunction(bunch.node, bunch.args, bunch.scopeStack)
                 # The full scopeStack *is* needed, but we could recreate it...
-    else:
+    else: # Used by unit tests.
         self.runDeferred(self._deferredFunctions)
             # Run all the queued runFunction functions or scanFunction methods.
         self._deferredFunctions = None
@@ -5433,7 +5465,7 @@ def pass3(self, node):
     if new_check:
         for scope in self.check_assign_list:
             self.checkAssignments(scope)
-    else:
+    else: # Used in unit tests.
         self.runDeferred(self._deferredAssignments)
             # Run all queued calls to checkUnusedAssignments and
             # (If Python 2) checkReturnWithArgumentInsideGenerator
@@ -5597,8 +5629,10 @@ aft = True
     # This is only slightly faster than the default handleChildren method.
     # True: create node handlers in getNodeHandler.
 if aft:
-    new_check = True
+    new_check = False # doctest unit tests fail when True
     new_scope = True
+        # doctest unit tests now succeed when True
+        # The fix was in runDeferred.
 else:
     new_check = new_scope = False</t>
 <t tx="ekr.20160526063937.1">
@@ -5626,6 +5660,31 @@ def scanFunction(self, node, args, scopeStack):
         self.handleNode(node.body, node)
     # Defer checking assignments until pass 3.
     self.check_assign_list.append(self.scopeStack[-1])
+    
+    if 0: # May be needed for unit tests.
+    
+        def checkUnusedAssignments():
+            """
+            Check to see if any assignments have not been used.
+            """
+            assert self.pass_n == 3, self.pass_n
+            for name, binding in self.scope.unusedAssignments():
+                self.report(messages.UnusedVariable, binding.source, name)
+        
+        self.deferAssignment(checkUnusedAssignments)
+    
+        if PY32:
+            def checkReturnWithArgumentInsideGenerator():
+                """
+                Check to see if there is any return statement with
+                arguments but the function is a generator.
+                """
+                assert self.pass_n == 3, self.pass_n
+                if self.scope.isGenerator and self.scope.returnValue:
+                    self.report(messages.ReturnWithArgsInsideGenerator,
+                                self.scope.returnValue)
+            self.deferAssignment(checkReturnWithArgumentInsideGenerator)
+
     self.popScope()</t>
 <t tx="ekr.20160526064907.1">test_scope='all'
 test_kind = 'normal', # 'resolve'</t>
@@ -5915,17 +5974,57 @@ AsyncFunctionDef = FunctionDef
 </t>
 <t tx="ekr.20160527075837.114">
 # GeneratorExp(expr elt, comprehension* generators)
+# SetComp(expr elt, comprehension* generators)
 
-def GeneratorExp(self, node):
+def GENERATOREXP(self, node):
+    # EKR: always push a new scope.
     name = 'Generator: %s' % id(node)
     self.pushScope(node, name, GeneratorScope)
-    # EKR: call generators first.
-    for z in node.generators:
-        self.handleNode(z, node)
-    self.handleNode(node.elt, node)
+    if aft:
+        # EKR: call generators first.
+        for z in node.generators:
+            self.handleNode(z, node)
+        self.handleNode(node.elt, node)
+    else:
+        self.handleChildren(node)
     self.popScope()
     
-ListComp = DictComp = SetComp = GeneratorExp
+if aft:
+    SetComp = GeneratorExp = GENERATOREXP
+    
+# DictComp(expr key, expr value, comprehension* generators)
+    
+def DictComp(self, node):
+    name = 'Generator: %s' % id(node)
+    self.pushScope(node, name, GeneratorScope)
+    if aft:
+        # EKR: call generators first.
+        for z in node.generators:
+            self.handleNode(z, node)
+        self.handleNode(node.key, node)
+        self.handleNode(node.value, node)
+    else:
+        self.handleChildren(node)
+    self.popScope()
+    
+def ListComp(self, node):
+    # EKR: Push a new scope only in Python 3.
+    name = 'Generator: %s' % id(node)
+    if g.isPython3:
+        self.pushScope(node, name, GeneratorScope)
+    if aft:
+        # EKR: call generators first.
+        for z in node.generators:
+            self.handleNode(z, node)
+        self.handleNode(node.elt, node)
+    else:
+        self.handleChildren(node)
+    if g.isPython3:
+        self.popScope()
+
+LISTCOMP = handleChildren if PY2 else GENERATOREXP
+    
+DICTCOMP = SETCOMP = GENERATOREXP
 </t>
 <t tx="ekr.20160527075837.115">
 def Global(self, node):
@@ -7193,6 +7292,8 @@ def Delete(self, node):
 import imp
 import os
 import unittest
+import checker
+imp.reload(checker)
 path = g.os_path_finalize_join(os.curdir, '..')
 file_, pathname, description = imp.find_module('pyflakes', [path])
 pyflakes = imp.load_module('pyflakes', file_, pathname, description)
@@ -7201,8 +7302,8 @@ from pyflakes.test import test_api, test_doctests, test_imports, test_other
 from pyflakes.test import test_return_with_arguments_inside_generator
 from pyflakes.test import test_undefined_names
 tests = (
-    # test_api,
-    # test_doctests,
+    ## test_api,
+    test_doctests,
     test_imports,
     test_other,
     test_return_with_arguments_inside_generator,
@@ -7215,5 +7316,16 @@ for module in tests:
     suite.addTest(loader.loadTestsFromModule(module))
 unittest.TextTestRunner(verbosity=1).run(suite)</t>
 <t tx="ekr.20160531170004.1"></t>
+<t tx="ekr.20160531204140.1"># flattened, ignore-case, head, body</t>
+<t tx="ekr.20160531210435.1">@language rest
+@wrap
+
+In retrospect, it would have been better to use pyflakes's unit tests from the beginning, but at that time I wasn't sure what the scope of the project would be.
+
+Today's work reorganized the folder structure so it is possible to import pyflakes and pyflakes.test from with the project.  There were a few other changes, not interesting enough to recount here.
+
+As of recent revs, the @button unit-test code works with both python 2 and 3.  This runs all unit tests except the test_api and test_doctests modules. The test_api fail because they depend on code outside this project.  The test_doctest tests fail for other reasons that I'm looking into.</t>
+<t tx="ekr.20160601064427.1"># flattened, ignore-case, head, body</t>
+<t tx="ekr.20160601064438.1"># flattened, ignore-case, head, body</t>
 </tnodes>
 </leo_file>

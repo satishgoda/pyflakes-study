@@ -45,8 +45,10 @@ aft = True
     # This is only slightly faster than the default handleChildren method.
     # True: create node handlers in getNodeHandler.
 if aft:
-    new_check = True
+    new_check = False # doctest unit tests fail when True
     new_scope = True
+        # doctest unit tests now succeed when True
+        # The fix was in runDeferred.
 else:
     new_check = new_scope = False
 stats = {}
@@ -430,9 +432,9 @@ class Checker(object):
         if new_check:
             self.defs_list = []
             self.check_assign_list = []
-        else:
-            self._deferredFunctions = []
-            self._deferredAssignments = []
+        # These are always defined because they could be used in unit tests.
+        self._deferredFunctions = []
+        self._deferredAssignments = []
         self.deadScopes = []
         self.messages = []
         self.nodeDepth = 0
@@ -450,7 +452,7 @@ class Checker(object):
         self.handleNode(tree, parent=None)
             # EKR: new MODULE handler does all the work.
 
-    if new_check:
+    if False: ### new_check:
         pass
     else:
 
@@ -479,6 +481,8 @@ class Checker(object):
             for handler, scope, offset in deferred:
                 self.scopeStack = scope
                 self.offset = offset
+                if new_scope:
+                    self.scope = self.scopeStack[-1] if self.scopeStack else None
                 handler()
 
     if new_scope:
@@ -793,6 +797,7 @@ class Checker(object):
                     self.handleNode(z, node)
                 # self.handleNode(node.ctx, node)
 
+            # It would not be good to have to test for lists.
             # if aft:
                 # def list(self, node):
                     # g.trace(g.callers())
@@ -1037,6 +1042,7 @@ class Checker(object):
     # EKR: like visitors
 
     def handleDoctests(self, node):
+
         try:
             (docstring, node_lineno) = self.getDocstring(node.body[0])
             examples = docstring and self._getDoctestExamples(docstring)
@@ -1047,7 +1053,7 @@ class Checker(object):
         if not examples:
             return
         node_offset = self.offset or (0, 0)
-        name = none
+        name = None
         self.pushScope(node, name, FunctionScope)
         underscore_in_builtins = '_' in self.builtIns
         if not underscore_in_builtins:
@@ -1173,7 +1179,6 @@ class Checker(object):
         if self.withDoctest:
             # g.trace('deferFunction', node.name)
             self.deferFunction(lambda: self.handleDoctests(node))
-            
     if aft:
         FunctionDef = AsyncFunctionDef = FUNCTIONDEF
 
@@ -1464,7 +1469,7 @@ class Checker(object):
             for bunch in self.defs_list:
                 self.scanFunction(bunch.node, bunch.args, bunch.scopeStack)
                     # The full scopeStack *is* needed, but we could recreate it...
-        else:
+        else: # Used by unit tests.
             self.runDeferred(self._deferredFunctions)
                 # Run all the queued runFunction functions or scanFunction methods.
             self._deferredFunctions = None
@@ -1497,6 +1502,31 @@ class Checker(object):
             self.handleNode(node.body, node)
         # Defer checking assignments until pass 3.
         self.check_assign_list.append(self.scopeStack[-1])
+        
+        if 0: # May be needed for unit tests.
+        
+            def checkUnusedAssignments():
+                """
+                Check to see if any assignments have not been used.
+                """
+                assert self.pass_n == 3, self.pass_n
+                for name, binding in self.scope.unusedAssignments():
+                    self.report(messages.UnusedVariable, binding.source, name)
+            
+            self.deferAssignment(checkUnusedAssignments)
+        
+            if PY32:
+                def checkReturnWithArgumentInsideGenerator():
+                    """
+                    Check to see if there is any return statement with
+                    arguments but the function is a generator.
+                    """
+                    assert self.pass_n == 3, self.pass_n
+                    if self.scope.isGenerator and self.scope.returnValue:
+                        self.report(messages.ReturnWithArgsInsideGenerator,
+                                    self.scope.returnValue)
+                self.deferAssignment(checkReturnWithArgumentInsideGenerator)
+
         self.popScope()
 
     def pass3(self, node):
@@ -1508,7 +1538,7 @@ class Checker(object):
         if new_check:
             for scope in self.check_assign_list:
                 self.checkAssignments(scope)
-        else:
+        else: # Used in unit tests.
             self.runDeferred(self._deferredAssignments)
                 # Run all queued calls to checkUnusedAssignments and
                 # (If Python 2) checkReturnWithArgumentInsideGenerator

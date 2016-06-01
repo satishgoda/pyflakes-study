@@ -987,7 +987,8 @@ class TestUnusedAssignment(TestCase):
 
     def test_returnOnly(self):
         """Do not crash on lone "return"."""
-        self.flakes('return 2')
+        # self.flakes('return 2')
+        self.flakes('return 2', m.ReturnOutsideFunction) # EKR
 
 
 class TestAsyncStatements(TestCase):

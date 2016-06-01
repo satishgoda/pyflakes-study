@@ -926,17 +926,57 @@ class Resolve(object):
     AsyncFunctionDef = FunctionDef
 
     # GeneratorExp(expr elt, comprehension* generators)
+    # SetComp(expr elt, comprehension* generators)
 
-    def GeneratorExp(self, node):
+    def GENERATOREXP(self, node):
+        # EKR: always push a new scope.
         name = 'Generator: %s' % id(node)
         self.pushScope(node, name, GeneratorScope)
-        # EKR: call generators first.
-        for z in node.generators:
-            self.handleNode(z, node)
-        self.handleNode(node.elt, node)
+        if aft:
+            # EKR: call generators first.
+            for z in node.generators:
+                self.handleNode(z, node)
+            self.handleNode(node.elt, node)
+        else:
+            self.handleChildren(node)
         self.popScope()
         
-    ListComp = DictComp = SetComp = GeneratorExp
+    if aft:
+        SetComp = GeneratorExp = GENERATOREXP
+        
+    # DictComp(expr key, expr value, comprehension* generators)
+        
+    def DictComp(self, node):
+        name = 'Generator: %s' % id(node)
+        self.pushScope(node, name, GeneratorScope)
+        if aft:
+            # EKR: call generators first.
+            for z in node.generators:
+                self.handleNode(z, node)
+            self.handleNode(node.key, node)
+            self.handleNode(node.value, node)
+        else:
+            self.handleChildren(node)
+        self.popScope()
+        
+    def ListComp(self, node):
+        # EKR: Push a new scope only in Python 3.
+        name = 'Generator: %s' % id(node)
+        if g.isPython3:
+            self.pushScope(node, name, GeneratorScope)
+        if aft:
+            # EKR: call generators first.
+            for z in node.generators:
+                self.handleNode(z, node)
+            self.handleNode(node.elt, node)
+        else:
+            self.handleChildren(node)
+        if g.isPython3:
+            self.popScope()
+
+    LISTCOMP = handleChildren if PY2 else GENERATOREXP
+        
+    DICTCOMP = SETCOMP = GENERATOREXP
 
     def Global(self, node):
         """

@@ -1498,7 +1498,6 @@ class Checker(object):
             assert isinstance(node, (ast.FunctionDef, ast.Lambda, ast.AsyncFunctionDef)), node
         else:
             assert isinstance(node, (ast.FunctionDef, ast.Lambda)), node
-        is_def = isinstance(node, ast.FunctionDef)
         if hasattr(node, 'name'):
             def_name = 'def: %s' % node.name
         else:

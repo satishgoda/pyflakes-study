@@ -430,11 +430,12 @@ class Checker(object):
         else:
             self._nodeHandlers = {}
         if new_check:
-            self.defs_list = []
             self.check_assign_list = []
-        # These are always defined because they could be used in unit tests.
-        self._deferredFunctions = []
-        self._deferredAssignments = []
+            self.defs_list = []
+            self.doctests_list = []
+        else:
+            self._deferredFunctions = []
+            self._deferredAssignments = []
         self.deadScopes = []
         self.messages = []
         self.nodeDepth = 0
@@ -1052,9 +1053,15 @@ class Checker(object):
             return
         if not examples:
             return
+        if 0:
+            g.trace('=========', g.callers())
+            g.trace('examples:', examples)
         node_offset = self.offset or (0, 0)
-        name = None
+        name = getattr(node, 'name', None) # EKR
         self.pushScope(node, name, FunctionScope)
+        if 0:
+            print('')
+            g.trace(self.offset, node, self.scopeStack)
         underscore_in_builtins = '_' in self.builtIns
         if not underscore_in_builtins:
             self.builtIns.add('_')
@@ -1069,7 +1076,13 @@ class Checker(object):
             else:
                 self.offset = (node_offset[0] + node_lineno + example.lineno,
                                node_offset[1] + example.indent + 4)
-                self.handleChildren(tree)
+                assert isinstance(tree, ast.Module)
+                if aft:
+                    # Explicitly visit the module's children.
+                    for z in tree.body:
+                        self.handleNode(z, tree)
+                else:
+                    self.handleChildren(tree)
                 self.offset = node_offset
         if not underscore_in_builtins:
             self.builtIns.remove('_')
@@ -1134,7 +1147,14 @@ class Checker(object):
                 self.handleNode(keywordNode, node)
         self.pushScope(node, node.name, ClassScope)
         if self.withDoctest:
-            self.deferFunction(lambda: self.handleDoctests(node))
+            if new_check:
+                self.doctests_list.append(
+                    g.Bunch(node=node,
+                            offset=self.offset,
+                            scopeStack=self.scopeStack[:],
+                    ))
+            else:
+                self.deferFunction(lambda: self.handleDoctests(node))
         # EKR: Unlike def's & lambda's, we *do* traverse the class's body.
         for stmt in node.body:
             self.handleNode(stmt, node)
@@ -1177,8 +1197,14 @@ class Checker(object):
         self.LAMBDA(node) # EKR: defer's traversal of the body!
         self.addBinding(node, FunctionDefinition(node.name, node))
         if self.withDoctest:
-            # g.trace('deferFunction', node.name)
-            self.deferFunction(lambda: self.handleDoctests(node))
+            if new_check:
+                self.doctests_list.append(
+                    g.Bunch(node=node,
+                            offset=self.offset,
+                            scopeStack=self.scopeStack[:],
+                    ))
+            else:
+                self.deferFunction(lambda: self.handleDoctests(node))
     if aft:
         FunctionDef = AsyncFunctionDef = FUNCTIONDEF
 
@@ -1317,6 +1343,7 @@ class Checker(object):
             self.defs_list.append(
                 g.Bunch(node=node,
                         args=args,
+                        offset=self.offset,
                         scopeStack=self.scopeStack[:],
                 ))
         else:
@@ -1351,6 +1378,7 @@ class Checker(object):
                     Check to see if any assignments have not been used.
                     """
                     assert self.pass_n == 3, self.pass_n
+                    # g.trace(self.scope)
                     for name, binding in self.scope.unusedAssignments():
                         self.report(messages.UnusedVariable, binding.source, name)
                 
@@ -1362,6 +1390,7 @@ class Checker(object):
                         Check to see if there is any return statement with
                         arguments but the function is a generator.
                         """
+                        # g.trace(self.scope)
                         assert self.pass_n == 3, self.pass_n
                         if self.scope.isGenerator and self.scope.returnValue:
                             self.report(messages.ReturnWithArgsInsideGenerator,
@@ -1467,8 +1496,20 @@ class Checker(object):
         self.pass_n = 2
         if new_check:
             for bunch in self.defs_list:
-                self.scanFunction(bunch.node, bunch.args, bunch.scopeStack)
+                self.offset = bunch.offset
+                self.scopeStack = bunch.scopeStack
+                if new_scope:
+                    self.scope = self.scopeStack[-1] if self.scopeStack else None
+                self.scanFunction(bunch.node, bunch.args)
                     # The full scopeStack *is* needed, but we could recreate it...
+            # Not *precisely* equivalent to runDeferred,
+            # because all doctests are handled after the calls to scanFunction.
+            for bunch in self.doctests_list:
+                self.offset = bunch.offset
+                self.scopeStack = bunch.scopeStack
+                if new_scope:
+                    self.scope = self.scopeStack[-1] if self.scopeStack else None
+                self.handleDoctests(bunch.node)
         else: # Used by unit tests.
             self.runDeferred(self._deferredFunctions)
                 # Run all the queued runFunction functions or scanFunction methods.
@@ -1478,7 +1519,7 @@ class Checker(object):
         t2 = time.clock()
         stats['pass2'] = stats.get('pass2', 0.0) + t2-t1
 
-    def scanFunction(self, node, args, scopeStack):
+    def scanFunction(self, node, args):
         
         # This was in runFunction...
         assert self.pass_n == 2, self.pass_n
@@ -1487,11 +1528,11 @@ class Checker(object):
         else:
             assert isinstance(node, (ast.FunctionDef, ast.Lambda)), node
         is_def = isinstance(node, ast.FunctionDef)
-        name = ('def: %s' % node.name) if is_def else ('Lambda: %s' % id(node))
-        self.scopeStack = scopeStack
-        # Not needed, because it is immediately changed.
-        # if new_scope: self.scope = self.scopeStack[-1]
-        self.pushScope(node, name, FunctionScope)
+        if hasattr(node, 'name'):
+            def_name = 'def: %s' % node.name
+        else:
+            def_name = 'Lambda: %s' % id(node)
+        self.pushScope(node, def_name, FunctionScope)
         for arg_name in args:
             self.addBinding(node, Argument(arg_name, node))
         # *Now* traverse the body of the def/lambda.
@@ -1501,32 +1542,10 @@ class Checker(object):
         else:
             self.handleNode(node.body, node)
         # Defer checking assignments until pass 3.
-        self.check_assign_list.append(self.scopeStack[-1])
-        
-        if 0: # May be needed for unit tests.
-        
-            def checkUnusedAssignments():
-                """
-                Check to see if any assignments have not been used.
-                """
-                assert self.pass_n == 3, self.pass_n
-                for name, binding in self.scope.unusedAssignments():
-                    self.report(messages.UnusedVariable, binding.source, name)
-            
-            self.deferAssignment(checkUnusedAssignments)
-        
-            if PY32:
-                def checkReturnWithArgumentInsideGenerator():
-                    """
-                    Check to see if there is any return statement with
-                    arguments but the function is a generator.
-                    """
-                    assert self.pass_n == 3, self.pass_n
-                    if self.scope.isGenerator and self.scope.returnValue:
-                        self.report(messages.ReturnWithArgsInsideGenerator,
-                                    self.scope.returnValue)
-                self.deferAssignment(checkReturnWithArgumentInsideGenerator)
-
+        bunch = g.Bunch(
+            offset=self.offset,
+            scopeStack = self.scopeStack[:])
+        self.check_assign_list.append(bunch)
         self.popScope()
 
     def pass3(self, node):
@@ -1536,8 +1555,14 @@ class Checker(object):
         self.pass_n = 3
             # handleNode will raise an exception if it is called.
         if new_check:
-            for scope in self.check_assign_list:
-                self.checkAssignments(scope)
+            g.trace(self.check_assign_list, g.callers())
+            for bunch in self.check_assign_list:
+                self.offset = bunch.offset
+                self.scopeStack = bunch.scopeStack
+                if new_scope:
+                    self.scope = self.scopeStack[-1] if self.scopeStack else None
+                self.checkAssignments()
+            self.check_assign_list = None
         else: # Used in unit tests.
             self.runDeferred(self._deferredAssignments)
                 # Run all queued calls to checkUnusedAssignments and
@@ -1548,16 +1573,17 @@ class Checker(object):
         t2 = time.clock()
         stats['pass3'] = stats.get('pass3', 0.0) + t2-t1
 
-    def checkAssignments(self, scope):
+    def checkAssignments(self):
         """
         Check to see if any assignments have not been used.
         """
         assert self.pass_n == 3, self.pass_n
-        for name, binding in scope.unusedAssignments(): # was self.scope.
+        g.trace(self.scope)
+        for name, binding in self.scope.unusedAssignments():
             self.report(messages.UnusedVariable, binding.source, name)
         
         if PY32:
-            if scope.isGenerator and scope.returnValue: # was self.scope
+            if self.scope.isGenerator and self.scope.returnValue:
                 self.report(messages.ReturnWithArgsInsideGenerator,
                             scope.returnValue)
 
@@ -1661,7 +1687,7 @@ class Checker(object):
     def handleNodeLoad(self, node):
         
         global n_load, test_scope
-        trace = False and test_scope == 'test'
+        trace = False # and test_scope == 'test'
         # EKR: ctx is Load or AugLoad.
         name = getNodeName(node)
         if not name:
@@ -1718,7 +1744,7 @@ class Checker(object):
     def handleNodeStore(self, node):
         
         global n_store, test_scope
-        trace = False and test_scope == 'test'
+        trace = False # and test_scope == 'test'
         name = getNodeName(node)
         if not name:
             return

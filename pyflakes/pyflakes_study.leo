@@ -341,8 +341,6 @@
 </v>
 <v t="ekr.20160519172255.116"><vh>_makeDefaultReporter</vh></v>
 </v>
-<v t="ekr.20160519180137.1"><vh>epytext markup</vh></v>
-<v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
 <v t="ekr.20160527075816.1"><vh>@clean resolve.py</vh>
 <v t="ekr.20160527075837.2"><vh>&lt;&lt; resolver imports &gt;&gt;</vh></v>
 <v t="ekr.20160527075837.7"><vh>top-level</vh>
@@ -483,10 +481,34 @@
 </v>
 </v>
 </v>
+<v t="ekr.20160519180137.1"><vh>epytext markup</vh></v>
+<v t="ekr.20160519182919.1"><vh>test of getFields code</vh></v>
 </v>
+<v t="ekr.20160523172144.1"><vh>----------------</vh></v>
+<v t="ekr.20160531100422.1"><vh>@button unit-tests</vh></v>
+<v t="ekr.20160520081237.1"><vh>@button test</vh>
+<v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
+<v t="ekr.20160526064907.1"><vh>&lt;&lt; test switches &gt;&gt;</vh></v>
+<v t="ekr.20160520162722.1"><vh>&lt;&lt; define s_list &gt;&gt;</vh>
+<v t="ekr.20160526165301.1"><vh>all messages</vh></v>
+</v>
+<v t="ekr.20160523085953.1"><vh>class TestController</vh>
+<v t="ekr.20160520082209.1"><vh>check_all</vh></v>
+<v t="ekr.20160520162336.1"><vh>check_string</vh></v>
+<v t="ekr.20160520210414.1"><vh>compile_string</vh></v>
+<v t="ekr.20160521023438.1"><vh>handle_tree (TestController)</vh></v>
+<v t="ekr.20160523172328.1"><vh>print_stats</vh></v>
+<v t="ekr.20160520210256.1"><vh>read_string</vh></v>
+<v t="ekr.20160520081827.1"><vh>run_test</vh></v>
+<v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
+</v>
+</v>
+<v t="ekr.20160526064907.1"></v>
+<v t="ekr.20160526060219.1"><vh>&lt;&lt; checker switches &gt;&gt;</vh></v>
+<v t="ekr.20160523172121.1"><vh>----------------</vh></v>
 <v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
 <v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
-<v t="ekr.20160526060219.1"><vh>&lt;&lt; checker switches &gt;&gt;</vh></v>
+<v t="ekr.20160526060219.1"></v>
 <v t="ekr.20160519172255.12"><vh>class _FieldsOrder(dict)</vh>
 <v t="ekr.20160519172255.13"><vh>_FieldsOrder._get_fields (changed)</vh></v>
 <v t="ekr.20160519172255.14"><vh>_FieldsOrder.__missing__</vh></v>
@@ -645,70 +667,30 @@
 </v>
 </v>
 </v>
-<v t="ekr.20160523172144.1"><vh>----------------</vh></v>
-<v t="ekr.20160531100422.1"><vh>@button unit-tests</vh></v>
-<v t="ekr.20160520081237.1"><vh>@button test</vh>
-<v t="ekr.20160520160409.1"><vh>&lt;&lt; test imports &gt;&gt;</vh></v>
-<v t="ekr.20160526064907.1"><vh>&lt;&lt; test switches &gt;&gt;</vh></v>
-<v t="ekr.20160520162722.1"><vh>&lt;&lt; define s_list &gt;&gt;</vh>
-<v t="ekr.20160526165301.1"><vh>all messages</vh></v>
-</v>
-<v t="ekr.20160523085953.1"><vh>class TestController</vh>
-<v t="ekr.20160520082209.1"><vh>check_all</vh></v>
-<v t="ekr.20160520162336.1"><vh>check_string</vh></v>
-<v t="ekr.20160520210414.1"><vh>compile_string</vh></v>
-<v t="ekr.20160521023438.1"><vh>handle_tree (TestController)</vh></v>
-<v t="ekr.20160523172328.1"><vh>print_stats</vh></v>
-<v t="ekr.20160520210256.1"><vh>read_string</vh></v>
-<v t="ekr.20160520081827.1"><vh>run_test</vh></v>
-<v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
-</v>
-</v>
-<v t="ekr.20160526064907.1"></v>
-<v t="ekr.20160526060219.1"></v>
-<v t="ekr.20160523172121.1"><vh>----------------</vh></v>
-<v t="ekr.20160531170004.1"><vh>Recent</vh>
-<v t="ekr.20160519172255.11"></v>
-<v t="ekr.20160519172255.54"></v>
-<v t="ekr.20160519172255.71"></v>
-<v t="ekr.20160519172255.67"></v>
-<v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160519172836.1"></v>
-<v t="ekr.20160519172255.77"></v>
-<v t="ekr.20160527075837.107"></v>
-<v t="ekr.20160519172255.63"></v>
-<v t="ekr.20160526063937.1"></v>
-<v t="ekr.20160522081949.29"></v>
-</v>
-<v t="ekr.20160519172255.42"></v>
-<v t="ekr.20160519172255.64"></v>
-<v t="ekr.20160519172255.44"></v>
-<v t="ekr.20160522063947.1"></v>
-<v t="ekr.20160526063937.1"></v>
 <v t="ekr.20160523173355.1"></v>
 <v t="ekr.20160531210435.1"><vh>posting: re unit tests.</vh></v>
-<v t="ekr.20160601064427.1"><vh>Found:new_check</vh>
-<v t="ekr.20160526060219.1"></v>
-<v t="ekr.20160519172255.41"></v>
-<v t="ekr.20160523181745.1"></v>
+<v t="ekr.20160602085820.1"><vh>recent</vh>
+<v t="ekr.20160519172255.68"></v>
 <v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160521155725.1"></v>
-<v t="ekr.20160523181742.1"></v>
-</v>
-<v t="ekr.20160601064438.1"><vh>Found:new_scope</vh>
-<v t="ekr.20160526060219.1"></v>
-<v t="ekr.20160519172255.41"></v>
-<v t="ekr.20160519172255.45"></v>
 <v t="ekr.20160522063947.1"></v>
+</v>
+<v t="ekr.20160519172255.41"></v>
+<v t="ekr.20160519172255.59"></v>
+<v t="ekr.20160522063947.1"></v>
+<v t="ekr.20160602103657.1"><vh>*** remove new_check switch</vh></v>
+<v t="ekr.20160602133105.1"><vh>Found:new_scope</vh>
+<v t="ekr.20160526060219.1"></v>
+<v t="ekr.20160523181742.1"></v>
+<v t="ekr.20160523181745.1"></v>
+<v t="ekr.20160519172255.41"></v>
+<v t="ekr.20160519172255.44"></v>
 <v t="ekr.20160519172255.46"></v>
 <v t="ekr.20160519172255.48"></v>
-<v t="ekr.20160526063937.1"></v>
+<v t="ekr.20160519172255.45"></v>
+<v t="ekr.20160522063947.1"></v>
 </v>
-<v t="ekr.20160531204140.1"><vh>Found:runDeferred</vh>
-<v t="ekr.20160519172255.44"></v>
-<v t="ekr.20160523181742.1"></v>
-<v t="ekr.20160523181745.1"></v>
-</v>
+<v t="ekr.20160519172255.64"></v>
+<v t="ekr.20160602133545.1"><vh>commit message</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -1307,11 +1289,12 @@ def __init__(self, tree, filename='(none)', builtins=None,
     else:
         self._nodeHandlers = {}
     if new_check:
-        self.defs_list = []
         self.check_assign_list = []
-    # These are always defined because they could be used in unit tests.
-    self._deferredFunctions = []
-    self._deferredAssignments = []
+        self.defs_list = []
+        self.doctests_list = []
+    else:
+        self._deferredFunctions = []
+        self._deferredAssignments = []
     self.deadScopes = []
     self.messages = []
     self.nodeDepth = 0
@@ -1573,7 +1556,7 @@ def getNodeHandler(self, node_class):
 def handleNodeLoad(self, node):
     
     global n_load, test_scope
-    trace = False and test_scope == 'test'
+    trace = False # and test_scope == 'test'
     # EKR: ctx is Load or AugLoad.
     name = getNodeName(node)
     if not name:
@@ -1631,7 +1614,7 @@ def handleNodeLoad(self, node):
 def handleNodeStore(self, node):
     
     global n_store, test_scope
-    trace = False and test_scope == 'test'
+    trace = False # and test_scope == 'test'
     name = getNodeName(node)
     if not name:
         return
@@ -1798,9 +1781,15 @@ def handleDoctests(self, node):
         return
     if not examples:
         return
+    if 0:
+        g.trace('=========', g.callers())
+        g.trace('examples:', examples)
     node_offset = self.offset or (0, 0)
-    name = None
+    name = getattr(node, 'name', None) # EKR
     self.pushScope(node, name, FunctionScope)
+    if 0:
+        print('')
+        g.trace(self.offset, node, self.scopeStack)
     underscore_in_builtins = '_' in self.builtIns
     if not underscore_in_builtins:
         self.builtIns.add('_')
@@ -1815,7 +1804,13 @@ def handleDoctests(self, node):
         else:
             self.offset = (node_offset[0] + node_lineno + example.lineno,
                            node_offset[1] + example.indent + 4)
-            self.handleChildren(tree)
+            assert isinstance(tree, ast.Module)
+            if aft:
+                # Explicitly visit the module's children.
+                for z in tree.body:
+                    self.handleNode(z, tree)
+            else:
+                self.handleChildren(tree)
             self.offset = node_offset
     if not underscore_in_builtins:
         self.builtIns.remove('_')
@@ -1993,8 +1988,14 @@ def FUNCTIONDEF(self, node):
     self.LAMBDA(node) # EKR: defer's traversal of the body!
     self.addBinding(node, FunctionDefinition(node.name, node))
     if self.withDoctest:
-        # g.trace('deferFunction', node.name)
-        self.deferFunction(lambda: self.handleDoctests(node))
+        if new_check:
+            self.doctests_list.append(
+                g.Bunch(node=node,
+                        offset=self.offset,
+                        scopeStack=self.scopeStack[:],
+                ))
+        else:
+            self.deferFunction(lambda: self.handleDoctests(node))
 if aft:
     FunctionDef = AsyncFunctionDef = FUNCTIONDEF
 
@@ -2013,6 +2014,7 @@ def LAMBDA(self, node):
         self.defs_list.append(
             g.Bunch(node=node,
                     args=args,
+                    offset=self.offset,
                     scopeStack=self.scopeStack[:],
             ))
     else:
@@ -2040,7 +2042,14 @@ def CLASSDEF(self, node):
             self.handleNode(keywordNode, node)
     self.pushScope(node, node.name, ClassScope)
     if self.withDoctest:
-        self.deferFunction(lambda: self.handleDoctests(node))
+        if new_check:
+            self.doctests_list.append(
+                g.Bunch(node=node,
+                        offset=self.offset,
+                        scopeStack=self.scopeStack[:],
+                ))
+        else:
+            self.deferFunction(lambda: self.handleDoctests(node))
     # EKR: Unlike def's &amp; lambda's, we *do* traverse the class's body.
     for stmt in node.body:
         self.handleNode(stmt, node)
@@ -5042,6 +5051,7 @@ def runFunction():
         Check to see if any assignments have not been used.
         """
         assert self.pass_n == 3, self.pass_n
+        # g.trace(self.scope)
         for name, binding in self.scope.unusedAssignments():
             self.report(messages.UnusedVariable, binding.source, name)
     
@@ -5053,6 +5063,7 @@ def runFunction():
             Check to see if there is any return statement with
             arguments but the function is a generator.
             """
+            # g.trace(self.scope)
             assert self.pass_n == 3, self.pass_n
             if self.scope.isGenerator and self.scope.returnValue:
                 self.report(messages.ReturnWithArgsInsideGenerator,
@@ -5444,8 +5455,20 @@ def pass2(self, node):
     self.pass_n = 2
     if new_check:
         for bunch in self.defs_list:
-            self.scanFunction(bunch.node, bunch.args, bunch.scopeStack)
+            self.offset = bunch.offset
+            self.scopeStack = bunch.scopeStack
+            if new_scope:
+                self.scope = self.scopeStack[-1] if self.scopeStack else None
+            self.scanFunction(bunch.node, bunch.args)
                 # The full scopeStack *is* needed, but we could recreate it...
+        # Not *precisely* equivalent to runDeferred,
+        # because all doctests are handled after the calls to scanFunction.
+        for bunch in self.doctests_list:
+            self.offset = bunch.offset
+            self.scopeStack = bunch.scopeStack
+            if new_scope:
+                self.scope = self.scopeStack[-1] if self.scopeStack else None
+            self.handleDoctests(bunch.node)
     else: # Used by unit tests.
         self.runDeferred(self._deferredFunctions)
             # Run all the queued runFunction functions or scanFunction methods.
@@ -5463,8 +5486,14 @@ def pass3(self, node):
     self.pass_n = 3
         # handleNode will raise an exception if it is called.
     if new_check:
-        for scope in self.check_assign_list:
-            self.checkAssignments(scope)
+        g.trace(self.check_assign_list, g.callers())
+        for bunch in self.check_assign_list:
+            self.offset = bunch.offset
+            self.scopeStack = bunch.scopeStack
+            if new_scope:
+                self.scope = self.scopeStack[-1] if self.scopeStack else None
+            self.checkAssignments()
+        self.check_assign_list = None
     else: # Used in unit tests.
         self.runDeferred(self._deferredAssignments)
             # Run all queued calls to checkUnusedAssignments and
@@ -5636,7 +5665,7 @@ if aft:
 else:
     new_check = new_scope = False</t>
 <t tx="ekr.20160526063937.1">
-def scanFunction(self, node, args, scopeStack):
+def scanFunction(self, node, args):
     
     # This was in runFunction...
     assert self.pass_n == 2, self.pass_n
@@ -5645,11 +5674,11 @@ def scanFunction(self, node, args, scopeStack):
     else:
         assert isinstance(node, (ast.FunctionDef, ast.Lambda)), node
     is_def = isinstance(node, ast.FunctionDef)
-    name = ('def: %s' % node.name) if is_def else ('Lambda: %s' % id(node))
-    self.scopeStack = scopeStack
-    # Not needed, because it is immediately changed.
-    # if new_scope: self.scope = self.scopeStack[-1]
-    self.pushScope(node, name, FunctionScope)
+    if hasattr(node, 'name'):
+        def_name = 'def: %s' % node.name
+    else:
+        def_name = 'Lambda: %s' % id(node)
+    self.pushScope(node, def_name, FunctionScope)
     for arg_name in args:
         self.addBinding(node, Argument(arg_name, node))
     # *Now* traverse the body of the def/lambda.
@@ -5659,46 +5688,25 @@ def scanFunction(self, node, args, scopeStack):
     else:
         self.handleNode(node.body, node)
     # Defer checking assignments until pass 3.
-    self.check_assign_list.append(self.scopeStack[-1])
-    
-    if 0: # May be needed for unit tests.
-    
-        def checkUnusedAssignments():
-            """
-            Check to see if any assignments have not been used.
-            """
-            assert self.pass_n == 3, self.pass_n
-            for name, binding in self.scope.unusedAssignments():
-                self.report(messages.UnusedVariable, binding.source, name)
-        
-        self.deferAssignment(checkUnusedAssignments)
-    
-        if PY32:
-            def checkReturnWithArgumentInsideGenerator():
-                """
-                Check to see if there is any return statement with
-                arguments but the function is a generator.
-                """
-                assert self.pass_n == 3, self.pass_n
-                if self.scope.isGenerator and self.scope.returnValue:
-                    self.report(messages.ReturnWithArgsInsideGenerator,
-                                self.scope.returnValue)
-            self.deferAssignment(checkReturnWithArgumentInsideGenerator)
-
+    bunch = g.Bunch(
+        offset=self.offset,
+        scopeStack = self.scopeStack[:])
+    self.check_assign_list.append(bunch)
     self.popScope()</t>
 <t tx="ekr.20160526064907.1">test_scope='all'
 test_kind = 'normal', # 'resolve'</t>
 <t tx="ekr.20160526074410.1">
-def checkAssignments(self, scope):
+def checkAssignments(self):
     """
     Check to see if any assignments have not been used.
     """
     assert self.pass_n == 3, self.pass_n
-    for name, binding in scope.unusedAssignments(): # was self.scope.
+    g.trace(self.scope)
+    for name, binding in self.scope.unusedAssignments():
         self.report(messages.UnusedVariable, binding.source, name)
     
     if PY32:
-        if scope.isGenerator and scope.returnValue: # was self.scope
+        if self.scope.isGenerator and self.scope.returnValue:
             self.report(messages.ReturnWithArgsInsideGenerator,
                         scope.returnValue)
 </t>
@@ -7301,22 +7309,30 @@ print('pyflakes: %s' % pyflakes)
 from pyflakes.test import test_api, test_doctests, test_imports, test_other
 from pyflakes.test import test_return_with_arguments_inside_generator
 from pyflakes.test import test_undefined_names
-tests = (
-    ## test_api,
-    test_doctests,
-    test_imports,
-    test_other,
-    test_return_with_arguments_inside_generator,
-    test_undefined_names,
-)
+if 0:
+    module_tests = []
+    individual_tests = (
+        'pyflakes.test.test_doctests.Test.test_offsetInLambdasInDoctests',
+    )
+else:
+    individual_tests = []
+    module_tests = (
+        ## test_api,
+        test_doctests,
+        test_imports,
+        test_other,
+        test_return_with_arguments_inside_generator,
+        test_undefined_names,
+    )
 loader = unittest.TestLoader()
 suite = unittest.TestSuite()
-for module in tests:
+for test in individual_tests:
+    suite.addTest(loader.loadTestsFromName(test))
+        #  (pyflakes.test.test_doctests.Test)
+for module in module_tests:
     # g.trace(module)
     suite.addTest(loader.loadTestsFromModule(module))
 unittest.TextTestRunner(verbosity=1).run(suite)</t>
-<t tx="ekr.20160531170004.1"></t>
-<t tx="ekr.20160531204140.1"># flattened, ignore-case, head, body</t>
 <t tx="ekr.20160531210435.1">@language rest
 @wrap
 
@@ -7325,7 +7341,9 @@ In retrospect, it would have been better to use pyflakes's unit tests from the b
 Today's work reorganized the folder structure so it is possible to import pyflakes and pyflakes.test from with the project.  There were a few other changes, not interesting enough to recount here.
 
 As of recent revs, the @button unit-test code works with both python 2 and 3.  This runs all unit tests except the test_api and test_doctests modules. The test_api fail because they depend on code outside this project.  The test_doctest tests fail for other reasons that I'm looking into.</t>
-<t tx="ekr.20160601064427.1"># flattened, ignore-case, head, body</t>
-<t tx="ekr.20160601064438.1"># flattened, ignore-case, head, body</t>
+<t tx="ekr.20160602085820.1"></t>
+<t tx="ekr.20160602103657.1"></t>
+<t tx="ekr.20160602133105.1"># flattened, ignore-case, head, body</t>
+<t tx="ekr.20160602133545.1"></t>
 </tnodes>
 </leo_file>

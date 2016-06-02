@@ -44,13 +44,8 @@ aft = True
 # jit = False
     # This is only slightly faster than the default handleChildren method.
     # True: create node handlers in getNodeHandler.
-if aft:
-    new_check = False # doctest unit tests fail when True
-    new_scope = True
-        # doctest unit tests now succeed when True
-        # The fix was in runDeferred.
-else:
-    new_check = new_scope = False
+new_scope = aft
+    # True: replace self.scope property by simple code in push/popStack.
 stats = {}
     # Timing stats.
 n_pass_nodes = [None, 0, 0]
@@ -64,38 +59,42 @@ test_scope = None
 # are only present on some platforms.
 _MAGIC_GLOBALS = ['__file__', '__builtins__', 'WindowsError']
 
+if aft:
+    pass
+else:
+    
 
-class _FieldsOrder(dict):
-    """Fix order of AST node fields."""
+    class _FieldsOrder(dict):
+        """Fix order of AST node fields."""
 
-    def _get_fields(self, node_class):
-        # handle iter before target, and generators before element
-        # EKR: the effect of the key is to assign 0 to 'iter' or 'generators' or 'value'
-        # and -1 to everything else. So the target is *last*, so reverse=True is needed.
-        if 1: # EKR new code
-            fields = list(node_class._fields)
-            for field in ('iter', 'generators', 'value'):
-                if field in fields:
-                    fields.remove(field)
-                    fields.insert(0, field)
-                    break
-            return tuple(fields)
-        else:
-            fields = node_class._fields
-            if 'iter' in fields:
-                key_first = 'iter'.find
-            elif 'generators' in fields:
-                key_first = 'generators'.find
+        def _get_fields(self, node_class):
+            # handle iter before target, and generators before element
+            # EKR: the effect of the key is to assign 0 to 'iter' or 'generators' or 'value'
+            # and -1 to everything else. So the target is *last*, so reverse=True is needed.
+            if 1: # EKR new code
+                fields = list(node_class._fields)
+                for field in ('iter', 'generators', 'value'):
+                    if field in fields:
+                        fields.remove(field)
+                        fields.insert(0, field)
+                        break
+                return tuple(fields)
             else:
-                key_first = 'value'.find
-            return tuple(sorted(fields, key=key_first, reverse=True))
-        
+                fields = node_class._fields
+                if 'iter' in fields:
+                    key_first = 'iter'.find
+                elif 'generators' in fields:
+                    key_first = 'generators'.find
+                else:
+                    key_first = 'value'.find
+                return tuple(sorted(fields, key=key_first, reverse=True))
+            
 
-    def __missing__(self, node_class):
-        # EKR: called if self[node_class] does not exist.
-        self[node_class] = fields = self._get_fields(node_class)
-        # g.trace(node_class.__name__, fields)
-        return fields
+        def __missing__(self, node_class):
+            # EKR: called if self[node_class] does not exist.
+            self[node_class] = fields = self._get_fields(node_class)
+            # g.trace(node_class.__name__, fields)
+            return fields
 
 # Python >= 3.3 uses ast.Try instead of (ast.TryExcept + ast.TryFinally)
 # EKR: used only by differentForks
@@ -127,20 +126,25 @@ else:
     def getNodeType(node_class):
         return node_class.__name__.upper()
 
-def iter_child_nodes(node, omit=None, _fields_order=_FieldsOrder()):
-    """
-    Yield all direct child nodes of *node*, that is, all fields that
-    are nodes and all items of fields that are lists of nodes.
-    """
-    for name in _fields_order[node.__class__]:
-        if name == omit:
-            continue
-        field = getattr(node, name, None)
-        if isinstance(field, ast.AST):
-            yield field
-        elif isinstance(field, list):
-            for item in field:
-                yield item
+if aft:
+    pass
+    
+else:
+
+    def iter_child_nodes(node, omit=None, _fields_order=_FieldsOrder()):
+        """
+        Yield all direct child nodes of *node*, that is, all fields that
+        are nodes and all items of fields that are lists of nodes.
+        """
+        for name in _fields_order[node.__class__]:
+            if name == omit:
+                continue
+            field = getattr(node, name, None)
+            if isinstance(field, ast.AST):
+                yield field
+            elif isinstance(field, list):
+                for item in field:
+                    yield item
 
 def unit_test(raise_on_fail=True):
     '''Run basic unit tests for this file.'''
@@ -326,9 +330,10 @@ class Scope(dict):
         self.name = name
         self.node = node
         self.parent = parent
-        self.children = []
-        if self.parent:
-            self.parent.children.append(self)
+        # This code would be useful in some contexts, but not here and now.
+        # self.children = []
+        # if self.parent:
+            # self.parent.children.append(self)
         
 
     def __repr__(self):
@@ -429,13 +434,8 @@ class Checker(object):
             pass
         else:
             self._nodeHandlers = {}
-        if new_check:
-            self.check_assign_list = []
-            self.defs_list = []
-            self.doctests_list = []
-        else:
-            self._deferredFunctions = []
-            self._deferredAssignments = []
+        self._deferredFunctions = []
+        self._deferredAssignments = []
         self.deadScopes = []
         self.messages = []
         self.nodeDepth = 0
@@ -453,38 +453,34 @@ class Checker(object):
         self.handleNode(tree, parent=None)
             # EKR: new MODULE handler does all the work.
 
-    if False: ### new_check:
-        pass
-    else:
+    def deferAssignment(self, func):
+        """
+        Schedule an assignment handler to be called just after deferred
+        function handlers.
+        """
+        self._deferredAssignments.append((func, self.scopeStack[:], self.offset))
 
-        def deferAssignment(self, func):
-            """
-            Schedule an assignment handler to be called just after deferred
-            function handlers.
-            """
-            self._deferredAssignments.append((func, self.scopeStack[:], self.offset))
+    def deferFunction(self, func, node=None, args=None):
+        """
+        Schedule a function handler to be called just before completion.
 
-        def deferFunction(self, func, node=None, args=None):
-            """
-            Schedule a function handler to be called just before completion.
+        This is used for handling function bodies, which must be deferred
+        because code later in the file might modify the global scope. When
+        `callable` is called, the scope at the time this is called will be
+        restored, however it will contain any new bindings added to it.
+        """
+        self._deferredFunctions.append((func, self.scopeStack[:], self.offset))
 
-            This is used for handling function bodies, which must be deferred
-            because code later in the file might modify the global scope. When
-            `callable` is called, the scope at the time this is called will be
-            restored, however it will contain any new bindings added to it.
-            """
-            self._deferredFunctions.append((func, self.scopeStack[:], self.offset))
-
-        def runDeferred(self, deferred):
-            """
-            Run the callables in C{deferred} using their associated scope stack.
-            """
-            for handler, scope, offset in deferred:
-                self.scopeStack = scope
-                self.offset = offset
-                if new_scope:
-                    self.scope = self.scopeStack[-1] if self.scopeStack else None
-                handler()
+    def runDeferred(self, deferred):
+        """
+        Run the callables in C{deferred} using their associated scope stack.
+        """
+        for handler, scope, offset in deferred:
+            self.scopeStack = scope
+            self.offset = offset
+            if new_scope:
+                self.scope = self.scopeStack[-1] if self.scopeStack else None
+            handler()
 
     if new_scope:
         pass
@@ -496,20 +492,33 @@ class Checker(object):
             if new_scope: assert False
             return self.scopeStack[-1]
 
-    def popScope(self):
-        self.deadScopes.append(self.scopeStack.pop())
-        if new_scope:
+    if new_scope:
+        
+        def popScope(self):
+            self.deadScopes.append(self.scopeStack.pop())
             self.scope = self.scopeStack[-1] if self.scopeStack else None
 
-    def pushScope(self, node, name, scopeClass):
-        global n_scopes ; n_scopes += 1
-        parent = self.scopeStack and self.scopeStack[-1] or None
-        if new_scope:
+    else:
+        
+        def popScope(self):
+            self.deadScopes.append(self.scopeStack.pop())
+
+    if new_scope:
+        
+        def pushScope(self, node, name, scopeClass):
+            global n_scopes ; n_scopes += 1
+            parent = self.scopeStack and self.scopeStack[-1] or None
             self.scope = scopeClass(node, name, parent)
             self.scopeStack.append(self.scope)
-        else:
+            
+    else:
+                
+        def pushScope(self, node, name, scopeClass):
+            global n_scopes ; n_scopes += 1
+            parent = self.scopeStack and self.scopeStack[-1] or None
             scope = scopeClass(node, name, parent)
             self.scopeStack.append(scope)
+
 
     def report(self, messageClass, *args, **kwargs):
         self.messages.append(messageClass(self.filename, *args, **kwargs))
@@ -646,6 +655,8 @@ class Checker(object):
     def handleChildren(self, tree, omit=None):
         # EKR: iter_child_nodes uses _FieldsOrder class.
         global n_handleChildren ; n_handleChildren += 1
+        
+        assert not aft, g.callers()
         
         for node in iter_child_nodes(tree, omit=omit):
             self.handleNode(node, tree)
@@ -1147,14 +1158,7 @@ class Checker(object):
                 self.handleNode(keywordNode, node)
         self.pushScope(node, node.name, ClassScope)
         if self.withDoctest:
-            if new_check:
-                self.doctests_list.append(
-                    g.Bunch(node=node,
-                            offset=self.offset,
-                            scopeStack=self.scopeStack[:],
-                    ))
-            else:
-                self.deferFunction(lambda: self.handleDoctests(node))
+            self.deferFunction(lambda: self.handleDoctests(node))
         # EKR: Unlike def's & lambda's, we *do* traverse the class's body.
         for stmt in node.body:
             self.handleNode(stmt, node)
@@ -1197,14 +1201,7 @@ class Checker(object):
         self.LAMBDA(node) # EKR: defer's traversal of the body!
         self.addBinding(node, FunctionDefinition(node.name, node))
         if self.withDoctest:
-            if new_check:
-                self.doctests_list.append(
-                    g.Bunch(node=node,
-                            offset=self.offset,
-                            scopeStack=self.scopeStack[:],
-                    ))
-            else:
-                self.deferFunction(lambda: self.handleDoctests(node))
+            self.deferFunction(lambda: self.handleDoctests(node))
     if aft:
         FunctionDef = AsyncFunctionDef = FUNCTIONDEF
 
@@ -1338,67 +1335,58 @@ class Checker(object):
         for child in annotations + defaults:
             if child:
                 self.handleNode(child, node)
-        # Queue pass 2: it must handle args
-        if new_check:
-            self.defs_list.append(
-                g.Bunch(node=node,
-                        args=args,
-                        offset=self.offset,
-                        scopeStack=self.scopeStack[:],
-                ))
-        else:
-            # EKR: The dog that isn't barking:
-            # pass 1 defers traversing the def's/lambda's body!
+        # EKR: The dog that isn't barking:
+        # pass 1 defers traversing the def's/lambda's body!
 
-            def runFunction():
-                '''A function that will be run in pass 2.'''
+        def runFunction():
+            '''A function that will be run in pass 2.'''
 
-                assert self.pass_n == 2, self.pass_n
-                if hasattr(node, 'name'):
-                    def_name = 'def: %s' % node.name
-                else:
-                    def_name = 'Lambda: %s' % id(node)
-                self.pushScope(node, def_name, FunctionScope)
-                for name in args:
-                    self.addBinding(node, Argument(name, node))
-                    
-                # EKR: *Now* traverse the body of the Def/Lambda.
-                if isinstance(node.body, list):
-                    # case for FunctionDefs
-                    for stmt in node.body:
-                        self.handleNode(stmt, node)
-                else:
-                    # case for Lambdas
-                    self.handleNode(node.body, node)
-                    
-                # EKR: defer checking assignments until pass 3.
-
-                def checkUnusedAssignments():
-                    """
-                    Check to see if any assignments have not been used.
-                    """
-                    assert self.pass_n == 3, self.pass_n
-                    # g.trace(self.scope)
-                    for name, binding in self.scope.unusedAssignments():
-                        self.report(messages.UnusedVariable, binding.source, name)
+            assert self.pass_n == 2, self.pass_n
+            if hasattr(node, 'name'):
+                def_name = 'def: %s' % node.name
+            else:
+                def_name = 'Lambda: %s' % id(node)
+            self.pushScope(node, def_name, FunctionScope)
+            for name in args:
+                self.addBinding(node, Argument(name, node))
                 
-                self.deferAssignment(checkUnusedAssignments)
+            # EKR: *Now* traverse the body of the Def/Lambda.
+            if isinstance(node.body, list):
+                # case for FunctionDefs
+                for stmt in node.body:
+                    self.handleNode(stmt, node)
+            else:
+                # case for Lambdas
+                self.handleNode(node.body, node)
+                
+            # EKR: defer checking assignments until pass 3.
 
-                if PY32:
-                    def checkReturnWithArgumentInsideGenerator():
-                        """
-                        Check to see if there is any return statement with
-                        arguments but the function is a generator.
-                        """
-                        # g.trace(self.scope)
-                        assert self.pass_n == 3, self.pass_n
-                        if self.scope.isGenerator and self.scope.returnValue:
-                            self.report(messages.ReturnWithArgsInsideGenerator,
-                                        self.scope.returnValue)
-                    self.deferAssignment(checkReturnWithArgumentInsideGenerator)
+            def checkUnusedAssignments():
+                """
+                Check to see if any assignments have not been used.
+                """
+                assert self.pass_n == 3, self.pass_n
+                # g.trace(self.scope)
+                for name, binding in self.scope.unusedAssignments():
+                    self.report(messages.UnusedVariable, binding.source, name)
+            
+            self.deferAssignment(checkUnusedAssignments)
 
-                self.popScope()
-            self.deferFunction(runFunction)
+            if PY32:
+                def checkReturnWithArgumentInsideGenerator():
+                    """
+                    Check to see if there is any return statement with
+                    arguments but the function is a generator.
+                    """
+                    # g.trace(self.scope)
+                    assert self.pass_n == 3, self.pass_n
+                    if self.scope.isGenerator and self.scope.returnValue:
+                        self.report(messages.ReturnWithArgsInsideGenerator,
+                                    self.scope.returnValue)
+                self.deferAssignment(checkReturnWithArgumentInsideGenerator)
+
+            self.popScope()
+        self.deferFunction(runFunction)
 
     if aft:
         Lambda = LAMBDA
@@ -1494,28 +1482,11 @@ class Checker(object):
         t1 = time.clock()
         # Traverse the bodies of all def's & lambda's.
         self.pass_n = 2
-        if new_check:
-            for bunch in self.defs_list:
-                self.offset = bunch.offset
-                self.scopeStack = bunch.scopeStack
-                if new_scope:
-                    self.scope = self.scopeStack[-1] if self.scopeStack else None
-                self.scanFunction(bunch.node, bunch.args)
-                    # The full scopeStack *is* needed, but we could recreate it...
-            # Not *precisely* equivalent to runDeferred,
-            # because all doctests are handled after the calls to scanFunction.
-            for bunch in self.doctests_list:
-                self.offset = bunch.offset
-                self.scopeStack = bunch.scopeStack
-                if new_scope:
-                    self.scope = self.scopeStack[-1] if self.scopeStack else None
-                self.handleDoctests(bunch.node)
-        else: # Used by unit tests.
-            self.runDeferred(self._deferredFunctions)
-                # Run all the queued runFunction functions or scanFunction methods.
-            self._deferredFunctions = None
-                # Set _deferredFunctions to None so that deferFunction will fail
-                # noisily if called after we've run through the deferred functions.
+        self.runDeferred(self._deferredFunctions)
+            # Run all the queued runFunction functions or scanFunction methods.
+        self._deferredFunctions = None
+            # Set _deferredFunctions to None so that deferFunction will fail
+            # noisily if called after we've run through the deferred functions.
         t2 = time.clock()
         stats['pass2'] = stats.get('pass2', 0.0) + t2-t1
 
@@ -1554,22 +1525,12 @@ class Checker(object):
         t1 = time.clock()
         self.pass_n = 3
             # handleNode will raise an exception if it is called.
-        if new_check:
-            g.trace(self.check_assign_list, g.callers())
-            for bunch in self.check_assign_list:
-                self.offset = bunch.offset
-                self.scopeStack = bunch.scopeStack
-                if new_scope:
-                    self.scope = self.scopeStack[-1] if self.scopeStack else None
-                self.checkAssignments()
-            self.check_assign_list = None
-        else: # Used in unit tests.
-            self.runDeferred(self._deferredAssignments)
-                # Run all queued calls to checkUnusedAssignments and
-                # (If Python 2) checkReturnWithArgumentInsideGenerator
-            self._deferredAssignments = None
-                # Set _deferredAssignments to None so that deferAssignment will fail
-                # noisily if called after we've run through the deferred assignments.
+        self.runDeferred(self._deferredAssignments)
+            # Run all queued calls to checkUnusedAssignments and
+            # (If Python 2) checkReturnWithArgumentInsideGenerator
+        self._deferredAssignments = None
+            # Set _deferredAssignments to None so that deferAssignment will fail
+            # noisily if called after we've run through the deferred assignments.
         t2 = time.clock()
         stats['pass3'] = stats.get('pass3', 0.0) + t2-t1
 

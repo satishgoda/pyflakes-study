@@ -667,21 +667,9 @@
 </v>
 </v>
 </v>
-<v t="ekr.20160523173355.1"></v>
 <v t="ekr.20160531210435.1"><vh>posting: re unit tests.</vh></v>
-<v t="ekr.20160602085820.1"><vh>recent</vh>
-<v t="ekr.20160519172255.68"></v>
-<v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160522063947.1"></v>
-</v>
-<v t="ekr.20160519172255.41"></v>
-<v t="ekr.20160519172255.59"></v>
-<v t="ekr.20160522063947.1"></v>
-<v t="ekr.20160602103657.1"><vh>*** remove new_check switch</vh></v>
-<v t="ekr.20160602133105.1"><vh>Found:new_scope</vh>
+<v t="ekr.20160602134936.1"><vh>Found:new_scope</vh>
 <v t="ekr.20160526060219.1"></v>
-<v t="ekr.20160523181742.1"></v>
-<v t="ekr.20160523181745.1"></v>
 <v t="ekr.20160519172255.41"></v>
 <v t="ekr.20160519172255.44"></v>
 <v t="ekr.20160519172255.46"></v>
@@ -689,8 +677,6 @@
 <v t="ekr.20160519172255.45"></v>
 <v t="ekr.20160522063947.1"></v>
 </v>
-<v t="ekr.20160519172255.64"></v>
-<v t="ekr.20160602133545.1"><vh>commit message</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -888,10 +874,14 @@ __version__ = '1.0.0'
 @others
 </t>
 <t tx="ekr.20160519172255.12">
+if aft:
+    pass
+else:
+    
 
-class _FieldsOrder(dict):
-    """Fix order of AST node fields."""
-    @others
+    class _FieldsOrder(dict):
+        """Fix order of AST node fields."""
+        @others
 </t>
 <t tx="ekr.20160519172255.120">from pyflakes.api import main
 
@@ -930,20 +920,25 @@ def __missing__(self, node_class):
     return fields
 </t>
 <t tx="ekr.20160519172255.15">
-def iter_child_nodes(node, omit=None, _fields_order=_FieldsOrder()):
-    """
-    Yield all direct child nodes of *node*, that is, all fields that
-    are nodes and all items of fields that are lists of nodes.
-    """
-    for name in _fields_order[node.__class__]:
-        if name == omit:
-            continue
-        field = getattr(node, name, None)
-        if isinstance(field, ast.AST):
-            yield field
-        elif isinstance(field, list):
-            for item in field:
-                yield item
+if aft:
+    pass
+    
+else:
+
+    def iter_child_nodes(node, omit=None, _fields_order=_FieldsOrder()):
+        """
+        Yield all direct child nodes of *node*, that is, all fields that
+        are nodes and all items of fields that are lists of nodes.
+        """
+        for name in _fields_order[node.__class__]:
+            if name == omit:
+                continue
+            field = getattr(node, name, None)
+            if isinstance(field, ast.AST):
+                yield field
+            elif isinstance(field, list):
+                for item in field:
+                    yield item
 </t>
 <t tx="ekr.20160519172255.16">
 
@@ -1122,9 +1117,10 @@ class Scope(dict):
         self.name = name
         self.node = node
         self.parent = parent
-        self.children = []
-        if self.parent:
-            self.parent.children.append(self)
+        # This code would be useful in some contexts, but not here and now.
+        # self.children = []
+        # if self.parent:
+            # self.parent.children.append(self)
         
     @others
 
@@ -1288,13 +1284,8 @@ def __init__(self, tree, filename='(none)', builtins=None,
         pass
     else:
         self._nodeHandlers = {}
-    if new_check:
-        self.check_assign_list = []
-        self.defs_list = []
-        self.doctests_list = []
-    else:
-        self._deferredFunctions = []
-        self._deferredAssignments = []
+    self._deferredFunctions = []
+    self._deferredAssignments = []
     self.deadScopes = []
     self.messages = []
     self.nodeDepth = 0
@@ -1356,11 +1347,16 @@ else:
         return self.scopeStack[-1]
 </t>
 <t tx="ekr.20160519172255.46">
-def popScope(self):
-    self.deadScopes.append(self.scopeStack.pop())
-    if new_scope:
+if new_scope:
+    
+    def popScope(self):
+        self.deadScopes.append(self.scopeStack.pop())
         self.scope = self.scopeStack[-1] if self.scopeStack else None
-</t>
+
+else:
+    
+    def popScope(self):
+        self.deadScopes.append(self.scopeStack.pop())</t>
 <t tx="ekr.20160519172255.47">
 def checkDeadScopes(self):
     """
@@ -1402,15 +1398,22 @@ def checkDeadScopes(self):
     stats['pass4'] = stats.get('pass4', 0.0) + t2-t1
 </t>
 <t tx="ekr.20160519172255.48">
-def pushScope(self, node, name, scopeClass):
-    global n_scopes ; n_scopes += 1
-    parent = self.scopeStack and self.scopeStack[-1] or None
-    if new_scope:
+if new_scope:
+    
+    def pushScope(self, node, name, scopeClass):
+        global n_scopes ; n_scopes += 1
+        parent = self.scopeStack and self.scopeStack[-1] or None
         self.scope = scopeClass(node, name, parent)
         self.scopeStack.append(self.scope)
-    else:
+        
+else:
+            
+    def pushScope(self, node, name, scopeClass):
+        global n_scopes ; n_scopes += 1
+        parent = self.scopeStack and self.scopeStack[-1] or None
         scope = scopeClass(node, name, parent)
         self.scopeStack.append(scope)
+
 </t>
 <t tx="ekr.20160519172255.49">
 def report(self, messageClass, *args, **kwargs):
@@ -1684,6 +1687,8 @@ def handleNodeDelete(self, node):
 def handleChildren(self, tree, omit=None):
     # EKR: iter_child_nodes uses _FieldsOrder class.
     global n_handleChildren ; n_handleChildren += 1
+    
+    assert not aft, g.callers()
     
     for node in iter_child_nodes(tree, omit=omit):
         self.handleNode(node, tree)
@@ -1988,14 +1993,7 @@ def FUNCTIONDEF(self, node):
     self.LAMBDA(node) # EKR: defer's traversal of the body!
     self.addBinding(node, FunctionDefinition(node.name, node))
     if self.withDoctest:
-        if new_check:
-            self.doctests_list.append(
-                g.Bunch(node=node,
-                        offset=self.offset,
-                        scopeStack=self.scopeStack[:],
-                ))
-        else:
-            self.deferFunction(lambda: self.handleDoctests(node))
+        self.deferFunction(lambda: self.handleDoctests(node))
 if aft:
     FunctionDef = AsyncFunctionDef = FUNCTIONDEF
 
@@ -2009,19 +2007,10 @@ def LAMBDA(self, node):
     for child in annotations + defaults:
         if child:
             self.handleNode(child, node)
-    # Queue pass 2: it must handle args
-    if new_check:
-        self.defs_list.append(
-            g.Bunch(node=node,
-                    args=args,
-                    offset=self.offset,
-                    scopeStack=self.scopeStack[:],
-            ))
-    else:
-        # EKR: The dog that isn't barking:
-        # pass 1 defers traversing the def's/lambda's body!
-        &lt;&lt; define runFunction &gt;&gt;
-        self.deferFunction(runFunction)
+    # EKR: The dog that isn't barking:
+    # pass 1 defers traversing the def's/lambda's body!
+    &lt;&lt; define runFunction &gt;&gt;
+    self.deferFunction(runFunction)
 
 if aft:
     Lambda = LAMBDA
@@ -2042,14 +2031,7 @@ def CLASSDEF(self, node):
             self.handleNode(keywordNode, node)
     self.pushScope(node, node.name, ClassScope)
     if self.withDoctest:
-        if new_check:
-            self.doctests_list.append(
-                g.Bunch(node=node,
-                        offset=self.offset,
-                        scopeStack=self.scopeStack[:],
-                ))
-        else:
-            self.deferFunction(lambda: self.handleDoctests(node))
+        self.deferFunction(lambda: self.handleDoctests(node))
     # EKR: Unlike def's &amp; lambda's, we *do* traverse the class's body.
     for stmt in node.body:
         self.handleNode(stmt, node)
@@ -4439,11 +4421,7 @@ def CLASSDEF(self, node):
         self.handleNode(stmt, node)
 </t>
 <t tx="ekr.20160521154847.1"></t>
-<t tx="ekr.20160521155725.1">
-if False: ### new_check:
-    pass
-else:
-    @others</t>
+<t tx="ekr.20160521155725.1"></t>
 <t tx="ekr.20160521155817.1"></t>
 <t tx="ekr.20160522063947.1">
 def MODULE(self, node):
@@ -5453,28 +5431,11 @@ def pass2(self, node):
     t1 = time.clock()
     # Traverse the bodies of all def's &amp; lambda's.
     self.pass_n = 2
-    if new_check:
-        for bunch in self.defs_list:
-            self.offset = bunch.offset
-            self.scopeStack = bunch.scopeStack
-            if new_scope:
-                self.scope = self.scopeStack[-1] if self.scopeStack else None
-            self.scanFunction(bunch.node, bunch.args)
-                # The full scopeStack *is* needed, but we could recreate it...
-        # Not *precisely* equivalent to runDeferred,
-        # because all doctests are handled after the calls to scanFunction.
-        for bunch in self.doctests_list:
-            self.offset = bunch.offset
-            self.scopeStack = bunch.scopeStack
-            if new_scope:
-                self.scope = self.scopeStack[-1] if self.scopeStack else None
-            self.handleDoctests(bunch.node)
-    else: # Used by unit tests.
-        self.runDeferred(self._deferredFunctions)
-            # Run all the queued runFunction functions or scanFunction methods.
-        self._deferredFunctions = None
-            # Set _deferredFunctions to None so that deferFunction will fail
-            # noisily if called after we've run through the deferred functions.
+    self.runDeferred(self._deferredFunctions)
+        # Run all the queued runFunction functions or scanFunction methods.
+    self._deferredFunctions = None
+        # Set _deferredFunctions to None so that deferFunction will fail
+        # noisily if called after we've run through the deferred functions.
     t2 = time.clock()
     stats['pass2'] = stats.get('pass2', 0.0) + t2-t1
 </t>
@@ -5485,22 +5446,12 @@ def pass3(self, node):
     t1 = time.clock()
     self.pass_n = 3
         # handleNode will raise an exception if it is called.
-    if new_check:
-        g.trace(self.check_assign_list, g.callers())
-        for bunch in self.check_assign_list:
-            self.offset = bunch.offset
-            self.scopeStack = bunch.scopeStack
-            if new_scope:
-                self.scope = self.scopeStack[-1] if self.scopeStack else None
-            self.checkAssignments()
-        self.check_assign_list = None
-    else: # Used in unit tests.
-        self.runDeferred(self._deferredAssignments)
-            # Run all queued calls to checkUnusedAssignments and
-            # (If Python 2) checkReturnWithArgumentInsideGenerator
-        self._deferredAssignments = None
-            # Set _deferredAssignments to None so that deferAssignment will fail
-            # noisily if called after we've run through the deferred assignments.
+    self.runDeferred(self._deferredAssignments)
+        # Run all queued calls to checkUnusedAssignments and
+        # (If Python 2) checkReturnWithArgumentInsideGenerator
+    self._deferredAssignments = None
+        # Set _deferredAssignments to None so that deferAssignment will fail
+        # noisily if called after we've run through the deferred assignments.
     t2 = time.clock()
     stats['pass3'] = stats.get('pass3', 0.0) + t2-t1
 </t>
@@ -5657,13 +5608,8 @@ aft = True
 # jit = False
     # This is only slightly faster than the default handleChildren method.
     # True: create node handlers in getNodeHandler.
-if aft:
-    new_check = False # doctest unit tests fail when True
-    new_scope = True
-        # doctest unit tests now succeed when True
-        # The fix was in runDeferred.
-else:
-    new_check = new_scope = False</t>
+new_scope = aft
+    # True: replace self.scope property by simple code in push/popStack.</t>
 <t tx="ekr.20160526063937.1">
 def scanFunction(self, node, args):
     
@@ -7341,9 +7287,6 @@ In retrospect, it would have been better to use pyflakes's unit tests from the b
 Today's work reorganized the folder structure so it is possible to import pyflakes and pyflakes.test from with the project.  There were a few other changes, not interesting enough to recount here.
 
 As of recent revs, the @button unit-test code works with both python 2 and 3.  This runs all unit tests except the test_api and test_doctests modules. The test_api fail because they depend on code outside this project.  The test_doctest tests fail for other reasons that I'm looking into.</t>
-<t tx="ekr.20160602085820.1"></t>
-<t tx="ekr.20160602103657.1"></t>
-<t tx="ekr.20160602133105.1"># flattened, ignore-case, head, body</t>
-<t tx="ekr.20160602133545.1"></t>
+<t tx="ekr.20160602134936.1"># flattened, word, ignore-case, head, body</t>
 </tnodes>
 </leo_file>

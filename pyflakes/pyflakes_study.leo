@@ -71,13 +71,6 @@
 <v t="ekr.20160521024930.14"><vh>NullChecker.EXCEPTHANDLER</vh></v>
 </v>
 </v>
-<v t="ekr.20160526165114.1"><vh>unused checker tests</vh>
-<v t="ekr.20160525070836.1"><vh>test test1</vh></v>
-<v t="ekr.20160525064717.1"><vh>test global_test1</vh></v>
-<v t="ekr.20160525070031.1"><vh>test global_test2</vh></v>
-<v t="ekr.20160525104223.1"><vh>test global_test3</vh></v>
-<v t="ekr.20160525064058.1"><vh>not a bug</vh></v>
-</v>
 </v>
 <v t="ekr.20160520102401.1"><vh>Reference</vh>
 <v t="ekr.20160519172255.117"><vh>@@clean __init__.py</vh></v>
@@ -668,15 +661,6 @@
 </v>
 </v>
 <v t="ekr.20160531210435.1"><vh>posting: re unit tests.</vh></v>
-<v t="ekr.20160602134936.1"><vh>Found:new_scope</vh>
-<v t="ekr.20160526060219.1"></v>
-<v t="ekr.20160519172255.41"></v>
-<v t="ekr.20160519172255.44"></v>
-<v t="ekr.20160519172255.46"></v>
-<v t="ekr.20160519172255.48"></v>
-<v t="ekr.20160519172255.45"></v>
-<v t="ekr.20160522063947.1"></v>
-</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -5480,52 +5464,6 @@ def Ellipsis(self, node):
 def alias(self, node):
     pass</t>
 <t tx="ekr.20160524091908.1">@others</t>
-<t tx="ekr.20160525064058.1"># '''\
-
-# import leo.core.leoGlobals as g
-
-# class TestClass:
-    
-    # def spam():
-        # return m + 1
-        
-# def match_c_word(s, i, name):
-    # # n = len(name)
-    # return (
-        # name and
-        # name == s[i: i + n] and
-        # (i + n == len(s) or not g.is_c_id(s[i + n]))
-    # )
-  
-# ''',
-</t>
-<t tx="ekr.20160525064717.1"># Use global.
-'''\
-
-def global_test1():
-    print(a)
-
-class aClass:
-    def aMethod(self):
-        print(a)
- 
-a = 2
-    
-''',
-</t>
-<t tx="ekr.20160525070031.1"># Use global.
-'''\
-
-a = 1
-
-def global_test2():
-    print(a)
-    
-class aClass:
-    def aMethod(self):
-        print(a)
-
-''',</t>
 <t tx="ekr.20160525070614.1">
 def dump(self, brief=False): # EKR
     aList = [
@@ -5545,19 +5483,6 @@ def dump(self, brief=False): # EKR
                 aList.append('%15s %r' % (key, value))
     return '\n'.join(aList)
 </t>
-<t tx="ekr.20160525070836.1"># Use global.
-'''\
-
-def test1():
-    a = 1
-    print(a)
-    b = lambda x: x
-    del b
-    
-print(x)
-
-''',
-</t>
 <t tx="ekr.20160525071459.1">
 def dump(self, scope=None):
     if self.used:
@@ -5574,21 +5499,6 @@ def dump(self, scope=None):
     return '%s: %s used: %s' % (
         self.__class__.__name__, self.name, s)
 </t>
-<t tx="ekr.20160525104223.1"># Use global.
-'''\
-
-a = 1
-
-def global_test3():
-    global a
-    print(a)
-    
-class aClass:
-    def aMethod(self):
-        global a
-        print(a)
-
-''',</t>
 <t tx="ekr.20160525151651.1">
 def __repr__(self):
     # scope_class = self.__class__.__name__
@@ -5655,7 +5565,6 @@ def checkAssignments(self):
             self.report(messages.ReturnWithArgsInsideGenerator,
                         scope.returnValue)
 </t>
-<t tx="ekr.20160526165114.1"></t>
 <t tx="ekr.20160526165301.1">'''\
 # This import ruins all other tests for undefined..
 from alpha import *         # ImportStarUsed                        
@@ -7286,6 +7195,5 @@ In retrospect, it would have been better to use pyflakes's unit tests from the b
 Today's work reorganized the folder structure so it is possible to import pyflakes and pyflakes.test from with the project.  There were a few other changes, not interesting enough to recount here.
 
 As of recent revs, the @button unit-test code works with both python 2 and 3.  This runs all unit tests except the test_api and test_doctests modules. The test_api fail because they depend on code outside this project.  The test_doctest tests fail for other reasons that I'm looking into.</t>
-<t tx="ekr.20160602134936.1"># flattened, word, ignore-case, head, body</t>
 </tnodes>
 </leo_file>

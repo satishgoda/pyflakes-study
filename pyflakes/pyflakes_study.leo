@@ -519,7 +519,32 @@
 </v>
 <v t="ekr.20160522063947.1"></v>
 <v t="ekr.20160519172255.72"></v>
+<v t="ekr.20160519172255.63"></v>
 <v t="ekr.20160603053150.1"><vh>Final post</vh></v>
+<v t="ekr.20160603085936.1"><vh>** to do</vh></v>
+<v t="ekr.20160603092050.1"><vh>Found:lineno</vh>
+<v t="ekr.20160519172255.64"></v>
+<v t="ekr.20160519172255.63"></v>
+<v t="ekr.20160519172255.62"></v>
+</v>
+<v t="ekr.20160603092457.1"><vh>Found:parent</vh>
+<v t="ekr.20160526060219.1"></v>
+<v t="ekr.20160519172255.58"></v>
+<v t="ekr.20160519172255.57"></v>
+<v t="ekr.20160519172255.38"></v>
+<v t="ekr.20160519172255.33"></v>
+<v t="ekr.20160519172255.37"></v>
+<v t="ekr.20160519172255.31"></v>
+<v t="ekr.20160519172255.35"></v>
+<v t="ekr.20160519172255.41"></v>
+<v t="ekr.20160519172255.48"></v>
+<v t="ekr.20160519172255.50"></v>
+<v t="ekr.20160519172255.51"></v>
+<v t="ekr.20160519172255.54"></v>
+<v t="ekr.20160519172836.1"></v>
+<v t="ekr.20160519172255.63"></v>
+<v t="ekr.20160519172255.68"></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -539,7 +564,7 @@ stats = {}
 n_pass_nodes = [None, 0, 0]
     # Only Passes 1 &amp; 2 traverse nodes.
     # The sum is the number of calls to handleNodes
-n_ignore = n_handleChildren = n_FunctionDef = n_null_nodes = 0
+n_ignore = n_handleChildren = n_FunctionDef = 0
 n_load = n_store = n_scopes = 0
 n_deferred_assignments = n_scope_names = 0
 test_scope = None
@@ -766,7 +791,6 @@ def __missing__(self, node_class):
 <t tx="ekr.20160519172255.15">
 if aft:
     pass
-    
 else:
 
     def iter_child_nodes(node, omit=None, _fields_order=_FieldsOrder()):
@@ -1584,15 +1608,14 @@ def getDocstring(self, node):
     return (node.s, doctest_lineno)
 </t>
 <t tx="ekr.20160519172255.63">
-# null_trace_n = 0
-
 def handleNode(self, node, parent):
     # EKR: this the general node visiter.
     # assert isinstance(node, (ast.AST, ast.AsyncWith)), repr(node)
-    global n_pass_nodes, n_null_nodes
+    global n_pass_nodes
     assert node, g.callers()
     # The following will fail unless 0 &lt; self.pass_n &lt; 3
     n_pass_nodes[self.pass_n] += 1
+    # EKR: used only when running doctests.
     if self.offset and getattr(node, 'lineno', None) is not None:
         node.lineno += self.offset[0]
         node.col_offset += self.offset[1]
@@ -5592,5 +5615,18 @@ In my mind, the statistics given above represent the essence of what makes pyfla
 At present, I plan no further work on this project. I welcome all questions, comments and corrections.
 
 Edward</t>
+<t tx="ekr.20160603085936.1">@language rest
+@wrap
+
+- Post: handleNode takes a parent arg, unlike AstFullTraverser.visit.
+- New check_attrs project:
+    - Ridiculously simple.
+    - Based on pyflakes code.
+    - Create flexible descriptors.
+        - global, per-file, per-class, per-method descriptors.
+    - Check Attributes based on descriptors.
+    - Use results to update descriptors, and repeat.</t>
+<t tx="ekr.20160603092050.1"># flattened, word, ignore-case, head, body</t>
+<t tx="ekr.20160603092457.1"># flattened, word, ignore-case, head, body</t>
 </tnodes>
 </leo_file>

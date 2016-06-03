@@ -51,7 +51,7 @@ stats = {}
 n_pass_nodes = [None, 0, 0]
     # Only Passes 1 & 2 traverse nodes.
     # The sum is the number of calls to handleNodes
-n_ignore = n_handleChildren = n_FunctionDef = n_null_nodes = 0
+n_ignore = n_handleChildren = n_FunctionDef = 0
 n_load = n_store = n_scopes = 0
 n_deferred_assignments = n_scope_names = 0
 test_scope = None
@@ -129,7 +129,6 @@ else:
 
 if aft:
     pass
-    
 else:
 
     def iter_child_nodes(node, omit=None, _fields_order=_FieldsOrder()):
@@ -1102,15 +1101,14 @@ class Checker(object):
             self.builtIns.remove('_')
         self.popScope()
 
-    # null_trace_n = 0
-
     def handleNode(self, node, parent):
         # EKR: this the general node visiter.
         # assert isinstance(node, (ast.AST, ast.AsyncWith)), repr(node)
-        global n_pass_nodes, n_null_nodes
+        global n_pass_nodes
         assert node, g.callers()
         # The following will fail unless 0 < self.pass_n < 3
         n_pass_nodes[self.pass_n] += 1
+        # EKR: used only when running doctests.
         if self.offset and getattr(node, 'lineno', None) is not None:
             node.lineno += self.offset[0]
             node.col_offset += self.offset[1]

@@ -53,6 +53,7 @@ n_pass_nodes = [None, 0, 0]
     # The sum is the number of calls to handleNodes
 n_ignore = n_handleChildren = n_FunctionDef = n_null_nodes = 0
 n_load = n_store = n_scopes = 0
+n_deferred_assignments = n_scope_names = 0
 test_scope = None
 
 # Globally defined names which are not attributes of the builtins module, or
@@ -379,6 +380,7 @@ class FunctionScope(Scope):
         Return a generator for the assignments which have not been used.
         """
         # EKR: only called in FunctionScope.
+        global n_scope_names ; n_scope_names += len(self.keys())
         for name, binding in self.items():
             if (not binding.used and
                 name not in self.globals and
@@ -458,6 +460,7 @@ class Checker(object):
         Schedule an assignment handler to be called just after deferred
         function handlers.
         """
+        global n_deferred_assignments ; n_deferred_assignments += 1
         self._deferredAssignments.append((func, self.scopeStack[:], self.offset))
 
     def deferFunction(self, func, node=None, args=None):

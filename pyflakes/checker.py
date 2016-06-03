@@ -1493,34 +1493,6 @@ class Checker(object):
         t2 = time.clock()
         stats['pass2'] = stats.get('pass2', 0.0) + t2-t1
 
-    def scanFunction(self, node, args):
-        
-        # This was in runFunction...
-        assert self.pass_n == 2, self.pass_n
-        if g.isPython3:
-            assert isinstance(node, (ast.FunctionDef, ast.Lambda, ast.AsyncFunctionDef)), node
-        else:
-            assert isinstance(node, (ast.FunctionDef, ast.Lambda)), node
-        if hasattr(node, 'name'):
-            def_name = 'def: %s' % node.name
-        else:
-            def_name = 'Lambda: %s' % id(node)
-        self.pushScope(node, def_name, FunctionScope)
-        for arg_name in args:
-            self.addBinding(node, Argument(arg_name, node))
-        # *Now* traverse the body of the def/lambda.
-        if isinstance(node.body, list): # Bug fix.
-            for z in node.body:
-                self.handleNode(z, node)
-        else:
-            self.handleNode(node.body, node)
-        # Defer checking assignments until pass 3.
-        bunch = g.Bunch(
-            offset=self.offset,
-            scopeStack = self.scopeStack[:])
-        self.check_assign_list.append(bunch)
-        self.popScope()
-
     def pass3(self, node):
         
         global stats
@@ -1535,20 +1507,6 @@ class Checker(object):
             # noisily if called after we've run through the deferred assignments.
         t2 = time.clock()
         stats['pass3'] = stats.get('pass3', 0.0) + t2-t1
-
-    def checkAssignments(self):
-        """
-        Check to see if any assignments have not been used.
-        """
-        assert self.pass_n == 3, self.pass_n
-        g.trace(self.scope)
-        for name, binding in self.scope.unusedAssignments():
-            self.report(messages.UnusedVariable, binding.source, name)
-        
-        if PY32:
-            if self.scope.isGenerator and self.scope.returnValue:
-                self.report(messages.ReturnWithArgsInsideGenerator,
-                            scope.returnValue)
 
     def checkDeadScopes(self):
         """

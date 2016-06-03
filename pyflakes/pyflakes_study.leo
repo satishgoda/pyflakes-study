@@ -71,6 +71,8 @@
 <v t="ekr.20160521024930.14"><vh>NullChecker.EXCEPTHANDLER</vh></v>
 </v>
 </v>
+<v t="ekr.20160526074410.1"><vh>Checker.checkAssignments (new_check)</vh></v>
+<v t="ekr.20160526063937.1"><vh>Checker.scanFunction (new_check)</vh></v>
 </v>
 <v t="ekr.20160520102401.1"><vh>Reference</vh>
 <v t="ekr.20160519172255.117"><vh>@@clean __init__.py</vh></v>
@@ -356,10 +358,8 @@
 <v t="ekr.20160520210931.1"><vh>traverse_tree</vh></v>
 </v>
 </v>
-<v t="ekr.20160526064907.1"></v>
-<v t="ekr.20160526060219.1"><vh>&lt;&lt; checker switches &gt;&gt;</vh></v>
-<v t="ekr.20160523172328.1"></v>
 <v t="ekr.20160523172121.1"><vh>----------------</vh></v>
+<v t="ekr.20160526060219.1"><vh>&lt;&lt; checker switches &gt;&gt;</vh></v>
 <v t="ekr.20160519172255.10"><vh>@clean checker.py</vh>
 <v t="ekr.20160519172255.11"><vh>&lt;&lt; imports &gt;&gt; (checker)</vh></v>
 <v t="ekr.20160526060219.1"></v>
@@ -500,12 +500,8 @@
 </v>
 <v t="ekr.20160522063947.1"><vh>Checker.MODULE (4 passes)</vh>
 <v t="ekr.20160523181737.1"><vh>Checker.pass1</vh></v>
-<v t="ekr.20160523181742.1"><vh>Checker.pass2 (uses scopeStack)</vh>
-<v t="ekr.20160526063937.1"><vh>Checker.scanFunction</vh></v>
-</v>
-<v t="ekr.20160523181745.1"><vh>Checker.pass3</vh>
-<v t="ekr.20160526074410.1"><vh>Checker.checkAssignments (NEW)</vh></v>
-</v>
+<v t="ekr.20160523181742.1"><vh>Checker.pass2 (uses scopeStack)</vh></v>
+<v t="ekr.20160523181745.1"><vh>Checker.pass3</vh></v>
 <v t="ekr.20160519172255.47"><vh>Checker.checkDeadScopes (pass4)</vh></v>
 </v>
 <v t="ekr.20160519172255.68"><vh>Checker.NAME &amp; helpers</vh>
@@ -521,8 +517,9 @@
 </v>
 </v>
 </v>
-<v t="ekr.20160531210435.1"><vh>posting: re unit tests.</vh></v>
-<v t="ekr.20160603042535.1"><vh>posting: project complete</vh></v>
+<v t="ekr.20160522063947.1"></v>
+<v t="ekr.20160519172255.72"></v>
+<v t="ekr.20160603053150.1"><vh>Final post</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -2252,13 +2249,13 @@ if c.isChanged():
     import time
     c.save()
     time.sleep(0.1)
-&lt;&lt; test switches &gt;&gt;
 &lt;&lt; test imports &gt;&gt;
+test_scope='all'
 checker.test_scope = test_scope
 checker.unit_test()
 aft = checker.aft
 print('aft: %s' % checker.aft)
-compare_traverse = False and test_kind != 'resolve'
+compare_traverse = False
 gc.collect() # Runs a full collection. Stabilizes timing statistics a bit.
 stats = {}
 test_list = [
@@ -2320,39 +2317,28 @@ import leo.core.leoTest as leoTest
 import api
 import leo_ast
 imp.reload(leo_ast)
-if test_kind == 'resolve':
-    import resolve
-    imp.reload(resolve)
-else:
-    import api
-    import checker
-    import messages
-    import reporter
-    imp.reload(api)
-    imp.reload(checker)
-    imp.reload(messages)
-    imp.reload(reporter)</t>
+import api
+import checker
+import messages
+import reporter
+imp.reload(api)
+imp.reload(checker)
+imp.reload(messages)
+imp.reload(reporter)</t>
 <t tx="ekr.20160520162336.1">def check_string(self, fn, s, tree):
     
-    if test_kind == 'resolve':
-        t1 = time.clock()
-        sfn = g.shortFileName(fn)
-        w = resolve.Resolve(tree, sfn)
-        t2 = time.clock()
-        self.stats['resolve'] = self.stats.get('resolve', 0.0) + t2 - t1
-    else:
-        t1 = time.clock()
-        sfn = g.shortFileName(fn)
-        r = reporter.Reporter(
-            errorStream=sys.stderr,
-            warningStream=sys.stderr,
-            )
-        errors = api.check(s, sfn, r, tree=tree)
-        t2 = time.clock()
-        self.stats['check'] = self.stats.get('check', 0.0) + t2 - t1
-        if errors:
-            print('pyflakes: %s error%s in %s' % (
-                errors, g.plural(errors), fn))
+    t1 = time.clock()
+    sfn = g.shortFileName(fn)
+    r = reporter.Reporter(
+        errorStream=sys.stderr,
+        warningStream=sys.stderr,
+        )
+    errors = api.check(s, sfn, r, tree=tree)
+    t2 = time.clock()
+    self.stats['check'] = self.stats.get('check', 0.0) + t2 - t1
+    if errors:
+        print('pyflakes: %s error%s in %s' % (
+            errors, g.plural(errors), fn))
 </t>
 <t tx="ekr.20160520162722.1">@others</t>
 <t tx="ekr.20160520184945.1">'''AST (Abstract Syntax Tree) related classes.'''
@@ -4805,7 +4791,7 @@ def Set(self, node):
 <t tx="ekr.20160523172328.1">def print_stats(self, n, t1, t2):
     
     stats = self.stats
-    m = resolve if test_kind == 'resolve' else checker
+    m = checker
     # compute...
     stats['total'] = t2 - t1
     for name in ('pass1', 'pass2', 'pass3', 'pass4', ):
@@ -4840,7 +4826,7 @@ def Set(self, node):
         # 'read', 'parse', 'visit', 'handle',
         'check',
         '  pass1', '  pass2',
-        # '  pass3', '  pass4',
+        '  pass3', '  pass4',
         'total', 'total2')
     for key in keys:
         if key.strip() in stats:
@@ -5412,8 +5398,8 @@ def scanFunction(self, node, args):
         scopeStack = self.scopeStack[:])
     self.check_assign_list.append(bunch)
     self.popScope()</t>
-<t tx="ekr.20160526064907.1">test_scope='all'
-test_kind = 'normal', # 'resolve'</t>
+<t tx="ekr.20160526064907.1">
+</t>
 <t tx="ekr.20160526074410.1">
 def checkAssignments(self):
     """
@@ -5513,14 +5499,98 @@ for module in module_tests:
     # g.trace(module)
     suite.addTest(loader.loadTestsFromModule(module))
 unittest.TextTestRunner(verbosity=1).run(suite)</t>
-<t tx="ekr.20160531210435.1">@language rest
+<t tx="ekr.20160603053150.1">@language rest
 @wrap
+
+This project is complete, for now, as far as I am concerned. This post will summarize what I have learned.
+
+*Speed and accuracy*
+
+I said in  Grand Overview post that "The most important aspect of pyflakes is its raw speed." But this ignores the question of how pyflakes performs its checks correctly.
+
+In fact, the most important aspect of pyflakes is that it checks Name nodes, assignments and scope symbols in the correct order. As shown in the new Module visitor, pyflakes checks each module in four passes.
+
+Pass 1: traverse the tree, delaying traversal of the bodies of defs/lambdas until pass 2.
+
+Pass 2: traverse the bodies of defs/lambdas, in top-down order.
+
+As a result, when the time the body of a def/lambda is traversed in pass 2, the bodies of all enclosing scopes have already been traversed.  This would not be true in a typical tree traversal.
+
+Pass 2 also queues pass 3, which checks all names in all scopes.  Finally, pass 4 makes one last pass through all scopes.
+
+The following statistics were gathered by the latest code run on all of Leo's source files:
+
+aft: True
+run_test scope: all
+370 files
+nodes visited...
+  pass1:  167252
+  pass2:  565730
+  total:  732982
+method calls...
+  handleNode:       732982
+  handleChildren:        0
+  FunctionDef:       15187
+  ignore:                0
+  Load:              22861
+  Store:             20337
+  deferAssignment:   15360
+data...
+  Scopes:            16630
+  Scope names:       59455
+times (sec.)...
+  check    1.84
+    pass1  0.34
+    pass2  1.44
+    pass3  0.02
+    pass4  0.02
+  total    3.86
+
+As you can see, almost all the time is spent in the tree traversals in passes 1 and 2.  The post-passes, passes 3 and 4, take almost no time. They do not traverse the tree. Instead, they merely check the data in each scope.
+
+In short, the order of tree traversal matters a lot, as does visiting each node only once.  The checks performed in the Ast.Name visitor and its helpers only work if done when assignments to symbols in enclosing scopes have already been handled.
+
+*Programming details*
+
+To summarize the substantive changes I made:
+
+1. When the aft (AstFullTraverser) switch is True, the heart of the handleNode method is:
+
+    handler = getattr(self, node.__class__.__name__)
+    handler(node)
+
+This is significantly faster than any other dispatch method.  To make this work, there must be a visitor for every possible Ast node, and each visitor should call handleNode directly, without calling handleChildren and its helpers.  The speedup is 10 to 20 percent. In fact, handleChildren is quite expensive compared with using getattr as shown above.
+
+checker.py contains a new top-level method called unit_test, which ensures that there are, in fact, visitors for all Ast nodes.
+
+2. Replacing the scope property with a scope ivar (managed by pushScope and popScope) improves the speed of pyflakes by an additional 5 percent or so.
+
+3. I added the Module visitor and its helpers and refactored the LAMBDA visitor. The Module code was originally in the ctor for the Checker class.
+
+*Missteps*
+
+I experimented with replacing the runFunction function defined in the LAMBDA visitor, but this experiment failed.  The runDeferred logic is simple and good.  The experimental code failed in mysterious ways for doctests, and I gave up trying to figure out what exactly was wrong.  The new_check switch enabled the experimental code, but that switch and all related code is now gone.
 
 In retrospect, it would have been better to use pyflakes's unit tests from the beginning, but at that time I wasn't sure what the scope of the project would be.
 
-Today's work reorganized the folder structure so it is possible to import pyflakes and pyflakes.test from with the project.  There were a few other changes, not interesting enough to recount here.
+*Testing*
 
-As of recent revs, the @button unit-test code works with both python 2 and 3.  This runs all unit tests except the test_api and test_doctests modules. The test_api fail because they depend on code outside this project.  The test_doctest tests fail for other reasons that I'm looking into.</t>
-<t tx="ekr.20160603042535.1"></t>
+As of recent revs, the @button unit-test code works with both python 2 and 3.  This runs all unit tests except the test_api module. The test_api tests fail because they depend on code outside this project.  The @button test code runs pyflakes on all files of Leo's code base. Results as shown above.
+
+*Alternative organizations*
+
+A more traditional organization of pyflakes might be to traverse the tree in a single pass, entering data into scopes (symbol tables) when assignments and Name nodes are encountered.  One or more post passes would then perform the actual tests.  It's probable that such a scheme could be made to work, but it would involve adding more data to the scopes.  The actual pyflakes code is more elegant, imo.
+
+*Summary*
+
+Pyflakes is fast because it traverses the parse tree once, in an unusual order.  Pyflakes is accurate because this unusual traversal order guarantees that when the body of a def/lambda is traversed, the bodies of all enclosing scopes have already been traversed.  This allows the tests in the Name visitor and its helpers to have the form they do.
+
+The aft and new_scope switches enable the modifications I made. All of pyflakes's unit tests pass regardless of these switches (except for the test_api module which should not be of concern). I fixed a buglet regarding 'return' statements at the top level of a module, and changed the corresponding unit test so that it passes.
+
+In my mind, the statistics given above represent the essence of what makes pyflakes fast and accurate.  Focusing on handleNode makes sense because it is called about 30 times more often than any other method.  Passes 3 and 4 are surprisingly fast.
+
+At present, I plan no further work on this project. I welcome all questions, comments and corrections.
+
+Edward</t>
 </tnodes>
 </leo_file>

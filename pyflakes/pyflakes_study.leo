@@ -517,34 +517,7 @@
 </v>
 </v>
 </v>
-<v t="ekr.20160522063947.1"></v>
-<v t="ekr.20160519172255.72"></v>
-<v t="ekr.20160519172255.63"></v>
 <v t="ekr.20160603053150.1"><vh>Final post</vh></v>
-<v t="ekr.20160603085936.1"><vh>** to do</vh></v>
-<v t="ekr.20160603092050.1"><vh>Found:lineno</vh>
-<v t="ekr.20160519172255.64"></v>
-<v t="ekr.20160519172255.63"></v>
-<v t="ekr.20160519172255.62"></v>
-</v>
-<v t="ekr.20160603092457.1"><vh>Found:parent</vh>
-<v t="ekr.20160526060219.1"></v>
-<v t="ekr.20160519172255.58"></v>
-<v t="ekr.20160519172255.57"></v>
-<v t="ekr.20160519172255.38"></v>
-<v t="ekr.20160519172255.33"></v>
-<v t="ekr.20160519172255.37"></v>
-<v t="ekr.20160519172255.31"></v>
-<v t="ekr.20160519172255.35"></v>
-<v t="ekr.20160519172255.41"></v>
-<v t="ekr.20160519172255.48"></v>
-<v t="ekr.20160519172255.50"></v>
-<v t="ekr.20160519172255.51"></v>
-<v t="ekr.20160519172255.54"></v>
-<v t="ekr.20160519172836.1"></v>
-<v t="ekr.20160519172255.63"></v>
-<v t="ekr.20160519172255.68"></v>
-</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160519172255.10">"""
@@ -5615,18 +5588,5 @@ In my mind, the statistics given above represent the essence of what makes pyfla
 At present, I plan no further work on this project. I welcome all questions, comments and corrections.
 
 Edward</t>
-<t tx="ekr.20160603085936.1">@language rest
-@wrap
-
-- Post: handleNode takes a parent arg, unlike AstFullTraverser.visit.
-- New check_attrs project:
-    - Ridiculously simple.
-    - Based on pyflakes code.
-    - Create flexible descriptors.
-        - global, per-file, per-class, per-method descriptors.
-    - Check Attributes based on descriptors.
-    - Use results to update descriptors, and repeat.</t>
-<t tx="ekr.20160603092050.1"># flattened, word, ignore-case, head, body</t>
-<t tx="ekr.20160603092457.1"># flattened, word, ignore-case, head, body</t>
 </tnodes>
 </leo_file>
